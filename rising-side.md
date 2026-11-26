@@ -24,10 +24,10 @@ $$\frac{a_{j+1}}{a_j}
  = e^{\alpha/m}(1+O(\sigma^{-1})).$$
 Here $\alpha/m\gg\sigma^{-1}$ in the limiting sense that their ratio tends to infinity. This proves the stated strict inequality.
 
-## The remaining obstacle
+## Reduction to intermediate small area
 
 For every fixed $\epsilon>0$, all sufficiently large $m$ have increasing ranks on $D/2\le j\le D-(x_*+\epsilon)m^{3/2}$, where $x_*$ is the scaled mode in the peak-window theorem. Indeed, a sequence violating growth there either has an unbounded subsequence of scaled coranks tending to infinity, covered above, or a subsequence converging to a finite point strictly above $x_*$. In the latter case the first-difference limit and $(\log f)''\le-12$ give $f'<0$, i.e. growth in the rank direction. The lower half follows from Björner–Ekedahl. A compact window containing the global peak has strict log-concavity.
 
 Consequently, if arbitrarily large counterexamples exist, one can choose a wrong-way step on the high-rank side (a strict decrease in corank order before the global peak in that order) along a subsequence with
 $$k/n\longrightarrow\infty,\qquad k/m^{3/2}\longrightarrow0.$$
-For precision, the fixed-linear tail theorem excludes bounded $k/n$, and the compact-window difference and log-concavity estimates exclude scaled coranks bounded away from zero up to and through the peak. On its far side the growth result above excludes a reversal. The same argument applies to both parities. It remains to control the intermediate small-area regime uniformly, and to cover every size in a complete proof.
+For precision, the fixed-linear tail theorem excludes bounded $k/n$, and the compact-window difference and log-concavity estimates exclude scaled coranks bounded away from zero up to and through the peak. On its far side the growth result above excludes a reversal. The same argument applies to both parities. The [block transfer argument](small-area.md) proves eventual growth in this last regime. An explicit finite-size cutoff remains to be found.

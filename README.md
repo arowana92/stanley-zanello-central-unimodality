@@ -8,9 +8,20 @@ The conjecture says that for each shape and every $n$, the sequence from $a_0$ t
 
 [2013 preprint](https://arxiv.org/abs/1305.6083) · [Authors’ final paper](https://math.mit.edu/~rstan/papers/distinctparts.pdf)
 
-## Partial results for arbitrary sizes
+## Asymptotic result and finite-size gap
 
-Write $m=2n$ or $2n+1$ for the word length, $D$ for the degree and $k=D-j$ for the number of missing cells at rank $j$. On each fixed window $u m^{3/2}\le k\le v m^{3/2}$ with $0<u<v$, the coefficients are strictly log-concave for all sufficiently large $n$. Every global maximum has $k/m^{3/2}$ tending to the same positive constant in both families. The rising-side bound reaches the peak window. In any sequence of arbitrarily large counterexamples a reversal would have to occur at coranks with $k/n\to\infty$ and $k/m^{3/2}\to0$. Full unimodality remains unresolved. [Peak window](peak-window.md) · [Tail inequalities](monotonicity.md) · [Rising-side proof](rising-side.md)
+The research notes give a proof that **both central families are unimodal for all sufficiently large $n$**. The proof yields no explicit cutoff. Exact computation verifies both families for every $1\le n\le192$. These results leave open the possibility of a finite exceptional size above 192.
+
+Write $m=2n$ or $2n+1$ for the word length, $D$ for the degree and $k=D-j$ for the number of missing cells at rank $j$. For both families, every global peak has $k/m^{3/2}$ tending to the mode of half the area under a standard Brownian meander. The proof controls adjacent coefficients in four ranges.
+
+| Range | Argument |
+| --- | --- |
+| $k/m$ bounded | Counting edges near the full shape and a fixed-tilt coefficient ratio give growth in corank. [Tail estimates, §3](monotonicity.md#3-decrease-near-the-top) |
+| $k/m\to\infty$ and $k/m^{3/2}\to0$ | A transfer operator on blocks of length about $(k/m)^2$ gives an adjacent-difference estimate smaller than the shrinking tilt. [Small-area proof and conclusion](small-area.md) |
+| $k/m^{3/2}$ in a compact subinterval of $(0,\infty)$ | Fourier bounds for paired steps give strict log-concavity, including throughout the peak window. [Peak-window proof](peak-window.md) |
+| $k/m^{3/2}\to\infty$ | An independent Bernoulli tilt gives growth in rank past the midpoint. A parabolic Bruhat interval inequality covers the lower half. [Rising-side proof](rising-side.md) · [Lower-half argument](monotonicity.md#1-lower-half-for-all-sizes) |
+
+The final subsequence argument combining the four estimates is in [the conclusion](small-area.md#consequence-and-finite-size-gap). The proof is a research draft.
 
 ## Literature check
 
@@ -29,7 +40,7 @@ $$P_{m,d}=q^d(P_{m-1,d}+P_{m-1,d-1}),\qquad 0\le d\le\lfloor m/2\rfloor.$$
 Start at $P_{0,0}=1$, use zero outside the admissible range, and sum over $d$ to obtain the rank polynomial.
 
 ```sh
-python3 verify.py --max-n 128 --direct-n 12
+python3 verify.py --max-n 192 --direct-n 12
 ```
 
-All 256 rank sequences pass the weak unimodality test. The script checks every coefficient against recursive enumeration of the actual parts for $1\le n\le12$, verifies each total against $\binom{m}{n}$, and detects the published valley $17,16,17$ at ranks 16–18 of $(9,7,5,3)$. At $n=128$ the unique peaks are at rank 14993 of 16384 and rank 15110 of 16512, respectively. The calculation uses arbitrary-precision integers. Add `--verbose` for the peak ranks and sizes of every shape. These are finite checks.
+All 384 rank sequences pass the weak unimodality test. The script checks every coefficient against recursive enumeration of the actual parts for $1\le n\le12$, verifies each total against $\binom{m}{n}$, and detects the published valley $17,16,17$ at ranks 16–18 of $(9,7,5,3)$. At $n=192$ the unique peaks are at rank 34249 of 36864 and rank 34429 of 37056, respectively. The calculation uses arbitrary-precision integers. Add `--verbose` for the peak ranks and sizes of every shape. These are finite checks.

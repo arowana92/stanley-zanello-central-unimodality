@@ -6,7 +6,7 @@ Write $m=2n$ or $2n+1$, $D=\lfloor m^2/4\rfloor$ and $b_k=a_{D-k}$. Thus $k$ mea
 2. For all sufficiently large $m$, $a_{j+1}>a_j$ whenever $D/2\le j\le D-m^{3/2}\log m$.
 3. For each fixed $C>0$, all sufficiently large $n$ satisfy $b_{k+1}>b_k$ simultaneously for $0\le k\le Cn$, for both parities of $m$.
 
-In particular every global maximum has corank $k$ with $k/n\to\infty$ and $k=O(n^{3/2}\log n)$ as $n\to\infty$. The bounds leave the signs of successive differences in the intervening range undetermined. In particular they allow several peaks there.
+In particular every global maximum has corank $k$ with $k/n\to\infty$ and $k=O(n^{3/2}\log n)$ as $n\to\infty$. The bounds leave the signs of successive differences in the intervening range undetermined. The [peak-window](peak-window.md), [rising-side](rising-side.md), and [small-area](small-area.md) arguments handle those differences for all sufficiently large sizes.
 
 ## 1. Lower half for all sizes
 
@@ -23,12 +23,12 @@ Read the variables in decreasing order of $r$, taking a down step when $X_r=1$. 
 $$c\,m^{-1/2}\log m\le \alpha\le A$$
 with an absolute $c>0$. All subsequent bounds are uniform over these tilts.
 
-**Smoothing by the small parts.** Let $S_M=\sum_{r=1}^M r X_r$ for $m/2\le M\le m$ and $f(u)=\Pr(S_M=u)$. We use two estimates:
+**Smoothing by the small parts.** Let $S_M=\sum_{r=1}^M r X_r$ for $m/2\le M\le m$ and $f(u)=\Pr(S_M=u)$. We use the following two estimates.
 $$\sup_u |f(u+1)-f(u)|=O(m^{-3}),\qquad
  f(u)\ge c_H m^{-3/2}\quad (|u-\mathbb ES_M|\le Hm^{3/2}),$$
 for each fixed $H$ and sufficiently large $m$.
 
-Here are details ensuring that lattice effects do not obscure an adjacent difference. The absolute characteristic function on $[-\pi,\pi]$ is at most $\exp(-c_1\sum_{r\le M}\sin^2(r\theta/2))$ by the uniform bounds on $p_r(1-p_r)$. For $|\theta|\le1/M$ the sum is $\gg M^3\theta^2$. For $1/M\le|\theta|\le 4\pi/M$, the first $\lfloor M/(4\pi)\rfloor$ terms give $\gg M$. Beyond $4\pi/M$, summing the geometric series for $\sum_r e^{ir\theta}$ gives the same lower bound. Inverting with the extra factor $|1-e^{-i\theta}|\le|\theta|$ proves the first estimate. For the second, put $\sigma^2=\sum_{r\le M}r^2p_r(1-p_r)\asymp m^3$. At $\theta=t/\sigma$, the log of the centered characteristic function is $-t^2/2+O(|t|^3m^4/\sigma^3)$ for bounded $t$, by Taylor expansion of the independent factors. The preceding integral bounds give Gaussian domination out to $1/M$ and exponentially small integral outside. Fourier inversion therefore gives $\sigma f(u)=(2\pi)^{-1/2}\exp(-(u-\mathbb E S_M)^2/(2\sigma^2))+o(1)$ uniformly in $u$, proving the claim.
+Fourier inversion gives the two estimates as follows. The absolute characteristic function on $[-\pi,\pi]$ is at most $\exp(-c_1\sum_{r\le M}\sin^2(r\theta/2))$ by the uniform bounds on $p_r(1-p_r)$. For $|\theta|\le1/M$ the sum is $\gg M^3\theta^2$. For $1/M\le|\theta|\le 4\pi/M$, the first $\lfloor M/(4\pi)\rfloor$ terms give $\gg M$. Beyond $4\pi/M$, summing the geometric series for $\sum_r e^{ir\theta}$ gives the same lower bound. Inverting with the extra factor $|1-e^{-i\theta}|\le|\theta|$ proves the first estimate. For the second, put $\sigma^2=\sum_{r\le M}r^2p_r(1-p_r)\asymp m^3$. At $\theta=t/\sigma$, the log of the centered characteristic function is $-t^2/2+O(|t|^3m^4/\sigma^3)$ for bounded $t$, by Taylor expansion of the independent factors. The preceding integral bounds give Gaussian domination out to $1/M$ and exponentially small integral outside. Fourier inversion therefore gives $\sigma f(u)=(2\pi)^{-1/2}\exp(-(u-\mathbb E S_M)^2/(2\sigma^2))+o(1)$ uniformly in $u$, proving the claim.
 
 **Cost of the ballot condition.** Set $L=\lceil B\log m/\alpha^2\rceil$ with $B$ a sufficiently large absolute constant and $M=m-L$. Then $L=O(m/\log m)$, so $M\ge m/2$. Write $E_L$ for survival through time $L$ and $s_L=\Pr(E_L)$. By coupling to fair independent steps using the same uniforms, $s_L\ge 2^{-L}\binom{L}{\lfloor L/2\rfloor}\gg m^{-1/2}$.
 

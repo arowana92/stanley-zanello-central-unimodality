@@ -4,7 +4,7 @@ For either central shape write $m=2n$ or $2n+1$, $D=\lfloor m^2/4\rfloor$, $s_m=
 
 **Theorem.** Fix $0<u<v<\infty$. For all sufficiently large $m$,
 $$b_k^2>b_{k-1}b_{k+1}\qquad(us_m\le k\le vs_m).$$
-There is a common constant $x_*>0$ for both families such that every global maximum satisfies $k/s_m\to x_*$. It is the mode of half the area under a standard Brownian meander of duration one. In particular, for large $m$ all the global maximizers consist of one rank or two consecutive ranks. Smaller peaks outside any fixed window around this scale still matter to Conjecture 3.4.
+There is a common constant $x_*>0$ for both families such that every global maximum satisfies $k/s_m\to x_*$. It is the mode of half the area under a standard Brownian meander of duration one. In particular, for large $m$ all the global maximizers consist of one rank or two consecutive ranks. The [tail arguments](small-area.md#consequence-and-finite-size-gap) control possible smaller peaks outside this window for sufficiently large sizes.
 
 ## A bound on the characteristic function
 
@@ -26,7 +26,7 @@ For fair words the prefactor is bounded by the ballot counts $2^{-j}\binom{j}{\l
 
 Under survival, the scaled height process converges in distribution to the standard Brownian meander $M$ on $[0,1]$. For the strict-positivity convention, prepend one up step to the nonnegative walk; this gives the uniform strictly positive walk of length $m+1$ and changes the scaled area by $o(1)$. By the [corank identity](monotonicity.md#3-decrease-near-the-top),
 $$K/s_m\ \Longrightarrow\ Y=\tfrac12\int_0^1 M(t)\,dt.$$
-The factor $1/2$ comes from $\lfloor h_t/2\rfloor$. Takács studied this area limit; Denisov, Kolb and Wachtel also give local estimates for meander area. We need convergence of adjacent *differences*, which follows here from the block bound. [Conditioned-walk invariance principle](https://doi.org/10.1214/aop/1176996607) · [Takács](https://doi.org/10.2307/3215294) · [Denisov, Kolb and Wachtel](https://doi.org/10.1112/jlms/jdu078)
+The factor $1/2$ comes from $\lfloor h_t/2\rfloor$. Takács studied this area limit; Denisov, Kolb and Wachtel also give local estimates for meander area. We need convergence of adjacent *differences*, which follows here from the block bound. [Conditioned-walk invariance principle](https://doi.org/10.1214/aop/1176996098) · [Takács](https://doi.org/10.2307/3215294) · [Denisov, Kolb and Wachtel](https://doi.org/10.1112/jlms/jdu078)
 
 Set $p_m(k)=b_k/\binom{m}{n}$, extended by zero, and let $\Delta p_m(k)=p_m(k+1)-p_m(k)$. For each fixed integer $r\ge0$, the law of $Y$ has a smooth density $f$ and
 $$\sup_{k\in\mathbb Z}\left|s_m^{r+1}\Delta^r p_m(k)-f^{(r)}(k/s_m)\right|\longrightarrow0.$$
@@ -55,6 +55,6 @@ This follows by expanding the determinant as the product of backward and forward
 
 The zeroth-order limit is uniform over *all* ranks. Outside each fixed neighborhood of $x_*$ the supremum of $f$ is strictly below $f(x_*)$, since $f$ vanishes at infinity and has a unique maximizer. Taking the lattice point nearest $s_m x_*$ rules out a global maximum outside the neighborhood for large $m$. All global maxima therefore lie in one compact window of strict log-concavity, proving the assertion on ties.
 
-## Remaining ranges
+## Joining the tail estimates
 
-The [tilted ballot argument](rising-side.md) controls the large-corank side all the way to this window. On the other side, the [fixed-linear tail estimate](monotonicity.md#3-decrease-near-the-top) still leaves the regime $k/n\to\infty$, $k/m^{3/2}\to0$. The absolute error in the difference limits gives no relative control there as the density tends to zero.
+The [tilted ballot argument](rising-side.md) controls the large-corank side all the way to this window. On the other side the [small-area argument](small-area.md) connects this window to the [fixed-linear tail estimate](monotonicity.md#3-decrease-near-the-top).
