@@ -6,7 +6,7 @@ For either central family put $m=2n$ or $2n+1$, $D=\lfloor m^2/4\rfloor$ and $s=
 $$a_{j+1}\ \ge\ a_j\exp\!\left(\frac{5(D-j)}{m^3}\right)>a_j,
 \qquad a_j^2>a_{j-1}a_{j+1}.$$
 
-The constant 200 is conservative. The interval first can be nonempty at $m=2{,}560{,}000$. Combined with the [lower-half inequality](monotonicity.md#1-lower-half-for-all-sizes), the result bounds the number of ranks that can still contain a reversal by $200m^{3/2}+O(1)$, uniformly in size. The [effective tail at the other end](finite-tail.md) removes a further linear interval. Control near the peak at all finite sizes is still needed.
+This proof gives 200 and first applies at $m=2{,}560{,}000$. The [first-passage proof](first-passage.md) gives the same inequalities from $D/2$ through $D-4s$, starting at $m=1024$. The paired-label and Bernoulli bounds below enter that proof and the tilted peak estimates.
 
 ## Tilt and survival
 

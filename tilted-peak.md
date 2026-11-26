@@ -86,4 +86,4 @@ To see this take $u=10^3/R\le10^{-5}$. The [Brownian tube bound](finite-reductio
 $$g'(x)\le \frac{\log(10^{11})+\lceil10^8/u^2\rceil\log2}{u}\le10^9/u^3=R^3.$$
 For the lower bound take the secant from $x$ to $201$. Applying the tube bound with the fixed parameter $10^{-5}$ gives $g(201)\ge-10^{18}\log2$. Since $201-x\ge1/2$, the slope exceeds $-10^{19}\ge-R$.
 
-Take $x=k/s$ in (1). The lower endpoint $2us$ equals $2000m^{59/40}$. The [increasing-side curvature theorem](effective-middle.md) covers all larger coranks from $200s$ to $D_0/2$. This proves the assertion, and the [small-area bridge estimate](effective-small-area.md#a-wider-window-at-large-sizes) connects its lower end to the high-rank tail for $n\ge10^{1700}$.
+Take $x=k/s$ in (1). The lower endpoint $2us$ equals $2000m^{59/40}$. The [increasing-side curvature theorem](first-passage.md) covers all larger coranks from $4s$ to $D_0/2$. This proves the assertion, and the [small-area bridge estimate](effective-small-area.md#a-wider-window-at-large-sizes) connects its lower end to the high-rank tail for $n\ge10^{1700}$.

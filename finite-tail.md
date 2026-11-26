@@ -47,7 +47,7 @@ $$T=1843(t-1)+614a+199b+62c+
 \begin{cases}2614&(\delta=0),\\2627&(\delta=1).\end{cases}$$
 For example, at $n=193$ this excludes reversals through coranks 2614 and 2627, respectively. For both parities
 $$T-9n\ \ge\ 115t+771-250a-233b-154c-9r\ \ge\ 42.$$
-The exact full rank calculation covers $100\le n<192$. For larger sizes it suffices to test unimodality from $b_T$ through $b_{\min(\lfloor D/2\rfloor,\,\lceil200m^{3/2}\rceil)}$, using the [lower-half inequality](monotonicity.md#1-lower-half-for-all-sizes) and [explicit growth beyond the midpoint](effective-middle.md) at the other end.
+The exact full rank calculation covers $100\le n<192$. For larger sizes it suffices to test unimodality from $b_T$ through $b_{\min(\lfloor D/2\rfloor,\,\lceil4m^{3/2}\rceil)}$, using the [lower-half inequality](monotonicity.md#1-lower-half-for-all-sizes) and [explicit growth beyond the midpoint](first-passage.md) at the other end.
 
 Run the table check and the small-size test from the repository root with Python 3.9 or later.
 

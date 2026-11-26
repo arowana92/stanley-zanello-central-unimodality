@@ -14,7 +14,7 @@ The research draft proves unimodality for **both central families** whenever $n\
 
 At $n\ge N$ the coefficients satisfy the stronger inequality $a_j^2>a_{j-1}a_{j+1}$ at every interior upper-half rank $j\ge D/2$, where $D=|\lambda|$. At **every** size it holds when $1\le D-j\le n/105$. The proof uses a zero-free disk for the finite rank polynomial written in reverse order. [Upper-half curvature proof](upper-curvature.md)
 
-Write $m=2n$ or $2n+1$ for the word length, $D$ for the degree and $k=D-j$ for the number of missing cells at rank $j$. For both families, **every global maximum at every $n\ge2$** satisfies $m^{3/2}/5000<k<7m^{3/2}$. The scaled corank $k/m^{3/2}$ tends to the mode of half the area under a standard Brownian meander. [All-size peak bounds](peak-rate.md#locating-every-global-maximum-at-every-size)
+Write $m=2n$ or $2n+1$ for the ballot word length, $D$ for the degree and $k=D-j$ for the number of missing cells at rank $j$. At **every $n\ge2$ in both families**, every global maximum satisfies $1/(6\sqrt6)\le k/m^{3/2}<13/20$. The lower constant is attained in $(5,3,1)$ at corank one. At $m\ge3136$ every rank reaching half the maximum lies in $1/15<k/m^{3/2}<3/4$. As $m$ grows, the scaled corank of any maximum tends to the mode of half the area under a standard Brownian meander. [Finite-size mode bounds](mode-bounds.md) · [Limiting mode](peak-window.md#consequences-for-the-coefficients)
 
 The proof controls adjacent coefficients in four ranges.
 
@@ -27,7 +27,7 @@ The proof controls adjacent coefficients in four ranges.
 
 There is an explicit result for the high-rank end. For both families and every $n\ge100$, the coefficients decrease strictly over the final $9n+42$ rank steps. A finite bridge calculation gives this infinite-size bound by concatenation. For any chosen integer $c>0$, the same method computes a cutoff for the final $cn$ steps. [Finite-tail theorem and verifier](finite-tail.md)
 
-There is also an explicit bound on the increasing side. For both families the coefficients increase strictly and are strictly log-concave at every rank $D/2\le j\le D-200m^{3/2}$. This leaves at most $200m^{3/2}+O(1)$ ranks to examine at any size, before applying the linear tail bound. The constant is large enough that the new interval first becomes nonempty at $m=2{,}560{,}000$. [Finite-size proof with constants](effective-middle.md)
+On the increasing side the coefficients grow strictly and are strictly log-concave at every rank $D/2\le j\le D-4m^{3/2}$. This interval first becomes nonempty at 512 rows. The proof controls the contribution of paths that hit the ballot boundary by retaining the area distribution before or after the hit. At any size it suffices to examine at most $4m^{3/2}+O(1)$ ranks for a reversal, before applying the high-rank tail bound. [First-passage proof and exact check at 512 rows](first-passage.md)
 
 From the high-rank end the corank coefficients increase strictly and are strictly log-concave for $2n\le k\le10^{-270}n^{3/2}$. For $n\ge10^{503}$ a sharper bridge estimate extends this through $10^{-37}n^{3/2}$. From the opposite side there is strict log-concavity for $2000m^{59/40}\le k\le D/2$ at $m\ge10^{960}$. The latter proof reweights the ballot paths so the selected corank is at the mode of the limiting density, where its second derivative has a uniform negative bound. The two ranges overlap for $n\ge N$. [Small-area estimates](effective-small-area.md) · [Tilted comparison](tilted-peak.md)
 

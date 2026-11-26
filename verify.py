@@ -97,7 +97,9 @@ def verify(max_n, direct_n, verbose, upper_curvature=False):
         if n >= 2:
             first_corank = ranks[::-1].index(peak)
             last_corank = len(ranks) - 1 - ranks.index(peak)
-            if (5000 * first_corank) ** 2 <= length ** 3 or last_corank ** 2 >= 49 * length ** 3:
+            lower_denominator = 15 if length == 6 else 14
+            if ((lower_denominator * first_corank) ** 2 <= length ** 3
+                    or (20 * last_corank) ** 2 >= 169 * length ** 3):
                 raise ArithmeticError(f"global corank outside the proved bounds at {length=}")
         if upper_curvature:
             for j in range(len(ranks) // 2, len(ranks) - 1):

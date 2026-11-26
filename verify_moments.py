@@ -2,7 +2,7 @@
 
 import argparse
 from fractions import Fraction
-from math import factorial
+from math import comb, factorial
 
 from verify import ballot_ranks, direct_ranks
 
@@ -87,6 +87,19 @@ def normalized_power_coefficient(h, n):
     return value
 
 
+def closed_variance(m):
+    """Finite variance of the corank, as simplified in mode-bounds.md."""
+    parity = m % 2
+    ell = (m + parity) // 2
+    central_ratio = Fraction(4 ** ell, comb(2 * ell, ell))
+    if parity:
+        correction = Fraction(44, 15) * ell ** 2 + Fraction(8, 5) * ell
+    else:
+        correction = Fraction(228, 5) * ell ** 2 + Fraction(344, 15) * ell + 4
+    polynomial = Fraction(472, 15) * ell ** 3 + correction
+    return (polynomial - ((3 * ell + 2 - 2 * parity) * central_ratio) ** 2) / 16
+
+
 def check(order, max_n, direct_n):
     formulas = moment_polynomials(order)
     exponents = [{h for poly in family for h in poly} for family in formulas]
@@ -98,11 +111,15 @@ def check(order, max_n, direct_n):
         count = sum(coranks)
         powers = {h: normalized_power_coefficient(h, n + parity)
                   for h in exponents[parity]}
+        moments = []
         for r, poly in enumerate(formulas[parity]):
             moment = sum(value * powers[h] for h, value in poly.items())
             expected = sum(k**r * b for k, b in enumerate(coranks))
             if moment * count != expected:
                 raise ArithmeticError(f"moment {r} disagrees at length {m}")
+            moments.append(moment)
+        if order >= 2 and moments[2] - moments[1] ** 2 != closed_variance(m):
+            raise ArithmeticError(f"closed variance disagrees at length {m}")
     print(f"Exact moments of orders 0 through {order} agree for both families "
           f"through n={max_n}. Direct partition counts agree through n={direct_n}.")
 
