@@ -2,10 +2,10 @@
 
 Write $k=D-j$ for corank and $b_k=a_{D-k}$. Both statements below apply to the odd-part and even-part staircases.
 
-* At every size $n$, $b_k^2>b_{k-1}b_{k+1}$ for $1\le k\le n/105$.
+* At every size $n$, the log-concavity determinant exceeds $b_k^2/(40k)$ for $1\le k\le n/3$. This uses the [paired-step ratio recurrence and rational certificate](paired-steps.md). The elementary argument below gives strict log-concavity for $1\le k\le n/105$.
 * Every $n\ge10^{550}$ satisfies strict log-concavity at **every interior rank $j\ge D/2$**.
 
-The second assertion gives the [finite reduction](finite-reduction.md) after applying the lower-half growth inequality. The exact upper-half checks begin at $n=9$. The results here leave sizes below the large threshold open outside the proved ranges.
+The second assertion implies unimodality by lower-half growth. The [finite reduction](finite-reduction.md) also bounds first differences, giving unimodality at a smaller threshold. The exact upper-half curvature checks begin at $n=9$.
 
 ## A finite polynomial at small positive tilt
 

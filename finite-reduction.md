@@ -1,12 +1,20 @@
 # Reduction to an explicit finite range
 
-Put $N=10^{550}$. For both central staircases the rank sequence is unimodal whenever $n\ge N$. Consequently any counterexample to Conjecture 3.4 must have $321\le n<N$, using the [exact checks](README.md#exact-coefficient-checks) for the lower bound. This upper bound on possible exceptional sizes is far beyond feasible exhaustive computation.
+Put $N=10^{290}$. For both central staircases the rank sequence is unimodal whenever $n\ge N$. Consequently any counterexample to Conjecture 3.4 must have $321\le n<N$, using the [exact checks](README.md#exact-coefficient-checks) for the lower bound. This upper bound on possible exceptional sizes is far beyond feasible exhaustive computation.
 
 The proof joins a [frequency comparison for the area transfer matrix](harmonic-small-area.md) to a [Brownian comparison after tilting](tilted-peak.md) and the [increasing-side estimate](first-passage.md). The exact moment formulas and the untilted comparison below give independent finite thresholds. All estimates apply to both parities of the word length.
 
+## Unimodality from the first difference
+
+Let $m=2n$ or $2n+1$, $s=m^{3/2}$, $D=\lfloor m^2/4\rfloor$ and $b_k=a_{D-k}$. Assume $n\ge10^{290}$. The [tail theorem](finite-tail.md) gives strict growth in corank through $2n$. The [small-corank estimate](harmonic-small-area.md) continues it through $3\cdot10^{-15}n^{3/2}$. Take $R_0=10^{-4}m^{1/28}$ and $R_1=10^{-5}m^{1/14}$. We have $R_0>10^6$ and
+$$\frac{4s/R_1}{n^{3/2}}\le 4\cdot10^5(2.001)^{3/2}m^{-1/14}<2.2\cdot10^{-15}.$$
+Thus the proved interval of growth extends more than two ranks past $4s/R_1$.
+
+From $4s/R_1$ to $4s$ the [positive-tilt first-difference argument](tilted-peak.md#strict-increase-in-corank-under-a-larger-positive-tilt) gives strict growth followed by strict log-concavity, in that order. The slope $(\log f)'(k/s)$ is decreasing, and at $x=4$ it is already below $R_0^3$ by the upper secant estimate with $u=2/R_0$. The [first-passage theorem](first-passage.md) continues strict log-concavity from $4s$ to $D/2$. Every corank step before the log-concave interval is therefore increasing, and within that interval the adjacent ratios can cross one only downwards. Beyond the midpoint the [lower-half rank inequality](monotonicity.md#1-lower-half-for-all-sizes) gives weak decrease in corank, including the central step when $D$ is odd. This proves unimodality for both parities.
+
 ## Joining the three intervals
 
-Write $m=2n$ for the odd-part staircase and $m=2n+1$ for the even-part staircase. The degree of the rank polynomial is $D=\lfloor m^2/4\rfloor$, and rank $j$ corresponds to corank $k=D-j$. At $n\ge N$ the following results give $a_j^2>a_{j-1}a_{j+1}$ on their respective corank intervals.
+Write $m=2n$ for the odd-part staircase and $m=2n+1$ for the even-part staircase. The degree of the rank polynomial is $D=\lfloor m^2/4\rfloor$, and rank $j$ corresponds to corank $k=D-j$. At $n\ge10^{550}$ the following results give $a_j^2>a_{j-1}a_{j+1}$ on their respective corank intervals.
 
 | Integer corank $k$ | Estimate |
 | --- | --- |

@@ -2,7 +2,7 @@
 
 Let $s=m^{3/2}$ for word length $m=2n$ or $2n+1$, let $P_m(k)$ be the probability of corank $k$, and let $f$ be the limiting density of half the Brownian meander area. For a real parameter $h$ write $P_{m,h}(k)$ and $f_h(x)$ for the probability laws obtained by multiplying by $e^{-hk/s}$ and $e^{-hx}$ respectively and normalizing. Put $\delta^2 p(k)=p(k-1)-2p(k)+p(k+1)$.
 
-**Tilted comparison.** If $R=10^{-4}m^{1/28}\ge10^8$ and $-R\le h\le R^3$, then
+**Tilted comparison.** If $R=10^{-4}m^{1/28}\ge10^6$ and $-R\le h\le R^3$, then
 $$\sup_{k\in\mathbb Z}|s^3\delta^2P_{m,h}(k)-f_h''(k/s)|<1. \tag{1}$$
 In particular, whenever $x=k/s>0$ and $-R\le(\log f)'(x)\le R^3$, the original coefficients satisfy $b_k^2>b_{k-1}b_{k+1}$.
 
@@ -10,9 +10,9 @@ For the implication choose $h=(\log f)'(x)$. The smooth positive density $f_h$ h
 
 ## The random clock and two deterministic times
 
-Use the [Brownian embedding](peak-rate.md#coupling-the-area-while-retaining-the-wall) with Brownian motion $B$, unit crossing times $T_i$, durations $D_i=T_i-T_{i-1}$ and walk heights $H_i=B(T_i)$. The durations are independent of all walk signs. Use $K=\sum_{i=1}^m\lfloor H_i/2\rfloor$ also on nonsurviving walks. Let $A$ be discrete survival, and $C_t$ continuous survival above $-1$ through time $t$. Write
+Use the [Brownian embedding](peak-rate.md#coupling-the-area-while-retaining-the-wall) with Brownian motion $B$, unit crossing times $T_i$, durations $D_i=T_i-T_{i-1}$ and walk heights $H_i=B(T_i)$. The durations are independent of all walk signs. Use $K=\sum_{i=1}^m\lfloor H_i/2\rfloor$ also on nonsurviving walks. Let $A$ be discrete survival, and $C_t$ continuous survival above $-1$ through time $t$. For estimates (2)–(5) allow any $R\ge10^6$ and $\epsilon=m^{-1/2}$ such that $10^{-56}R^{-14}\le\epsilon\le10^{-35}R^{-7}$. Both the tilt range $-R\le h\le R^3$ and the upper end $T$ of the Fourier interval refer to this $R$. Write
 $$
-\epsilon=m^{-1/2}=10^{-56}R^{-14},\quad V=10^5R\sqrt m,\quad t_\pm=m\pm V,\quad
+V=10^5R\sqrt m,\quad t_\pm=m\pm V,\quad
 Y_t=\frac{1}{2t^{3/2}}\int_0^t(1+B_u)\,du,\quad T=10^9R^3.
 $$
 There is an event $G$ with $\Pr(G^c)\le e^{-1000R^2}$ such that on $G$
@@ -45,7 +45,7 @@ Indeed $W_u-uW_1$ is independent of $W_1$. Shifting the Gaussian endpoint by $a 
 
 We have $|L_a-Y^0|\le a/2$. On $\sup |W_u|\le R^2$ use $a\le2\epsilon$ and $|\log(a/\epsilon)|\le 2V/m$. The logarithm of the real weight ratio to the integrand of $Z_*$ has modulus at most $2V/m+2\epsilon R^2+2\epsilon^2+\epsilon R^3<4\epsilon R^3$. The phases differ by at most $\epsilon|\xi|$. For the tails write $M=\sup|W_u|$. Reflection gives $\Pr(M>z)\le12e^{-z^2/6}$, and $\mathbb E g^2=1$ by Gaussian integration. Thus $\mathbb E[g e^{(R+1)M}{\bf1}_{M>R^2}]\le e^{-R^4/100}$ by Cauchy–Schwarz and integration of the Gaussian tail, using $2(R+1)z\le z^2/12$ above $R^2$. This bounds both discarded terms after division by $\epsilon$ up to a factor of four, since $h\ge-R$ and $Ra\le1$. Division by $I_h(0)\ge e^{-16R^2}$ gives (3).
 
-Put $D(\xi)=\mathbb E[{\bf1}_A\exp((-h+i\xi)K/s)]$. Removing $G^c$ from $D$ or either $Q_t$ costs at most $\epsilon Z_*$ at every frequency. For $h\ge0$ the survival indicators make both real weights at most one. For $-R\le h<0$ use the unconstrained identity $K=D_0-S$ with $D_0=\lfloor m^2/4\rfloor$ and $S$ the sum of independent fair down-step labels. Its mean in units of $s$ has modulus at most one, and Hoeffding gives $\mathbb E e^{uK/s}\le e^{|u|+u^2/8}$. The unconstrained Brownian $Y_t$ is Gaussian with mean $a/2$ and variance $1/12$. Cauchy–Schwarz with $u=-2h\le2R$ and $\Pr(G^c)\le e^{-1000R^2}$ gives the claim, using $\epsilon=10^{-56}R^{-14}$ and $Z_*\ge\epsilon e^{-16R^2}$.
+Put $D(\xi)=\mathbb E[{\bf1}_A\exp((-h+i\xi)K/s)]$. Removing $G^c$ from $D$ or either $Q_t$ costs at most $\epsilon Z_*$ at every frequency. For $h\ge0$ the survival indicators make both real weights at most one. For $-R\le h<0$ use the unconstrained identity $K=D_0-S$ with $D_0=\lfloor m^2/4\rfloor$ and $S$ the sum of independent fair down-step labels. Its mean in units of $s$ has modulus at most one, and Hoeffding gives $\mathbb E e^{uK/s}\le e^{|u|+u^2/8}$. The unconstrained Brownian $Y_t$ is Gaussian with mean $a/2$ and variance $1/12$. Cauchy–Schwarz with $u=-2h\le2R$ and $\Pr(G^c)\le e^{-1000R^2}$ gives the claim, using $\epsilon\ge10^{-56}R^{-14}$ and $Z_*\ge\epsilon e^{-16R^2}$.
 
 On $G$, (2) sandwiches $D(0)$ between the masses of $C_{t_+}$ and $C_{t_-}$ up to factors $e^{\pm R^3\eta}$ and discarded masses at most $3\epsilon Z_*$. By (3), $|D(0)/Z_*-1|\le 3R^3\eta$. The discrete mass of $A\setminus(C_{t_+}\cap G)$ divided by $Z_*$ is at most $6R^3\eta$, by subtracting the lower comparison on $C_{t_+}\cap G$. On that common event the real weight ratio differs from one by at most $2R^3\eta$ and the phases differ by at most $|\xi|\eta$. Compare the complex integrals there, apply (3) and normalize by $D(0)$. These inequalities give
 $$
@@ -77,13 +77,33 @@ For $0\le h\le R^3$ we also need (5) with prefactor $e^{100(1+R^2)}$ in place of
 
 For $|\xi|\ge T$, the envelopes just proved are at most $e^{-|\xi|^{2/3}/8000}$ because $T^{2/3}/8000=125R^2>100(1+R^2)$. The tail in the inversion integrals for the second difference and the density's second derivative has absolute value below $.01$ in total. For instance extract $e^{-T^{2/3}/16000}$ and integrate $\xi^2e^{-|\xi|^{2/3}/16000}$ over the real line. Outside the lattice Fourier interval only the limiting transform is needed.
 
-On $[-T,T]$ the scaled lattice multiplier is $-4s^2\sin^2(\xi/(2s))$. Its difference from $-\xi^2$ is at most $\xi^4/(12s^2)$ and its modulus is at most $\xi^2$. Equation (4) bounds the characteristic-function error after integration by $2\cdot10^{22}\epsilon R^5 T^3=2\cdot10^{-7}$. The multiplier costs at most $T^5/s^2<.01$ since $s=\epsilon^{-3}$. This proves (1).
+On $[-T,T]$ the scaled lattice multiplier is $-4s^2\sin^2(\xi/(2s))$. Its difference from $-\xi^2$ is at most $\xi^4/(12s^2)$ and its modulus is at most $\xi^2$. Equation (4) bounds the characteristic-function error after integration by $2\cdot10^{22}\epsilon R^5 T^3=2\cdot10^{-7}$. The multiplier costs at most $T^5/s^2<.01$ at the tilt scale of (1), where $\epsilon=10^{-56}R^{-14}$ and $s=\epsilon^{-3}$. This proves (1).
 
 ## A range of coranks with strict log-concavity
 
-For either central family at every $m\ge10^{336}$ the coefficients are strictly log-concave at all integer coranks
+For either central family at every $m\ge10^{280}$ the coefficients are strictly log-concave at all integer coranks
 $$4\cdot10^4 m^{41/28}\le k\le D_0/2.$$
 
 We first bound the limiting density below on $[u,5]$ for $0<u\le1/20$. The bound is $\exp(-3/u^2)$ everywhere on this interval. To see this, put all three Brownian coordinates inside $[-2u/\sqrt3,2u/\sqrt3]$ up to time one. The killed cosine eigenfunction gives event probability at least $\exp(-9\pi^2/(32u^2))$. Here $Y^0\le u$ and the Imhof weight $\sqrt{\pi/2}\,g$ exceeds one. Hence there is a point below $u$ with density at least $\exp(-3/u^2)$. For a point above five, take the tube of Euclidean radius $1/2$ about the straight path $24t e_1$. The centered tube contains the paths confined in each coordinate to $[-1/4,1/4]$ with joint survival probability at least $e^{-6\pi^2}$. Changing measure to drift $24e_1$ gives the shifted tube at least $e^{-288-12}$ times the centered mass, by its endpoint displacement. The half-area is within $1/4$ of six and the Imhof weight exceeds $1/25$. This gives a point above five with density at least $e^{-365}$. Log-concavity between the two points proves the asserted bound.
 
 Now put $u=2/R$ and $g_0=\log f$. The [fair Fourier estimate](peak-rate.md#fourier-inversion-for-lattice-differences) gives $f\le 10^{11}$. For $2u\le x\le4$, use the secant from $x-u$ to $x$ to get $g_0'(x)\le(\log(10^{11})+3/u^2)/u<R^3$. For the lower bound use the secant to five and apply the density bound at $u=1/20$. As $5-x\ge1$, this gives $g_0'(x)\ge-1200-\log(10^{11})>-R$. The mode comparison therefore proves strict log-concavity from $4s/R=4\cdot10^4m^{41/28}$ through $4s$. The [increasing-side curvature theorem](first-passage.md) covers $4s\le k\le D_0/2$. The [small-corank estimate](harmonic-small-area.md) meets the lower endpoint for $n\ge10^{550}$. [Interval overlap](finite-reduction.md#joining-the-three-intervals)
+
+## Strict increase in corank under a larger positive tilt
+
+Let $R_0=10^{-4}m^{1/28}\ge10^6$ and $R_1=10^{-5}m^{1/14}$. At any corank with $x=k/s>0$ and
+$$R_0^3<h=(\log f)'(x)\le R_1^3,$$
+we have $b_{k+1}>b_k$. This holds for each parity. We compare the first forward difference at the mode of the tilted density; undoing the tilt then gives the sign.
+
+Put $R=h^{1/3}$. Since $R_0<R\le R_1$, we have $10^{-56}R^{-14}\le\epsilon=m^{-1/2}\le10^{-35}R^{-7}$. These are the hypotheses for (2)–(5). In the clock estimate $V/m=10^5\epsilon R$ and in the relative mass estimate the real exponent error is $R^3\eta=2\cdot10^{11}\epsilon R^5$. Both are below $10^{-20}$. The lower bound on $\epsilon$ ensures $e^{-R^4/100+16R^2}<\epsilon$ and $e^{-400R^2}<\epsilon^2e^{-16R^2}$ for the discarded terms.
+
+Here a lower cutoff $T_1=10^6R^3$ in Fourier inversion suffices. On an even suffix of $2\lceil m/4\rceil$ fair steps, the [paired-step row bound](harmonic-small-area.md#comparing-two-frequencies) gives $2e^{-|\xi|^{2/3}/150}$ after retaining positive tilt weights in $[0,1]$. The prefix costs at most $2/\sqrt m$ by the ballot survival probability. Dividing by $D(0)\ge\epsilon e^{-16R^2}/2$ gives a normalized bound $8e^{16R^2-|\xi|^{2/3}/150}$ on the lattice Fourier interval. The same bound with prefactor 16 holds on the real line for the limiting tilted transform. Indeed take a word length $M\to\infty$ with $h,R$ fixed, using the prefix/full fair survival ratio at most four and the limiting conditional normalizer $I_h(0)/I_0(0)\ge e^{-16R^2}/2$. For $|\xi|\ge T_1$ both envelopes are below $e^{-|\xi|^{2/3}/300}$ since $T_1^{2/3}=10^4R^2$. Their combined inversion tails weighted by $1+|\xi|$ cost less than $.01$, by extracting $e^{-T_1^{2/3}/600}$ and integrating the other factor.
+
+On $[-T_1,T_1]$, (4) bounds the transform error by $2\cdot10^{19}\epsilon R^5$. For the density the integrated error is at most $2\cdot10^{25}\epsilon R^8$. For the first difference the multiplier $s(e^{-i\xi/s}-1)$ has modulus at most $|\xi|$ and differs from $-i\xi$ by at most $\xi^2/(2s)$. Thus the integrated error for this comparison is at most $2\cdot10^{31}\epsilon R^{11}+T_1^3/s$, including the factor $1/(2\pi)$ in inversion. Since $s=\epsilon^{-3}$ and $\epsilon R^7\le10^{-35}$, we have
+$$
+|sP_{m,h}(k)-f_h(x)|<R/1000,\qquad
+|s^2\Delta P_{m,h}(k)-f_h'(x)|<R^4/1000.
+$$
+
+At least $1-e^{-4R^2}$ of the limiting tilted mass lies in $[0,20/R]$. Indeed $I_h(0)\ge e^{-16R^2}$, and on the complement $e^{-hY^0}\le e^{-20R^2}$ with $\mathbb E g=I_0(0)<1$. The density is maximized at $x$ by the choice of $h$, so $f_h(x)>R/21$ and $f_h'(x)=0$. Consequently $sP_{m,h}(k)>R/22$ and $|\Delta P_{m,h}(k)|/P_{m,h}(k)<22h/(1000s)$. As $0<h/s=R^3\epsilon^3<1$, multiplying the adjacent ratio by $e^{h/s}$ upon undoing the tilt proves strict increase.
+
+On $4/R_1\le x\le4$ the density secants in the preceding section, with $u=2/R_1$, give $-R_0\le(\log f)'(x)\le R_1^3$. This slope decreases with $x$. Thus this interval has strict growth in corank for all lattice points with slope above $R_0^3$, followed by strict log-concavity wherever the slope is at most $R_0^3$, using (1) at $R_0$. Either portion may be empty. The [overlap proof](finite-reduction.md#unimodality-from-the-first-difference) joins these signs to the rest of the rank sequence.
