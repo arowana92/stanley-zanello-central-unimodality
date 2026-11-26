@@ -3,7 +3,7 @@
 Write $m=2n+\delta$, $\delta\in\{0,1\}$, and $b_k=a_{D-k}$ for either central staircase. For $n\ge10^{100}$ one has
 $$ b_{k+1}>b_k,\qquad b_k^2>b_{k-1}b_{k+1}
        \qquad(2n\le k\le 3\cdot10^{-15}n^{3/2}). \tag{1}$$
-The same strict inequalities hold between $n/105$ and $2n$ at these sizes. The two statements use integer $k$ in the indicated real intervals.
+The same strict inequalities hold between $n/105$ and $2n$ at these sizes. The two statements use integer $k$ in the indicated real intervals. The [linear-potential comparison](linear-potential.md) extends the upper endpoint to $10^{-5}n^{3/2}$.
 
 The argument tilts the coefficients so the selected corank lies near the mean. A Gaussian approximation there gives a negative second difference if the error from the other Fourier frequencies is small enough. Estimate (2) obtains that error from the cancellation of paired walk steps at a multiple of the original frequency. This controls a whole interval of coranks with one choice of block length at each tilt.
 

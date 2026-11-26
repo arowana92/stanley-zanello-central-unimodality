@@ -8,6 +8,8 @@ In particular, whenever $x=k/s>0$ and $-R\le(\log f)'(x)\le R^3$, the original c
 
 For the implication choose $h=(\log f)'(x)$. The smooth positive density $f_h$ has logarithmic second derivative at most $-12$ by the [Gaussian projection proof](peak-window.md#curvature-of-the-limiting-density). It has its maximum at $x$. Integrating $f_h(y)\le f_h(x)e^{-6(y-x)^2}$ gives $f_h(x)\ge\sqrt{6/\pi}$. Thus $f_h''(x)\le-12f_h(x)<-1$, and (1) makes the tilted lattice mass at $k$ strictly exceed the average of its neighbors. Undoing a geometric tilt preserves the sign of the log-concavity determinant.
 
+The [comparison with a shorter Fourier block](mode-comparison.md) uses this coupling with a sharper clock estimate to obtain smaller global thresholds.
+
 ## The random clock and two deterministic times
 
 Use the [Brownian embedding](peak-rate.md#coupling-the-area-while-retaining-the-wall) with Brownian motion $B$, unit crossing times $T_i$, durations $D_i=T_i-T_{i-1}$ and walk heights $H_i=B(T_i)$. The durations are independent of all walk signs. Use $K=\sum_{i=1}^m\lfloor H_i/2\rfloor$ also on nonsurviving walks. Let $A$ be discrete survival, and $C_t$ continuous survival above $-1$ through time $t$. For estimates (2)–(5) allow any $R\ge10^6$ and $\epsilon=m^{-1/2}$ such that $10^{-56}R^{-14}\le\epsilon\le10^{-35}R^{-7}$. Both the tilt range $-R\le h\le R^3$ and the upper end $T$ of the Fourier interval refer to this $R$. Write
