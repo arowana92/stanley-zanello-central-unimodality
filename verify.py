@@ -93,12 +93,17 @@ def verify(max_n, direct_n, verbose, upper_curvature=False):
             d, a = witness
             raise ArithmeticError(f"length {length}: ranks {d-1},{d} give "
                                   f"{ranks[d-1:d+1]}, ranks {a-1},{a} give {ranks[a-1:a+1]}")
+        peak = max(ranks)
+        if n >= 2:
+            first_corank = ranks[::-1].index(peak)
+            last_corank = len(ranks) - 1 - ranks.index(peak)
+            if (5000 * first_corank) ** 2 <= length ** 3 or last_corank ** 2 >= 49 * length ** 3:
+                raise ArithmeticError(f"global corank outside the proved bounds at {length=}")
         if upper_curvature:
             for j in range(len(ranks) // 2, len(ranks) - 1):
                 if ranks[j] ** 2 <= ranks[j - 1] * ranks[j + 1]:
                     last_curvature_failure[length % 2] = (n, j)
         if verbose or n == max_n:
-            peak = max(ranks)
             print(f"length {length}, degree {len(ranks)-1}, peak {peak}, "
                   f"ranks {ranks.index(peak)}..{len(ranks)-1-ranks[::-1].index(peak)}")
     print(f"Both families unimodal for 1 <= n <= {max_n}. "

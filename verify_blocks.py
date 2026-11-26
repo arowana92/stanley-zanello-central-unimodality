@@ -61,6 +61,25 @@ def check_small_walks():
                     raise ArithmeticError(f"direct enumeration failed at {start=}, {time=}, {cap=}")
 
 
+def check_half_swaps():
+    """Check the transposition phase in effective-small-area.md with integer actions."""
+    def twice_edge_action(steps):
+        height = len(steps)  # Both orders stay above the wall.
+        action = 0
+        for step in steps:
+            following = height + step
+            action += min(height, following)
+            height = following
+        return action
+
+    for length in range(1, 8):
+        for steps in product((-1, 1), repeat=2 * length):
+            left, right = steps[:length], steps[length:]
+            change = twice_edge_action(steps) - twice_edge_action(right + left)
+            if change != length * (sum(left) - sum(right)):
+                raise ArithmeticError(f"incorrect bridge phase for {steps=}")
+
+
 class FailedInequality(ArithmeticError):
     """A proposed interval bound exceeds an exact coefficient inequality."""
 
@@ -143,6 +162,7 @@ if __name__ == "__main__":
     parser.add_argument("--slope", type=int, help="search for a certificate at this positive integer slope")
     args = parser.parse_args()
     check_small_walks()
+    check_half_swaps()
     if args.slope is None:
         stop = verify_table(BRIDGE, FREE_END)
         print(f"Verified fixed-endpoint bounds {BRIDGE} and free-end bounds {FREE_END}.")

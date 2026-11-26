@@ -1,8 +1,8 @@
 # Reduction to an explicit finite range
 
-Define $A_1=10$ and $A_{i+1}=10^{A_i}$. For both central staircases the rank sequence is unimodal whenever $n\ge A_{16}$. Consequently any counterexample to Conjecture 3.4 must have $257\le n<A_{16}$, using the [exact checks](README.md#exact-coefficient-checks) for the lower bound. Equation (3) below gives a smaller explicit upper bound. This upper bound on possible exceptional sizes is far beyond a feasible exhaustive computation.
+Put $N=10^{10^{554}}$. For both central staircases the rank sequence is unimodal whenever $n\ge N$. Consequently any counterexample to Conjecture 3.4 must have $257\le n<N$, using the [exact checks](README.md#exact-coefficient-checks) for the lower bound. This upper bound on possible exceptional sizes is far beyond feasible exhaustive computation.
 
-The point requiring a rate is the compact interval between the [effective small-area estimate](effective-small-area.md) and the [effective increasing-side estimate](effective-middle.md). We give a modulus of convergence for the first two lattice differences there. Every power tower and error bound below is independent of the parity of the word length.
+The point requiring a rate is the compact interval between the [effective small-area estimate](effective-small-area.md) and the [effective increasing-side estimate](effective-middle.md). A [Brownian embedding of the ballot walk](peak-rate.md) controls the first two lattice differences there. The exact moment formulas below give a second way to obtain a finite threshold. All estimates apply to both parities of the word length.
 
 ## Exact area moments
 
@@ -45,12 +45,14 @@ All nonvanishing terms in (1) have $h\ge-3r-1$. Otherwise the smallest such expo
 ## Density lower bound and inversion
 
 Choose the rational numbers
-$$u=2^{-10^{313}},\qquad b=2^{-\lceil10^8/u^2\rceil},\qquad \varepsilon=b^2/10^{40}.$$
+$$u=10^{-272},\qquad b=2^{-10^{552}},\qquad \varepsilon=b^2/10^{40}.$$
 Then $f(x)\ge b$ for $u\le x\le201$. To verify the constant, use Imhof's relation from the [density argument](peak-window.md#curvature-of-the-limiting-density). For three-dimensional Brownian motion $W$ started at zero, the meander law is the law of $|W|$ reweighted by $\sqrt{\pi/2}/|W(1)|$. About each of the two straight paths $4xt e_1$, $x=u/2$ or $202$, take a tube of radius $a=u/8$ in uniform Euclidean distance. The half-area is within $a/2$ of $x$ there. The constant-drift change of measure bounds the Brownian tube mass below by $\exp(-8x^2-4xa)$ times the centered tube mass. Each Brownian coordinate stays within $[-a/2,a/2]$ through time one with probability at least $\exp(-\pi^2/(2a^2))$, by the killed eigenfunction $y\mapsto\cos(\pi y/a)$ on that interval. The coordinates are independent and the corresponding cube fits in the centered tube. The Imhof factor exceeds $1/810$ on both tubes. Each of the two area intervals therefore has mass at least $\exp(-10^7/u^2)>b$ and length less than one. Each contains a point of density at least $b$, one below $u$ and one above $201$. Log-concavity gives the assertion.
 
 Let $P_m(k)=b_k/\binom{m}{n}$ with $b_k$ the corank coefficient, and $\Delta P_m(k)=P_m(k+1)-P_m(k)$. We derive a uniform error at most $\varepsilon$ when approximating $s^{r+1}\Delta^r P_m(k)$ by $f^{(r)}(k/s)$ for $r=0,1,2$. The fair-walk characteristic function on the scaled interval $[-\pi s,\pi s]$ is bounded by $10e^{-|t|^{2/3}/4000}$. This is the [paired-label estimate](effective-middle.md#restoring-the-wall-without-losing-a-lattice-difference) using a surviving prefix to $\lceil m/2\rceil$ and the explicit ballot ratio $\Pr(E_{\lceil m/2\rceil})/\Pr(E_m)\le4$ for $m\ge4$. The same bound holds for the limiting characteristic function by weak convergence. Its integral with weight $1+|t|^3$ over the line is below $10^{30}$ by the substitution $y=|t|^{2/3}/4000$. In particular all derivatives of $f$ through order three have absolute value below $10^{30}$.
 
-For an explicit cutoff take the integers and rational tolerance
+The [quantitative derivative estimate](peak-rate.md) bounds all three errors by $10^{21}m^{-1/4}$. For $n\ge N$ this is less than $\varepsilon$, and $10^{30}/s<\varepsilon$ as well. Indeed $(10^{554}/4)\log 10>2\cdot10^{552}\log 2+61\log 10$.
+
+For the independent moment-based estimate take the integers and rational tolerance
 $$
  T=\lceil10^{33}/\varepsilon\rceil,\qquad
  \tau=\varepsilon/(1000(1+T)^3),\qquad
@@ -65,10 +67,10 @@ The sum of the moment errors is bounded by $(Q+1)(1+T)^Q E/\sqrt n<\tau$. Thus t
 In the identity
 $$P_m(k)^2-P_m(k-1)P_m(k+1)
  =\Delta P_m(k-1)\Delta P_m(k)-P_m(k)\Delta^2 P_m(k-1),$$
-multiply by $s^4$ and put $x=k/s$. Evaluation at $(k-1)/s$ in place of $x$ costs at most $10^{30}/s$ per limiting derivative. The scaled determinant therefore differs from $f'(x)^2-f(x)f''(x)$ by at most $12\cdot10^{30}\varepsilon$. On $[u,201]$ the latter determinant is at least $12f(x)^2\ge12 b^2$. This proves strict log-concavity at every such lattice point for $n\ge N_0$.
+multiply by $s^4$ and put $x=k/s$. Evaluation at $(k-1)/s$ in place of $x$ costs at most $10^{30}/s$ per limiting derivative. The scaled determinant therefore differs from $f'(x)^2-f(x)f''(x)$ by at most $12\cdot10^{30}\varepsilon$. On $[u,201]$ the latter determinant is at least $12f(x)^2\ge12 b^2$. This proves strict log-concavity at every such lattice point for $n\ge N$, and independently under (3).
 
 ## Joining the three intervals
 
-For $n\ge N_0$, $us+2<c_* n^{3/2}$ since $s\le(3n)^{3/2}$ and $u<c_*/12$. The [small-area and linear bounds](effective-small-area.md) give increasing corank coefficients through the left edge of the interval of strict log-concavity. On its right the [increasing-side estimate](effective-middle.md) makes the corank coefficients decrease from $200s$ up to the midpoint. The [lower-half inequality](monotonicity.md#1-lower-half-for-all-sizes) continues weak decrease to the end. The overlaps contain adjacent ranks. Strict log-concavity on the intervening interval allows the adjacent coefficient ratios to pass through one at most once. This gives unimodality for both parities.
+For $n\ge N$, $us+2<c_* n^{3/2}$ since $s\le(3n)^{3/2}$ and $u<c_*/12$. The [small-area and linear bounds](effective-small-area.md) give increasing corank coefficients through the left edge of the interval of strict log-concavity. On its right the [increasing-side estimate](effective-middle.md) makes the corank coefficients decrease from $200s$ up to the midpoint. The [lower-half inequality](monotonicity.md#1-lower-half-for-all-sizes) continues weak decrease to the end. The overlaps contain adjacent ranks. Strict log-concavity on the intervening interval allows the adjacent coefficient ratios to pass through one at most once. This gives unimodality for both parities.
 
-For comparison with the simpler bound in the theorem, $u^{-1}<A_4$, $b^{-1}<A_6$, $\varepsilon^{-1}<A_7$, $T<A_8$, $\tau^{-1}<A_9$, and $Q+4<A_{10}$. Then $J<A_{11}$, $V<A_{13}$, $E<A_{15}$ and $(1+T)^{Q+4}<A_{12}$. Equation (3) gives $N_0<A_{16}$. The computation through 256 does not cover the remaining finite interval.
+The [upper-half curvature argument](upper-curvature.md) also gives strict log-concavity at every interior rank $j\ge D/2$ for $n\ge N$. The computation through 256 does not cover the remaining finite interval.

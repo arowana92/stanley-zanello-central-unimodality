@@ -1,11 +1,11 @@
 # An effective small-area window on the peak scale
 
 For word length $m=2n+\delta$, $\delta\in\{0,1\}$, let $b_k$ count the surviving walks of corank $k$. Put
-$$c_*=\exp(-10^{311}).$$
+$$c_*=10^{-270}.$$
 
 **Theorem.** For $2n\le k\le c_* n^{3/2}$ one has $b_{k+1}>b_k$ and $b_k^2>b_{k-1}b_{k+1}$. Together with the [linear tail bound](finite-tail.md), this gives strict growth through $\lfloor c_*n^{3/2}\rfloor$ for both families at every $n\ge100$.
 
-The size of the constant comes from a deliberately coarse estimate for a bridge constrained to a tube. The advantage of the bound is its exponent and its uniformity in $n$. In computations at the sizes checked in this repository the linear tail bound is much stronger.
+The frequency estimate pairs bridges by exchanging their two halves. The bounds are uniform in $n$. In computations at the sizes checked in this repository the linear tail bound is much stronger.
 
 ## Real transfer operator
 
@@ -66,22 +66,29 @@ $$\left|\frac{F(z)-c(z)e^{np(z)}}{c(\beta)\lambda^n}\right|
 
 ## Frequencies outside the saddle
 
-Write $\theta=\Im z$, $y=H^3\theta$, $y_0=10^{-130}$ and $Y=10^{10}$. For $y_0\le |y|\le Y$ within $|\theta|\le\pi$ we claim
+Write $\theta=\Im z$, $y=H^3\theta$, $y_0=10^{-130}$ and $Y=10^{10}$. For $y_0\le |y|\le Y$ within $|\theta|\le\pi$ we prove
 $$\frac{|F(\beta+i\theta)|}{c(\beta)\lambda^n}
- \le e^{240}\exp(-N e^{-10^{305}}).\tag{4}$$
+ \le e^{240}\exp(-10^{-451}N).\tag{4}$$
 
-First let $H\ge H_*=10^{400}$. For $i,j$ even in $I=[.001H,1000H]$ we compare two sets of bridges in the block of $2l$ steps. In rescaled time $[0,1]$ and heights divided by $H$, take the linear path from $i/H$ to $j/H$. For the second path add a piecewise linear tent, zero at the two ends and of height $2\pi H^2/(l|y|)$ at time $1/2$. Both curves have slopes of magnitude below $10^{132}$. For any step word, its block action in the symmetric transfer matrix is one half the trapezoidal sum of its heights minus $2l/4$, since $\min(a,b)=(a+b-1)/2$ across an edge. The deterministic centers of the phases for these two curves differ by $\pi$ in absolute value. The tent apex is on the time grid. In tubes of radius $wH$, $w=10^{-13}$, the phase errors are at most $|\theta|l wH\le2Yw$.
+First suppose $H\ge10^{16}$. Set $v=\min(1,|y|)$, $a=10^{-10}\min(1,|y|^{-2/3})$, $L=2\lfloor aH^2/2\rfloor$ and $w=\sqrt{2L}$. We use a bridge of $2L$ steps. We have $a\ge10^{-17}$, $aH^2/2\le L\le aH^2$ and
+$$10^{-15}v\le|\theta|w^3\le3\cdot10^{-15}v,\qquad w<.000015H.$$
+Take even endpoints $i,j$ in $I=[.001H,1000H]$ with $|d|=|j-i|\le w/16$. In the first $L$ steps prescribe an even displacement $h\in[w/4,w/2]$, and in the second prescribe $d-h$. In both halves keep the absolute displacement from that half's starting vertex below $\lfloor5w\rfloor$ at all times.
 
-Here is an elementary lower bound on each tube probability, with the final vertex prescribed. Split $l$ pairs of steps as evenly as possible into $J=10^{300}$ groups. Each duration $t$ lies between $H^2/J$ and $4H^2/J$. At interior cuts allow even heights within $H/(100\sqrt J)$ of the curve, giving at least $H/(200\sqrt J)$ choices. Every consecutive prescribed displacement has magnitude below $\sqrt t$, since the curve moves at most $2\cdot 10^{132}H/J$ during a group. An even fair walk of $t$ steps has mass at least $1/(100\sqrt t)$ at each even displacement $|d|\le\sqrt t$, and mass at most $2e^{-d^2/(4t)}/\sqrt t$ at any even displacement. For the upper bound multiply the central binomial bound by the ratios $(t/2-a+1)/(t/2+a)$ for $1\le a\le|d|/2$, using $\log(1-x)\le-x$. For the lower bound in this range, the same ratios and $\log(1-x)\ge-2x$ for $x\le1/2$ suffice with the central mass at least $1/(2\sqrt t)$ and $t\ge100$.
+Each half has unweighted probability at least $1/(200\sqrt L)$ for its prescribed endpoint and confinement. Indeed for even $L\ge100$ the binomial mass at an even $|g|\le\sqrt L$ is at least $1/(100\sqrt L)$, and that at any even $g$ is at most $2e^{-g^2/(4L)}/\sqrt L$. Both follow from the central binomial bounds and multiplication by the ratios $(L/2-j+1)/(L/2+j)$ up to $j=|g|/2$. In the lower bound $\log(1-t)\ge-2t$ applies to those ratios written as $1-t$. Reflection at either boundary costs at most $4e^{-(2\lfloor5w\rfloor-\sqrt L)^2/(4L)}/\sqrt L<1/(200\sqrt L)$. Both prescribed displacements have modulus less than $\sqrt L$. There are at least $w/10$ choices of $h$, giving total fair path mass at least $10^{-6}/w$.
 
-Exclude paths reaching absolute displacement $\lfloor wH/2\rfloor$ from the starting vertex during a group. Reflection at either boundary bounds the rejected endpoint mass by the sum of two binomial masses at distance at least $2\lfloor wH/2\rfloor-|d|$. Since $wH/\sqrt t\ge w\sqrt J/2$, this sum is less than $1/(200\sqrt t)$. The retained paths lie in the desired tube and stay positive. Multiplication over groups and summation over cut heights give probability at least $10^{-6J}/H$. The tilt on each path is at least $\exp(-2(1001+2\pi/y_0))$. Thus each of the two almost opposite phase arcs carries real transfer mass at least $\exp(-10^{302})/H$. Pair equal amounts from the arcs. The modulus lost relative to the real entry is at least $\exp(-10^{303})/H$.
+Swap the two halves of every retained path. The image is disjoint from the original set since its first displacement is negative, and swapping preserves endpoints and fair weights. In either order the path stays between $i-6w$ and $i+6w$, hence above zero and below $1001H$. Its real tilt factor is at least $\exp(-1001L/H^2)>.9$. Translating a half of $L$ steps up by $h$ adds $Lh/2$ to its symmetric edge action. Thus the two orders have absolute phase difference $|\theta| L|2h-d|/2$, between $10^{-16}v$ and one. For two weights with moduli $u_1,u_2$ and phase difference $\alpha$, the deficit in the triangle inequality is at least $\min(u_1,u_2)\sin^2(\alpha/2)$ by squaring. Since $\sin^2(\alpha/2)\ge\alpha^2/\pi^2$ here, summing the disjoint pairs costs at least $10^{-40}v^2/w$ in the modulus of the $(i,j)$ entry relative to the real entry.
 
-The matrix $|K_{\beta+i\theta}^l|$ of entrywise moduli is symmetric, is dominated by $K^l$ and has the preceding deficit throughout $I\times I$ on even heights. To bound its norm it suffices to test nonnegative unit vectors $x$. If $\|x-u_e\|\ge.001$, the real Rayleigh quotient loses at least $(1-\langle x,u_e\rangle^2)(1-e^{-G})\lambda^l$, since $\lambda_2(K)^l\le e^{-G}\lambda^l$. Otherwise $\sum_{i\in I}x_i\ge .05\sqrt H$ on even heights by the mass bound for $u$ and Cauchy–Schwarz. The entrywise deficit now gives
-$$\|K_{\beta+i\theta}^l\|\le\lambda^l(1-e^{-10^{304}}).$$
+As a finite check of the phase identity, the [bridge verifier](verify_blocks.py) compares the integer actions in both orders for every pair of half-words of lengths one through seven.
 
-For $1\le H<H_*$ a two-step block suffices. In the diagonal entry of $K_{\beta+i\theta}$ at height two the two weights, of moduli $e^{-\beta}/4$ and $e^{-2\beta}/4$, differ in phase by $\theta$. The deficit is at least $.01\sin^2(\theta/2)$, by squaring their sum in modulus. Also $u_e(2)\ge .1 H^{-3/2}$ by the boundary equations above. A nonnegative unit vector at distance at least $.05H^{-3/2}$ from $u_e$ loses at least $10^{-7}H^{-5}$ in the real Rayleigh quotient by (1). Every closer vector pays the diagonal deficit times at least $.05^2 H^{-3}$. Hence the norm is at most $\lambda-10^{-7}H^{-5}\sin^2(\theta/2)$. For $|\theta|\ge y_0 H^{-3}$ this loss exceeds $e^{-10^{304}}$ throughout $[1,H_*)$.
+~~~sh
+python3 -B -c 'from verify_blocks import check_half_swaps; check_half_swaps()'
+~~~
 
-For either argument, peel off the two boundary factors of length $2l$ first. Use the contracting bound on each full remaining block, and $\|K_{\beta+i\theta}^r\|\le\lambda^r$ on the remainder by entrywise domination. At least $N/2-4$ blocks of $2l$ steps fit in the middle, or more when using pairs. The two boundary norms, $\lambda^{-2l}\le e^{192}$ and $c(\beta)\ge10^{-8}/H$ give (4).
+The symmetric matrix of entrywise moduli of $K_{\beta+i\theta}^L$ is dominated by $K^L$, and its norm can be bounded by testing nonnegative unit vectors $x$. At distance at least $.001$ from $u_e$, the real Rayleigh quotient loses at least $(.001)^2(1-e^{-GL/H^2})\lambda^L/2\ge10^{-28}\lambda^L$ using (1). For every closer vector, $\sum_{i\in I}x_i\ge.05\sqrt H$ over even heights, by the ground-state mass and coordinate bounds above and Cauchy–Schwarz. Split $I$ into at most $20000H/w$ intervals of length at most $w/16$. The sum of the squared $x$-masses $(\sum_i x_i)^2$ of these intervals is at least $(.05\sqrt H)^2/(20000H/w)$. Applying the entry deficit within each interval therefore gives $\|K_{\beta+i\theta}^L\|\le\lambda^L(1-10^{-48}v^2)$, using $\lambda^L\le1$.
+
+For $1\le H<10^{16}$ use $L=1$. At height two the diagonal weights of moduli $e^{-\beta}/4$ and $e^{-2\beta}/4$ differ in phase by $\theta$. Their deficit is at least $.01\sin^2(\theta/2)$. The boundary equations give $u_e(2)\ge.1H^{-3/2}$. A nonnegative unit vector at distance at least $.05H^{-3/2}$ from $u_e$ loses at least $10^{-7}H^{-5}$ in the real Rayleigh quotient by (1). Every closer vector pays the diagonal deficit times at least $.05^2H^{-3}$. The norm is at most $\lambda-10^{-7}H^{-5}\sin^2(\theta/2)$. For $|\theta|\ge y_0 H^{-3}$ the loss exceeds $10^{-450}$ throughout this range of $H$.
+
+For both cases each full block contracts by at least the relative factor $1-10^{-450}$. After the two boundary cuts of $l=\lceil H^2\rceil$ pairs each, at least $N/2-4\ge N/3$ full blocks fit. Use $\|K_{\beta+i\theta}^r\|\le\lambda^r$ on the remainder and the preceding two boundary norms, $\lambda^{-2l}\le e^{192}$ and $c(\beta)\ge10^{-8}/H$. This proves (4).
 
 For $Y\le|y|\le\pi H^3$ we use
 $$\frac{|F(\beta+i\theta)|}{c(\beta)\lambda^n}
@@ -90,7 +97,7 @@ Indeed on any even block, from a given start and up to a phase depending on the 
 
 ## Sign of the adjacent differences
 
-Let $k=-np'(\beta)$ and $N=n/H^2\ge N_*=\exp(10^{310})$. Put $\sigma^2=np''(\beta)$, $d=\beta\sigma$, so that $10^{-30}\sqrt N\le d\le10^{13}\sqrt N$. Normalize the transform by $c(\beta)\lambda^n$ and denote it by $\Psi(\theta)$. The following three inversion bounds suffice:
+Let $k=-np'(\beta)$ and $N=n/H^2\ge N_*=10^{470}$. Put $\sigma^2=np''(\beta)$, $d=\beta\sigma$, so that $10^{-30}\sqrt N\le d\le10^{13}\sqrt N$. Normalize the transform by $c(\beta)\lambda^n$ and denote it by $\Psi(\theta)$. The following three inversion bounds suffice:
 $$
 \int_{-\pi}^{\pi}\Re(e^{ik\theta}\Psi(\theta))\,d\theta>1/\sigma,\quad
 \int_{-\pi}^{\pi}|\theta\Psi(\theta)|\,d\theta<e^{250}/\sigma^2,\quad
@@ -99,7 +106,7 @@ $$
 
 For details scale $x=\sigma\theta=d y$. In $|y|\le y_0$, the main term of (3) after canceling the linear phase has exponent $-x^2/2$ with error at most $10^{38}N|y|^3$. By (1) and $y_0=10^{-130}$ the real part of the exponent is at most $-x^2/4$ throughout. In $|x|\le50$ the error is bounded by $10^{38}50^3\,10^{90}/\sqrt N<10^{-4}$, and the amplitude ratio differs from one by at most $10^{115}|y|<10^{-4}$. The real main term there is at least $.99e^{-x^2/2}$. For the third integral the scaled multiplier is $4\sigma^2\sin^2(x/(2\sigma))$, between $.99x^2$ and $x^2$ there because $\sigma\ge d$. The integrals of $e^{-x^2/2}$ and $x^2 e^{-x^2/2}$ over $[-50,50]$ both exceed two.
 
-For $|x|>50$ still in the small neighborhood, the main term is at most $e^{235}e^{-x^2/4}$ in modulus. Its integral with weight $1+x^2$ there is below $.01$. The low-frequency remainder (3) contributes at most $2e^{240}(1+dY)^3 e^{-10^{-5}N}$ with the same weight. The intermediate region contributes at most $2e^{240}(1+dY)^3\exp(-Ne^{-10^{305}})$ by (4). Both are below $.01$ for $N\ge N_*$. For (5) the weighted integral is bounded by $2e^{240}(1+d)^3\int_Y^\infty(1+y^2)e^{-N y^{2/3}/20000}\,dy<.01$. For example, extract $e^{-N Y^{2/3}/40000}$ and integrate the remaining exponential with $N$ replaced by $40000$. These estimates prove the first and third inversion bounds. For the absolute first difference integrate the majorant $e^{235}|x|e^{-x^2/4}$ over the entire low neighborhood and use the same remainder estimates.
+For $|x|>50$ still in the small neighborhood, the main term is at most $e^{235}e^{-x^2/4}$ in modulus. Its integral with weight $1+x^2$ there is below $.01$. The low-frequency remainder (3) contributes at most $2e^{240}(1+dY)^3 e^{-10^{-5}N}$ with the same weight. The intermediate region contributes at most $2e^{240}(1+dY)^3\exp(-10^{-451}N)$ by (4). Both are below $.01$ for $N\ge N_*$. For (5) the weighted integral is bounded by $2e^{240}(1+d)^3\int_Y^\infty(1+y^2)e^{-N y^{2/3}/20000}\,dy<.01$. For example, extract $e^{-N Y^{2/3}/40000}$ and integrate the remaining exponential with $N$ replaced by $40000$. These estimates prove the first and third inversion bounds. For the absolute first difference integrate the majorant $e^{235}|x|e^{-x^2/4}$ over the entire low neighborhood and use the same remainder estimates.
 
 Fourier inversion now gives the tilted mass at $k$ a relative change of at most $e^{250}/\sigma\le\beta/4$ at $k+1$. Undoing the tilt gives $b_{k+1}/b_k\ge e^\beta(1-\beta/4)>1$. The third integral is the negative centered second difference of the tilted mass up to a positive factor, so that mass is strictly log-concave at $k$. The same holds for $b_k$ upon undoing the tilt.
 
