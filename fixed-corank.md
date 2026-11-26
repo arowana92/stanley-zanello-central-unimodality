@@ -2,11 +2,11 @@
 
 Let $b_{n,k}$ count partitions missing $k$ cells from one of the two central staircases of size parameter $n$. Fix the parity of its largest part. We prove three assertions.
 
-1. For $n\ge k$, $b_{n,k}$ is a polynomial in $n$ of degree $k$ with leading coefficient $1/k!$.
-2. For every $1\le k\le320$ and every $n\ge\max(4,k+1)$, $b_{n,k}^2>b_{n,k-1}b_{n,k+1}$. This uses exact integer certificates of polynomial positivity.
-3. For arbitrary $k\ge1$, the same strict inequality holds whenever $n\ge4(k+1)^2$. This uses only row counting.
+1. For $k\le2n+1$, $b_{n,k}$ agrees with a polynomial in $n$ of degree $k$ and leading coefficient $1/k!$. At $k=2n+2$ the polynomial exceeds the true count by one. [Paired-step stabilization lemma](paired-steps.md#an-exact-stabilization-identity)
+2. For every $1\le k\le640$ and every $n\ge\max(9,\lceil k/2\rceil)$, the determinant $L_k(n)=b_{n,k}^2-b_{n,k-1}b_{n,k+1}$ exceeds $b_{n,k}^2/(40k)$. This uses exact integer certificates of polynomial positivity.
+3. For arbitrary $k\ge1$, strict log-concavity holds whenever $n\ge4(k+1)^2$. This uses only row counting.
 
-Together with the [full rank checks](README.md#exact-coefficient-checks), assertion 2 gives strict log-concavity at every interior upper-half rank of corank at most 320 for **all** $n\ge9$. An upper-half rank is a rank $j=D-k\ge D/2$, where $D$ is the area of the shape.
+Together with the [full rank checks](README.md#exact-coefficient-checks), assertion 2 gives strict log-concavity at every interior upper-half rank of corank at most 640 for **all** $n\ge9$. An upper-half rank is a rank $j=D-k\ge D/2$, where $D$ is the area of the shape.
 
 ## Removing row ends
 
@@ -18,17 +18,17 @@ $$
 =\frac{\sum_{r\ge0}V_r(w)z^r}
        {1-z-\sum_{r\ge1}U_r(w)z^{r+1}}.
 $$
-Expand the denominator as a geometric series in the nonempty runs, keeping the factor $1-z$ intact. Choose $h$ such runs and the terminal run, with a combined $v$ positive entries. Their length factor is $z^{v+h}/(1-z)^{h+1}$, and their area factor is a product of the run polynomials. For a contribution to $[w^k]$, necessarily $h\le v\le k$. For $n\ge k$ the length coefficient is $\binom{n-v}{h}$, including zero when $0\le n-v<h$. Thus $b_{n,k}$ is a nonnegative integral combination of these binomial polynomials. The only term of degree $k$ has $h=v=k$, all nonterminal runs of length one, and empty terminal run. It contributes $\binom{n-k}{k}$, proving assertion 1.
+Expand the denominator as a geometric series in the nonempty runs, keeping the factor $1-z$ intact. Choose $h$ such runs and the terminal run, with a combined $v$ positive entries. Their length factor is $z^{v+h}/(1-z)^{h+1}$, and their area factor is a product of the run polynomials. For a contribution to $[w^k]$, necessarily $h\le v\le k$. For $n\ge k$ the length coefficient is $\binom{n-v}{h}$, including zero when $0\le n-v<h$. Thus $b_{n,k}$ is a nonnegative integral combination of these binomial polynomials. The only term of degree $k$ has $h=v=k$, all nonterminal runs of length one, and empty terminal run. It contributes $\binom{n-k}{k}$, proving polynomiality on $n\ge k$. Equation (3) of the paired-step lemma identifies the same polynomial and extends its validity to $k\le2n+1$.
 
 ## Certifying a corank for all larger sizes
 
-For $n\ge k+1$, the determinant $L_k(n)=b_{n,k}^2-b_{n,k-1}b_{n,k+1}$ is a polynomial of degree $2k$. Its leading coefficient is $1/((k+1)(k!)^2)$. At any integer $a\ge k+1$, Newton interpolation gives
+For $2n\ge k$, the determinant $L_k(n)=b_{n,k}^2-b_{n,k-1}b_{n,k+1}$ is a polynomial of degree $2k$. Its leading coefficient is $1/((k+1)(k!)^2)$. At any integer $a\ge\lceil k/2\rceil$, Newton interpolation gives
 $$L_k(n)=\sum_{h=0}^{2k}(\Delta^h L_k)(a)\binom{n-a}{h},\qquad
 (\Delta L)(a)=L(a+1)-L(a).$$
-For each $1\le k\le320$ take $a=\max(4,k+1)$. Every one of the $2k+1$ integer coefficients is strictly positive for both families. The script recomputes each coefficient, checks that the next difference vanishes, and compares the underlying corank rows against direct enumeration at small sizes. Since the constant term is positive and all binomial factors are nonnegative for $n\ge a$, this certifies every such $n$.
+For each $1\le k\le640$ take $a=\max(9,\lceil k/2\rceil)$. Apply the formula to $L_k(n)$ and to $40kL_k(n)-b_{n,k}^2$. Every one of the $2k+1$ integer coefficients of each expansion is strictly positive for both families. The script recomputes each coefficient, checks that the next difference vanishes, and compares the underlying corank rows against direct enumeration at small sizes. Since the constant term is positive and all binomial factors are nonnegative for $n\ge a$, this certifies both inequalities for every such $n$.
 
 ~~~sh
-python3 -B verify_corank.py --max-corank 320 --direct-n 12
+python3 -B verify_corank.py --max-corank 640 --direct-n 12
 ~~~
 
 The verifier keeps the endpoint height of the ballot walk and discards coefficients above the requested degree. All prefix areas are nondecreasing. Reaching height $2h$ already costs at least $h^2$, the sum of the contributions at the first visits to heights $1,\ldots,2h$. A prefix ending at $2h+1$ costs at least as much. The truncations therefore preserve every retained count. The direct checks also cover coefficients beyond the true degree, where the truncated array is padded with zeros.

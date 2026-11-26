@@ -31,7 +31,7 @@ def truncated_coranks(max_n, cap):
 
 def verify(cap, direct_n):
     # One extra sample checks the predicted vanishing higher difference.
-    max_n = max(4, cap + 1) + 2 * cap + 1
+    max_n = max(9, (cap + 1) // 2) + 2 * cap + 1
     rows = [[None], [None]]
     for length, values in truncated_coranks(max_n, cap + 1):
         n = length // 2
@@ -44,18 +44,32 @@ def verify(cap, direct_n):
 
     for parity, family in enumerate(("odd-part", "even-part")):
         for k in range(1, cap + 1):
-            start = max(4, k + 1)
+            start = max(9, (k + 1) // 2)
+            for n in range(max(4, k + 1), start):
+                row = rows[parity][n]
+                if row[k] ** 2 <= row[k - 1] * row[k + 1]:
+                    raise ArithmeticError(f"small-size determinant failed at {family}, {n=}, {k=}")
             samples = rows[parity][start:start + 2 * k + 2]
-            differences = [row[k] ** 2 - row[k - 1] * row[k + 1] for row in samples]
-            for order in range(2 * k + 1):
-                if differences[0] <= 0:
-                    raise ArithmeticError(f"{family}, k={k}, n={start}, "
-                                          f"Newton coefficient {order} = {differences[0]}")
-                differences = [b - a for a, b in zip(differences, differences[1:])]
-            if differences != [0]:
-                raise ArithmeticError(f"unexpected degree at {family}, k={k}")
-        print(f"{family}: positive Newton coefficients for 1 <= k <= {cap} "
-              f"at n = max(4, k+1), through order 2k.")
+            squares = [row[k] ** 2 for row in samples]
+            determinants = [square - row[k - 1] * row[k + 1]
+                            for square, row in zip(squares, samples)]
+            margins = [40 * k * det - square for det, square in zip(determinants, squares)]
+            for label, differences in (("determinant", determinants), ("margin", margins)):
+                for order in range(2 * k + 1):
+                    if differences[0] <= 0:
+                        raise ArithmeticError(f"{family}, k={k}, n={start}, {label} "
+                                              f"Newton coefficient {order} = {differences[0]}")
+                    differences = [b - a for a, b in zip(differences, differences[1:])]
+                if differences != [0]:
+                    raise ArithmeticError(f"unexpected {label} degree at {family}, k={k}")
+        for n in range(3, 9):
+            row = rows[parity][n]
+            for k in range(1, min(cap, n // 3) + 1):
+                square = row[k] ** 2
+                if 40 * k * (square - row[k - 1] * row[k + 1]) <= square:
+                    raise ArithmeticError(f"small-size relative margin failed at {family}, {n=}, {k=}")
+        print(f"{family}: positive determinant and margin Newton coefficients for 1 <= k <= {cap} "
+              f"at n = max(9, ceil(k/2)), through order 2k.")
     print(f"Checked one additional size per polynomial and direct ranks through n={direct_n}.")
 
 
@@ -64,6 +78,7 @@ if __name__ == "__main__":
     parser.add_argument("--max-corank", type=int, default=256)
     parser.add_argument("--direct-n", type=int, default=12)
     args = parser.parse_args()
-    if args.max_corank < 1 or not 1 <= args.direct_n <= max(4, args.max_corank + 1) + 2 * args.max_corank + 1:
+    last_n = max(9, (args.max_corank + 1) // 2) + 2 * args.max_corank + 1
+    if args.max_corank < 1 or not 1 <= args.direct_n <= last_n:
         parser.error("require a positive corank limit and a direct size within the computed range")
     verify(args.max_corank, args.direct_n)
