@@ -5,7 +5,7 @@ $$c_*=10^{-270}.$$
 
 **Theorem.** For $2n\le k\le c_* n^{3/2}$ one has $b_{k+1}>b_k$ and $b_k^2>b_{k-1}b_{k+1}$. Together with the [linear tail bound](finite-tail.md), this gives strict growth through $\lfloor c_*n^{3/2}\rfloor$ for both families at every $n\ge100$.
 
-The frequency estimate pairs bridges by exchanging their two halves. The bounds are uniform in $n$. In computations at the sizes checked in this repository the linear tail bound is much stronger.
+The frequency estimate below pairs bridges by exchanging their two halves. The [integer-multiple comparison](harmonic-small-area.md) gives a wider interval at $n\ge10^{100}$. In computations at the sizes checked in this repository the linear tail bound is much stronger.
 
 ## Real transfer operator
 

@@ -10,7 +10,7 @@ The conjecture says that for each shape and every $n$, the sequence from $a_0$ t
 
 ## Asymptotic result and finite-size gap
 
-The research draft proves unimodality for **both central families** whenever $n\ge N=10^{1700}$. Exact computation verifies every $1\le n\le320$. The outstanding sizes lie between 321 and $N-1$. The upper bound is far too large for exhaustive verification. [Proof of the finite reduction](finite-reduction.md)
+The research draft proves unimodality for **both central families** whenever $n\ge N=10^{550}$. Exact computation verifies every $1\le n\le320$. The outstanding sizes lie between 321 and $N-1$. The upper bound is far too large for exhaustive verification. [Proof of the finite reduction](finite-reduction.md)
 
 At $n\ge N$ the coefficients satisfy the stronger inequality $a_j^2>a_{j-1}a_{j+1}$ at every interior upper-half rank $j\ge D/2$, where $D=|\lambda|$. At **every** size it holds when $1\le D-j\le n/105$. The proof uses a zero-free disk for the finite rank polynomial written in reverse order. [Upper-half curvature proof](upper-curvature.md)
 
@@ -29,7 +29,7 @@ There is an explicit result for the high-rank end. For both families and every $
 
 On the increasing side the coefficients grow strictly and are strictly log-concave at every rank $D/2\le j\le D-4m^{3/2}$. This interval first becomes nonempty at 512 rows. The proof controls the contribution of paths that hit the ballot boundary by retaining the area distribution before or after the hit. At any size it suffices to examine at most $4m^{3/2}+O(1)$ ranks for a reversal, before applying the high-rank tail bound. [First-passage proof and exact check at 512 rows](first-passage.md)
 
-From the high-rank end the corank coefficients increase strictly and are strictly log-concave for $2n\le k\le10^{-270}n^{3/2}$. For $n\ge10^{503}$ a sharper bridge estimate extends this through $10^{-37}n^{3/2}$. From the opposite side there is strict log-concavity for $2000m^{59/40}\le k\le D/2$ at $m\ge10^{960}$. The latter proof reweights the ballot paths so the selected corank is at the mode of the limiting density, where its second derivative has a uniform negative bound. The two ranges overlap for $n\ge N$. [Small-area estimates](effective-small-area.md) · [Tilted comparison](tilted-peak.md)
+At $n\ge10^{100}$ the corank coefficients increase strictly and are strictly log-concave for $n/105\le k\le3\cdot10^{-15}n^{3/2}$. The proof bounds the Fourier transform at intermediate frequencies by comparing each frequency to an integer multiple. From the opposite side a comparison with a tilted Brownian meander gives strict log-concavity for $4\cdot10^4 m^{41/28}\le k\le D/2$ at $m\ge10^{336}$. These ranges overlap at $n\ge N$. [Frequency comparison and small-corank proof](harmonic-small-area.md) · [Tilted comparison](tilted-peak.md)
 
 The [subsequence argument](small-area.md#consequence-and-finite-size-gap) gives a qualitative proof. An explicit Brownian coupling bounds the errors in the first two lattice differences by $10^{15}(1+\log m)^6/\sqrt m$ on the scaled lattice. For $m\ge10^{90}$, all ranks attaining at least half the maximum form a single interval of strict log-concavity. Smaller local peaks outside it are still possible below the global threshold. The [coupling and peak bound](peak-rate.md) and the [independent exact-moment method](finite-reduction.md#exact-area-moments) both use the ballot condition.
 

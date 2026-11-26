@@ -1,8 +1,8 @@
 # Reduction to an explicit finite range
 
-Put $N=10^{1700}$. For both central staircases the rank sequence is unimodal whenever $n\ge N$. Consequently any counterexample to Conjecture 3.4 must have $321\le n<N$, using the [exact checks](README.md#exact-coefficient-checks) for the lower bound. This upper bound on possible exceptional sizes is far beyond feasible exhaustive computation.
+Put $N=10^{550}$. For both central staircases the rank sequence is unimodal whenever $n\ge N$. Consequently any counterexample to Conjecture 3.4 must have $321\le n<N$, using the [exact checks](README.md#exact-coefficient-checks) for the lower bound. This upper bound on possible exceptional sizes is far beyond feasible exhaustive computation.
 
-The proof joins the [small-area bridge estimate](effective-small-area.md#a-wider-window-at-large-sizes) to a [Brownian comparison after tilting](tilted-peak.md) and the [increasing-side estimate](effective-middle.md). The exact moment formulas and the untilted comparison below give independent finite thresholds. All estimates apply to both parities of the word length.
+The proof joins a [frequency comparison for the area transfer matrix](harmonic-small-area.md) to a [Brownian comparison after tilting](tilted-peak.md) and the [increasing-side estimate](first-passage.md). The exact moment formulas and the untilted comparison below give independent finite thresholds. All estimates apply to both parities of the word length.
 
 ## Joining the three intervals
 
@@ -11,12 +11,12 @@ Write $m=2n$ for the odd-part staircase and $m=2n+1$ for the even-part staircase
 | Integer corank $k$ | Estimate |
 | --- | --- |
 | $1\le k\le 2n$ | [Sparse and bounded tilts](upper-curvature.md#joining-the-tilts-between-the-sparse-and-peak-regimes) |
-| $2n\le k\le 10^{-37}n^{3/2}$ | [Small-area bridge estimate](effective-small-area.md#a-wider-window-at-large-sizes) |
-| $2000m^{59/40}\le k\le D/2$ | [Tilted Brownian comparison and increasing-side estimate](tilted-peak.md#a-range-of-coranks-with-strict-log-concavity) |
+| $2n\le k\le 3\cdot10^{-15}n^{3/2}$ | [Small-corank transfer estimate](harmonic-small-area.md) |
+| $4\cdot10^4m^{41/28}\le k\le D/2$ | [Tilted Brownian comparison and increasing-side estimate](tilted-peak.md#a-range-of-coranks-with-strict-log-concavity) |
 
-For the last two rows, $m\le3n$ gives
-$$\frac{2000m^{59/40}}{n^{3/2}}\le 2000\cdot3^{3/2}m^{-1/40}<4\cdot10^{-39}$$
-at $m\ge10^{1700}$. Thus the second interval extends more than two whole ranks beyond the start of the third. Every interior rank $j\ge D/2$ lies in the union. On this interval the adjacent coefficient ratios decrease and hence cross one at most once. The [lower-half inequality](monotonicity.md#1-lower-half-for-all-sizes) gives weak growth up to $\lceil D/2\rceil$. This proves unimodality of both rank sequences throughout the stated size range.
+For the last two rows, $m/n\le2.001$ at these sizes and
+$$\frac{4\cdot10^4 m^{41/28}}{n^{3/2}}\le4\cdot10^4(2.001)^{3/2}m^{-1/28}<2.6\cdot10^{-15}$$
+at $m\ge10^{550}$. Thus the second interval extends more than two whole ranks beyond the start of the third. Every interior rank $j\ge D/2$ lies in the union. On this interval the adjacent coefficient ratios decrease and hence cross one at most once. The [lower-half inequality](monotonicity.md#1-lower-half-for-all-sizes) gives weak growth up to $\lceil D/2\rceil$. This proves unimodality of both rank sequences throughout the stated size range.
 
 ## Exact area moments
 

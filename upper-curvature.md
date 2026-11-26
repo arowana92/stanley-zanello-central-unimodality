@@ -3,7 +3,7 @@
 Write $k=D-j$ for corank and $b_k=a_{D-k}$. Both statements below apply to the odd-part and even-part staircases.
 
 * At every size $n$, $b_k^2>b_{k-1}b_{k+1}$ for $1\le k\le n/105$.
-* Every $n\ge10^{1700}$ satisfies strict log-concavity at **every interior rank $j\ge D/2$**.
+* Every $n\ge10^{550}$ satisfies strict log-concavity at **every interior rank $j\ge D/2$**.
 
 The second assertion gives the [finite reduction](finite-reduction.md) after applying the lower-half growth inequality. The exact upper-half checks begin at $n=9$. The results here leave sizes below the large threshold open outside the proved ranges.
 
@@ -42,7 +42,7 @@ For $1\le k\le16$ with $n\ge105k$, we have $n\ge4(k+1)^2$. The [counting bound](
 
 ## Joining the tilts between the sparse and peak regimes
 
-We give explicit bounds for the remaining interval $n/105\le k\le2n$ at $n\ge10^{531}$. Use the real symmetric transfer operator and notation of the [effective small-area proof](effective-small-area.md#real-transfer-operator), so $F(z)=4^{-n}2^{-\delta}Z_n(e^{-z})=e_0 K_z^n W_\delta(z)$, $\lambda$ is the top eigenvalue of $K_\beta$, and $p(\beta)=\log\lambda$. The real slope $-p'(\beta)$ decreases continuously from infinity to zero on $\beta>0$. This follows from the [slope proof](monotonicity.md#3-decrease-near-the-top) with the sign of the tilt reversed.
+For $n\ge10^{100}$ the remaining interval $n/105\le k\le2n$ is covered by the [bounded-tilt inversion](harmonic-small-area.md#bounded-height-scales). We justify the required range of slopes here and record a separate estimate valid at $n\ge10^{531}$. Use the real symmetric transfer operator and notation of the [effective small-area proof](effective-small-area.md#real-transfer-operator), so $F(z)=4^{-n}2^{-\delta}Z_n(e^{-z})=e_0 K_z^n W_\delta(z)$, $\lambda$ is the top eigenvalue of $K_\beta$, and $p(\beta)=\log\lambda$. The real slope $-p'(\beta)$ decreases continuously from infinity to zero on $\beta>0$. This follows from the [slope proof](monotonicity.md#3-decrease-near-the-top) with the sign of the tilt reversed.
 
 At $\beta=8$, the slope is at most $25e^{-8}/24<1/105$. Indeed, the normalized finite means $M(e^{-\beta})/n$ converge to $-p'(\beta)$. At fixed $\beta>0$ the top eigenvalue is simple with a spectral gap and nonzero endpoint amplitude, yielding $n^{-1}\log F(\beta)\to p(\beta)$. The two secant inequalities for these convex functions then give convergence of derivatives at every differentiability point of $p$. Therefore the saddle $-p'(\beta)=k/n$ in the stated interval lies in $0<\beta\le8$.
 
@@ -63,4 +63,4 @@ In particular for $10^{-22}\le|\theta|\le\pi$ the power loses a factor at least 
 
 For $n\ge10^{160}$ put $\sigma^2=np''(\beta)$ and $x=\sigma\theta$. In $|\theta|\le10^{-22}$, cancel the linear phase by $e^{ik\theta}$. Taylor's theorem gives principal exponent $-x^2/2$ with error at most $10^{14}n|\theta|^3/6$, so its real part is at most $-x^2/4$. For $|x|\le12$ the same error and the amplitude error $4\cdot10^5 |x|/\sigma$ are each below $.001$ using $\sigma^2\ge10^{-5}n$. The real centered principal term there is at least $.99e^{-x^2/2}$. Multiply by $4\sigma^2\sin^2(x/(2\sigma))$ and integrate in $x$. This multiplier lies between $.99x^2$ and $x^2$ on $[-12,12]$, giving a contribution greater than one. The principal tail still in the small disk costs at most $20\int_{|x|>12}x^2e^{-x^2/4}\,dx<.01$. The complementary powers and off-disk frequencies together cost at most $10^4\sigma^3((.4)^n+e^{-10^{-59}n})<.01$ by $\sigma^2\le10^9n$. The integral is positive. Inversion again gives strict negative centered second difference of the tilted mass at $k$, and hence strict log-concavity after removing the tilt.
 
-This covers $1\le k\le2n$ for $n\ge10^{531}$. At $n\ge10^{1700}$ the [large-size bridge bound](effective-small-area.md#a-wider-window-at-large-sizes) takes over at $2n$ and meets the [tilted comparison](tilted-peak.md#a-range-of-coranks-with-strict-log-concavity). The [overlap calculation](finite-reduction.md#joining-the-three-intervals) covers every interior upper-half rank.
+The sparse and bounded tilts together cover $1\le k\le2n$ for $n\ge10^{100}$. At $n\ge10^{550}$ the [small-corank bound](harmonic-small-area.md) takes over at $2n$ and meets the [tilted comparison](tilted-peak.md#a-range-of-coranks-with-strict-log-concavity). The [overlap calculation](finite-reduction.md#joining-the-three-intervals) covers every interior upper-half rank.

@@ -94,6 +94,26 @@ def check_area_tilts():
                 raise ArithmeticError(f"tilted corank mismatch at {length=}, {a=}, {b=}")
 
 
+def check_edge_actions():
+    """Compare symmetric edge actions with down-label sums, including paths below zero."""
+    for length in range(2, 13):
+        for start in (0, 2, 6):
+            for steps in product((-1, 1), repeat=length):
+                height = start
+                twice_action = down_sum = area = 0
+                for label, step in zip(range(length, 0, -1), steps):
+                    following = height + step
+                    twice_action += min(height, following)
+                    if step < 0:
+                        down_sum += label
+                    height = following
+                    area += height // 2
+                label_area = length * (start // 2) + length ** 2 // 4 - down_sum
+                endpoint_change = height // 2 - start // 2
+                if area != label_area or twice_action + endpoint_change != 2 * area:
+                    raise ArithmeticError(f"edge action mismatch at {start=}, {steps=}")
+
+
 def check_half_swaps():
     """Check the transposition phase in effective-small-area.md with integer actions."""
     def twice_edge_action(steps):
@@ -196,6 +216,7 @@ if __name__ == "__main__":
     args = parser.parse_args()
     check_small_walks()
     check_area_tilts()
+    check_edge_actions()
     check_half_swaps()
     if args.slope is None:
         stop = verify_table(BRIDGE, FREE_END)
