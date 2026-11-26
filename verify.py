@@ -18,6 +18,13 @@ def direct_ranks(shape):
     return counts
 
 
+def unpack_polynomial(packed, length, width):
+    degree = (length // 2) * ((length + 1) // 2)
+    data = packed.to_bytes(width * (degree + 1), "little")
+    return [int.from_bytes(data[i:i + width], "little")
+            for i in range(0, len(data), width)]
+
+
 def ballot_ranks(max_n):
     """Yield (word length, ranks) in increasing length, starting at 2."""
     max_length = 2 * max_n + 1
@@ -27,16 +34,14 @@ def ballot_ranks(max_n):
     bits = 8 * width
     endpoints = [1]
     for length in range(1, max_length + 1):
-        previous = endpoints + [0]
-        endpoints = [1]
-        for downs in range(1, length // 2 + 1):
+        if length % 2 == 0:
+            endpoints.append(0)
+        # Descending order keeps both predecessor polynomials in the old row.
+        for downs in range(length // 2, 0, -1):
             # Every existing part increases by one. A last down adds part 1.
-            endpoints.append((previous[downs] + previous[downs - 1]) << (bits * downs))
+            endpoints[downs] = (endpoints[downs] + endpoints[downs - 1]) << (bits * downs)
         if length >= 2:
-            degree = (length // 2) * ((length + 1) // 2)
-            data = sum(endpoints).to_bytes(width * (degree + 1), "little")
-            yield length, [int.from_bytes(data[i:i + width], "little")
-                           for i in range(0, len(data), width)]
+            yield length, unpack_polynomial(sum(endpoints), length, width)
 
 
 def valley(ranks):
@@ -50,11 +55,28 @@ def valley(ranks):
     return None
 
 
-def verify(max_n, direct_n, verbose):
+def catalan_coranks(max_n):
+    """Evaluate the Dyck, type B and odd-length recurrences at one wide base."""
+    width = (2 * max_n + 1) // 8 + 1
+    bits = 8 * width
+    dyck = [1]
+    type_b = [1]
+    for n in range(1, max_n + 1):
+        dyck.append(sum((dyck[h] * dyck[n - 1 - h]) << (bits * h) for h in range(n)))
+        type_b.append(dyck[n] + sum((type_b[h] * dyck[n - h]) << (bits * (2 * h + 1))
+                                    for h in range(n)))
+        odd = sum((dyck[n - h] * type_b[h]) << (bits * h) for h in range(n + 1))
+        yield unpack_polynomial(type_b[n], 2 * n, width)
+        yield unpack_polynomial(odd, 2 * n + 1, width)
+
+
+def verify(max_n, direct_n, verbose, upper_curvature=False):
     # Sensitivity control from Stanley and Zanello, just outside the families.
     control = direct_ranks((9, 7, 5, 3))
     if control[16:19] != [17, 16, 17] or valley(control) != (17, 18):
         raise ArithmeticError("failed to reproduce the published valley")
+    catalan = catalan_coranks(direct_n)
+    last_curvature_failure = {}
     for length, ranks in ballot_ranks(max_n):
         n = length // 2
         shape = range(length - 1, 0, -2)
@@ -64,17 +86,28 @@ def verify(max_n, direct_n, verbose):
             raise ArithmeticError(f"wrong ballot total at length {length}")
         if n <= direct_n and ranks != direct_ranks(shape):
             raise ArithmeticError(f"enumeration mismatch at length {length}")
+        if n <= direct_n and ranks[::-1] != next(catalan):
+            raise ArithmeticError(f"Catalan recurrence mismatch at length {length}")
         witness = valley(ranks)
         if witness:
             d, a = witness
             raise ArithmeticError(f"length {length}: ranks {d-1},{d} give "
                                   f"{ranks[d-1:d+1]}, ranks {a-1},{a} give {ranks[a-1:a+1]}")
+        if upper_curvature:
+            for j in range(len(ranks) // 2, len(ranks) - 1):
+                if ranks[j] ** 2 <= ranks[j - 1] * ranks[j + 1]:
+                    last_curvature_failure[length % 2] = (n, j)
         if verbose or n == max_n:
             peak = max(ranks)
             print(f"length {length}, degree {len(ranks)-1}, peak {peak}, "
                   f"ranks {ranks.index(peak)}..{len(ranks)-1-ranks[::-1].index(peak)}")
     print(f"Both families unimodal for 1 <= n <= {max_n}. "
-          f"Direct ranks agree through n = {direct_n}.")
+          f"Direct ranks and the Catalan recurrences agree through n = {direct_n}.")
+    if upper_curvature:
+        for parity, family in enumerate(("odd-part", "even-part")):
+            failure = last_curvature_failure.get(parity)
+            print(f"{family} upper-half strict log-concavity through n={max_n}: "
+                  f"last failure (n, rank) = {failure}")
 
 
 if __name__ == "__main__":
@@ -82,7 +115,9 @@ if __name__ == "__main__":
     parser.add_argument("--max-n", type=int, default=64)
     parser.add_argument("--direct-n", type=int, default=8)
     parser.add_argument("--verbose", action="store_true", help="show all peak ranks and sizes")
+    parser.add_argument("--upper-curvature", action="store_true",
+                        help="report strict log-concavity failures at interior ranks j >= degree/2")
     args = parser.parse_args()
     if not 1 <= args.direct_n <= args.max_n:
         parser.error("require 1 <= direct-n <= max-n")
-    verify(args.max_n, args.direct_n, args.verbose)
+    verify(args.max_n, args.direct_n, args.verbose, args.upper_curvature)
