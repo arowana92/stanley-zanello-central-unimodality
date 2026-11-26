@@ -8,6 +8,10 @@ The conjecture says that for each shape and every $n$, the sequence from $a_0$ t
 
 [2013 preprint](https://arxiv.org/abs/1305.6083) · [Authors’ final paper](https://math.mit.edu/~rstan/papers/distinctparts.pdf)
 
+## Partial results for arbitrary sizes
+
+Write $m=2n$ or $2n+1$ for the word length, $D$ for the degree and $k=D-j$ for the number of missing cells at rank $j$. On each fixed window $u m^{3/2}\le k\le v m^{3/2}$ with $0<u<v$, the coefficients are strictly log-concave for all sufficiently large $n$. Every global maximum has $k/m^{3/2}$ tending to the same positive constant in both families. The outer ranges admit further adjacent-coefficient inequalities. The notes give the proofs and the gaps in full unimodality. [Peak window](peak-window.md) · [Tail inequalities](monotonicity.md)
+
 ## Literature check
 
 I found no proof or counterexample covering either entire central family in the literature checked on 26 November 2026. Proposition 3.2 of the authors’ paper gives a ballot-word bijection. Theorem 3.7 settles both families for at most three rows. Their nonunimodal four-row example is $(9,7,5,3)$. The four-row shapes in Conjecture 3.4 are $(7,5,3,1)$ and $(8,6,4,2)$. [Stanley and Zanello, §3](https://math.mit.edu/~rstan/papers/distinctparts.pdf)
