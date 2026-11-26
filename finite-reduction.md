@@ -1,0 +1,74 @@
+# Reduction to an explicit finite range
+
+Define $A_1=10$ and $A_{i+1}=10^{A_i}$. For both central staircases the rank sequence is unimodal whenever $n\ge A_{16}$. Consequently any counterexample to Conjecture 3.4 must have $257\le n<A_{16}$, using the [exact checks](README.md#exact-coefficient-checks) for the lower bound. Equation (3) below gives a smaller explicit upper bound. This upper bound on possible exceptional sizes is far beyond a feasible exhaustive computation.
+
+The point requiring a rate is the compact interval between the [effective small-area estimate](effective-small-area.md) and the [effective increasing-side estimate](effective-middle.md). We give a modulus of convergence for the first two lattice differences there. Every power tower and error bound below is independent of the parity of the word length.
+
+## Exact area moments
+
+Write $m=2n+\delta$, $s=m^{3/2}$, $Y_m=K/s$ for the scaled area of a uniform surviving word, and $Y$ for half the area of the standard Brownian meander. The [peak-window argument](peak-window.md) gives $Y_m\Rightarrow Y$, a smooth density $f$ and $(\log f)''\le-12$ on $(0,\infty)$. Takács derived limit distributions and moments for Bernoulli meander area. We use the two last-return recurrences to control the errors at finite $m$. [Takács](https://doi.org/10.2307/3215294)
+
+For $x\ge1$ there is the uniform bound $\Pr(Y_m\ge x)\le2e^{-x^2/2}/x$. Indeed $K\le m\max H_t/2$. To reach $h=\lceil2x\sqrt m\rceil$ before hitting $-1$ the walk must first hit $\lfloor h/2\rfloor$ before $-1$, of probability at most $2/h$ by fair ruin probabilities. From there it must climb at least $h/2$ in at most $m$ steps, of probability at most $e^{-h^2/(8m)}$ by the exponential maximal inequality. Divide by $\Pr(E_m)=2^{-m}\binom{m}{n}\ge1/(2\sqrt m)$. Thus all fixed moments converge by uniform integrability. For $d\ge1$ the even moments of both $Y_m$ and $Y$ are bounded by $1+2^{d+1}d!$, by integration of this tail.
+
+Use the [Catalan series](README.md#catalan-recurrences-for-the-two-families) $C,B,O$ with length variable $z$ and area variable $q=e^x$. Put $v=\sqrt{1-4z}$. At $x=0$ we have $C_0=2/(1+v)$, $B_0=1/v$ and $O_0=C_0B_0$. Factor these three respective bases out of the series and expand in ordinary powers $x^r$, with constant coefficient one in each factored series. The coefficients are Laurent polynomials in $v$ over the rationals, computed as follows.
+
+* Write $D=z\partial_z=(v-v^{-1})\partial_v/2$. On coefficients multiplying $C_0$ and $B_0$ the respective operators are $D_C=D+(v^{-1}-1)/2$ and $D_B=D+(v^{-2}-1)/2$. The substitution $z\mapsto e^{a x}z$ in a based series with coefficients $P_i$ gives at order $r$ the sum $\sum_{i+j=r}a^j D_{\rm base}^j P_i/j!$.
+* For $C=1+zC(z,q)C(qz,q)$ the multiplier on the product after factoring is $(1-v)/2$. Omit the two unknown order-$r$ terms, multiply the known product coefficient by $(1-v)/(2v)$, and obtain the normalized $C$ coefficient at $r\ge1$.
+* For $B=C+e^x(C-1)B(e^{2x}z,q)$, divide the equation at order $r$ by $B_0(2-C_0)$. The normalized $B$ coefficient is the normalized $C$ coefficient plus $v^{-1}$ times the known order-$r$ coefficient of $e^x ((C-1)/C_0)(B(e^{2x}z,q)/B_0)$. Here the constant of $(C-1)/C_0$ is $(1-v)/2$, and only the as-yet unknown $B$ coefficient is omitted. Finally multiply the normalized $C$ series by the normalized shifted $B(e^xz,q)$ series to obtain the normalized $O$ series.
+
+Multiply the resulting even and odd coefficient polynomials at order $r$ by $r!v^{-1}$ and $r!(1-v)v^{-1}$ respectively. Write $P_{\delta,r}(v)=\sum_h c_hv^h$ for the result. With $\ell=n+\delta$, set
+$$R_h(\ell)=\frac{[z^\ell](1-4z)^{h/2}}{\binom{2\ell}{\ell}}
+ =\prod_{i=0}^{\ell-1}\frac{2i-h}{2i+1}.$$
+Then the exact scaled moment is
+$$\mathbb E Y_m^r=(2\ell-\delta)^{-3r/2}\sum_h c_h R_h(\ell).\tag{1}$$
+For the odd case this uses $C_0=(1-v)/(2z)$ and $\binom{2n+2}{n+1}=2\binom{2n+1}{n}$. For example the coefficient of $v^{-4}$ in both first-moment polynomials is $3/4$, and that of $v^{-7}$ in both second-moment polynomials is $59/16$. Formula (1) gives the limiting moments $3\sqrt{2\pi}/16$ and $59/240$.
+
+The following checks (1) in exact arithmetic against the rank polynomials for both parities and against direct partition enumeration for small shapes.
+
+~~~sh
+python3 -B verify_moments.py --order 10 --max-n 64 --direct-n 12
+~~~
+
+## A uniform error estimate for finitely many moments
+
+For any positive integer $Q$, take
+$$J=1000(Q+4)^6,\qquad V=2^{2^J},\qquad E=(10V)^{10V}.$$
+For $0\le r\le Q$ and $n\ge(10V)^4$ we claim
+$$|\mathbb E Y_m^r-\mathbb E Y^r|\le E/\sqrt n.\tag{2}$$
+
+Here are bounds on the algebra in (1). The maximum absolute exponent and the sum of absolute coefficients of every $P_{\delta,r}$ are at most $V$. For clarity, one may count Laurent polynomial operations following the three recurrences above. For a series shifted by $e^{a x}$ through order $r$, form each sequence of divided derivatives by repeatedly applying $a D_{\rm base}/j$ to its preceding entry, then add by total order. Its triangular array has at most $(r+1)^2$ entries. At each order form three such arrays and the products, including the convolution with $\sum x^j/j!$. Fewer than $50(Q+2)^4$ binary additions, products, Euler derivatives and scalar operations suffice for all orders combined, counting the logarithmic derivative of each base as a fixed Laurent multiplier. The only large final scalar $r!$ can be included as $r$ multiplications by integers at most $Q$. To bound every intermediate size start at $Q+10$, and after every operation replace the current bound $S$ by $10S^2$. For example on $v^h$, $D$ has two terms with coefficient sum $|h|$. Fixed factors, monomial shifts and multiplication by $a/j$ or $1/j!$ all obey this bound. Iteration gives $\log_2 S\le 2^{50(Q+2)^4}(\log_2(Q+10)+4)<2^J$. This also bounds $r!$ times the polynomials as claimed.
+
+For even $h\ge0$ the contribution vanishes for $\ell>h/2$. For every other $h$, $R_h(\ell)$ has leading term $L_h\ell^{-(h+1)/2}$ with $L_h\ne0$. Start at $R_{-1}=1$ or $R_{-2}=4^\ell/\binom{2\ell}{\ell}$. The latter is between $\sqrt{\pi\ell}$ and $\sqrt{\pi(\ell+1)}$ by the Wallis inequalities. Move by steps of two using $R_{h+2}/R_h=(h+2)/(h+2-2\ell)$, staying in the odd indices or the strictly negative even indices. This construction gives $|L_h|\le(2V+4)^{V+2}$. When $\ell\ge(10V)^4$, the absolute log of the ratio to the signed leading term is at most $4(V+2)^2/\ell$. Indeed each nonconstant correction factor is $1+a/(2\ell)$ or its inverse with $|a|\le V+2$, and there are at most $V+1$ of them in addition to the Wallis factor. Including the factor $(1-\delta/(2\ell))^{-3r/2}$ in (1) raises this log bound to at most $6(V+2)^2/\ell$.
+
+All nonvanishing terms in (1) have $h\ge-3r-1$. Otherwise the smallest such exponent would give a unique unbounded leading term, contradicting the uniform moment bound. The possible term $h=-3r-1$ has a constant limit, and every other term is $O(\ell^{-1/2})$ with the explicit factors just bounded. Using $|e^t-1|\le2|t|$ for $|t|\le1/2$, their sum differs from its limit by at most $V(2V+4)^{V+2}(12(V+2)^2+2)/\sqrt\ell$. This is bounded by $E/\sqrt n$. The limit is the moment of $Y$ by the tail bound, proving (2).
+
+## Density lower bound and inversion
+
+Choose the rational numbers
+$$u=2^{-10^{313}},\qquad b=2^{-\lceil10^8/u^2\rceil},\qquad \varepsilon=b^2/10^{40}.$$
+Then $f(x)\ge b$ for $u\le x\le201$. To verify the constant, use Imhof's relation from the [density argument](peak-window.md#curvature-of-the-limiting-density). For three-dimensional Brownian motion $W$ started at zero, the meander law is the law of $|W|$ reweighted by $\sqrt{\pi/2}/|W(1)|$. About each of the two straight paths $4xt e_1$, $x=u/2$ or $202$, take a tube of radius $a=u/8$ in uniform Euclidean distance. The half-area is within $a/2$ of $x$ there. The constant-drift change of measure bounds the Brownian tube mass below by $\exp(-8x^2-4xa)$ times the centered tube mass. Each Brownian coordinate stays within $[-a/2,a/2]$ through time one with probability at least $\exp(-\pi^2/(2a^2))$, by the killed eigenfunction $y\mapsto\cos(\pi y/a)$ on that interval. The coordinates are independent and the corresponding cube fits in the centered tube. The Imhof factor exceeds $1/810$ on both tubes. Each of the two area intervals therefore has mass at least $\exp(-10^7/u^2)>b$ and length less than one. Each contains a point of density at least $b$, one below $u$ and one above $201$. Log-concavity gives the assertion.
+
+Let $P_m(k)=b_k/\binom{m}{n}$ with $b_k$ the corank coefficient, and $\Delta P_m(k)=P_m(k+1)-P_m(k)$. We derive a uniform error at most $\varepsilon$ when approximating $s^{r+1}\Delta^r P_m(k)$ by $f^{(r)}(k/s)$ for $r=0,1,2$. The fair-walk characteristic function on the scaled interval $[-\pi s,\pi s]$ is bounded by $10e^{-|t|^{2/3}/4000}$. This is the [paired-label estimate](effective-middle.md#restoring-the-wall-without-losing-a-lattice-difference) using a surviving prefix to $\lceil m/2\rceil$ and the explicit ballot ratio $\Pr(E_{\lceil m/2\rceil})/\Pr(E_m)\le4$ for $m\ge4$. The same bound holds for the limiting characteristic function by weak convergence. Its integral with weight $1+|t|^3$ over the line is below $10^{30}$ by the substitution $y=|t|^{2/3}/4000$. In particular all derivatives of $f$ through order three have absolute value below $10^{30}$.
+
+For an explicit cutoff take the integers and rational tolerance
+$$
+ T=\lceil10^{33}/\varepsilon\rceil,\qquad
+ \tau=\varepsilon/(1000(1+T)^3),\qquad
+ d=\lceil16T^2/\tau\rceil,\qquad Q=2d.
+$$
+Use $V,E$ above at this $Q$. It suffices to have
+$$ n\ \ge\ N_0=\left\lceil\big(10V(Q+1)(1+T)^{Q+4}E/\tau\big)^4\right\rceil.\tag{3}$$
+In fact, outside $[-T,T]$ the Fourier tails weighted by $|t|^r$ cost at most $2\cdot10^{30}/T$ for both transforms combined. Inside, expand $e^{itY_m}$ and $e^{itY}$ through order $2d-1$. Each remainder in expectation is at most
+$$\frac{T^{2d}(1+2^{d+1}d!)}{(2d)!}\le3(2T^2/d)^d<\tau.$$
+The sum of the moment errors is bounded by $(Q+1)(1+T)^Q E/\sqrt n<\tau$. Thus the characteristic functions differ by at most $3\tau$ on this interval. The scaled forward-difference multiplier $s(e^{-it/s}-1)$ differs from $-it$ by at most $t^2/(2s)$ and has modulus at most $|t|$. For its $r$th power the error is at most $r|t|^{r+1}/(2s)$ for $r=1,2$. Condition (3) ensures $\pi s>T$, $2(1+T)^4/s<\varepsilon/100$ and $10^{30}/s<\varepsilon$. Fourier inversion now gives the claimed three errors, including the zeroth derivative. These estimates use only rational polynomial operations, elementary functions and the proved tail and curvature bounds.
+
+In the identity
+$$P_m(k)^2-P_m(k-1)P_m(k+1)
+ =\Delta P_m(k-1)\Delta P_m(k)-P_m(k)\Delta^2 P_m(k-1),$$
+multiply by $s^4$ and put $x=k/s$. Evaluation at $(k-1)/s$ in place of $x$ costs at most $10^{30}/s$ per limiting derivative. The scaled determinant therefore differs from $f'(x)^2-f(x)f''(x)$ by at most $12\cdot10^{30}\varepsilon$. On $[u,201]$ the latter determinant is at least $12f(x)^2\ge12 b^2$. This proves strict log-concavity at every such lattice point for $n\ge N_0$.
+
+## Joining the three intervals
+
+For $n\ge N_0$, $us+2<c_* n^{3/2}$ since $s\le(3n)^{3/2}$ and $u<c_*/12$. The [small-area and linear bounds](effective-small-area.md) give increasing corank coefficients through the left edge of the interval of strict log-concavity. On its right the [increasing-side estimate](effective-middle.md) makes the corank coefficients decrease from $200s$ up to the midpoint. The [lower-half inequality](monotonicity.md#1-lower-half-for-all-sizes) continues weak decrease to the end. The overlaps contain adjacent ranks. Strict log-concavity on the intervening interval allows the adjacent coefficient ratios to pass through one at most once. This gives unimodality for both parities.
+
+For comparison with the simpler bound in the theorem, $u^{-1}<A_4$, $b^{-1}<A_6$, $\varepsilon^{-1}<A_7$, $T<A_8$, $\tau^{-1}<A_9$, and $Q+4<A_{10}$. Then $J<A_{11}$, $V<A_{13}$, $E<A_{15}$ and $(1+T)^{Q+4}<A_{12}$. Equation (3) gives $N_0<A_{16}$. The computation through 256 does not cover the remaining finite interval.

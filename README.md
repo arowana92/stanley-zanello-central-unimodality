@@ -10,7 +10,7 @@ The conjecture says that for each shape and every $n$, the sequence from $a_0$ t
 
 ## Asymptotic result and finite-size gap
 
-The research notes give a proof that **both central families are unimodal for all sufficiently large $n$**. The proof yields no explicit cutoff. Exact computation verifies both families for every $1\le n\le256$. These results leave open the possibility of a finite exceptional size above 256.
+The research draft gives an explicit finite reduction for **both central families**. Define $A_1=10$ and $A_{i+1}=10^{A_i}$. The proof gives unimodality for every $n\ge A_{16}$, and exact computation verifies every $1\le n\le256$. The outstanding sizes lie between 257 and $A_{16}-1$. The upper bound is far too large for exhaustive verification. [Proof of the finite reduction](finite-reduction.md)
 
 Write $m=2n$ or $2n+1$ for the word length, $D$ for the degree and $k=D-j$ for the number of missing cells at rank $j$. For both families, every global peak has $k/m^{3/2}$ tending to the mode of half the area under a standard Brownian meander. The proof controls adjacent coefficients in four ranges.
 
@@ -25,9 +25,9 @@ There is an explicit result for the high-rank end. For both families and every $
 
 There is also an explicit bound on the increasing side. For both families the coefficients increase strictly and are strictly log-concave at every rank $D/2\le j\le D-200m^{3/2}$. This leaves at most $200m^{3/2}+O(1)$ ranks to examine at any size, before applying the linear tail bound. The constant is large enough that the new interval first becomes nonempty at $m=2{,}560{,}000$. [Finite-size proof with constants](effective-middle.md)
 
-A separate uniform transfer estimate reaches the scale of the peak from the high-rank end. With $c_*=exp(-10^{311})$, the corank coefficients increase strictly and are strictly log-concave for $2n\le k\le c_*n^{3/2}$. The constant makes this a theoretical improvement on the linear bound only at extremely large sizes. [Effective small-area proof](effective-small-area.md)
+A separate uniform transfer estimate reaches the scale of the peak from the high-rank end. With $c_*=\exp(-10^{311})$, the corank coefficients increase strictly and are strictly log-concave for $2n\le k\le c_*n^{3/2}$. The constant makes this a theoretical improvement on the linear bound only at extremely large sizes. [Effective small-area proof](effective-small-area.md)
 
-The final subsequence argument combining the four estimates is in [the conclusion](small-area.md#consequence-and-finite-size-gap). The proof is a research draft.
+The [subsequence argument](small-area.md#consequence-and-finite-size-gap) gives a qualitative proof. The explicit version bounds the errors in the first two lattice differences on the interval containing the peak, using [exact finite-size area moments](finite-reduction.md#exact-area-moments).
 
 ## Literature check
 
