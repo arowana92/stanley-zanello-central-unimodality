@@ -3,7 +3,7 @@
 import argparse
 from itertools import product
 
-from verify import ballot_ranks
+from verify import ballot_ranks, direct_ranks
 
 
 # Each entry is twice a lower bound on the interval centers.
@@ -59,6 +59,39 @@ def check_small_walks():
                 actual = {h: coefficients(p, 2, cap) for h, p in row.items()}
                 if actual != direct:
                     raise ArithmeticError(f"direct enumeration failed at {start=}, {time=}, {cap=}")
+
+
+def check_area_tilts():
+    """Compare two exact rational area tilts with independent weighted steps."""
+    for length in range(2, 13):
+        degree = length ** 2 // 4
+        labels = range(length, 0, -1)
+        coranks = direct_ranks(range(length - 1, 0, -2))[::-1]
+        for a, b in ((2, 3), (3, 2)):
+            weighted = [0] * (degree + 1)
+            for steps in product((-1, 1), repeat=length):
+                height = area = down_sum = 0
+                survives = True
+                weight = 1
+                for step, label in zip(steps, labels):
+                    height += step
+                    area += height // 2
+                    survives = survives and height >= 0
+                    if step < 0:
+                        down_sum += label
+                        weight *= b ** label
+                    else:
+                        weight *= a ** label
+                if area != degree - down_sum:
+                    raise ArithmeticError(f"area identity failed for {steps=}")
+                if survives:
+                    weighted[area] += weight
+            # The independent up/down weights give odds (b/a)**label.
+            common = a ** (sum(labels) - degree)
+            expected = [common * count * a ** k * b ** (degree - k)
+                        for k, count in enumerate(coranks)]
+            if weighted != expected:
+                raise ArithmeticError(f"tilted corank mismatch at {length=}, {a=}, {b=}")
 
 
 def check_half_swaps():
@@ -162,6 +195,7 @@ if __name__ == "__main__":
     parser.add_argument("--slope", type=int, help="search for a certificate at this positive integer slope")
     args = parser.parse_args()
     check_small_walks()
+    check_area_tilts()
     check_half_swaps()
     if args.slope is None:
         stop = verify_table(BRIDGE, FREE_END)

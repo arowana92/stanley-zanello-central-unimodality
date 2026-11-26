@@ -1,8 +1,22 @@
 # Reduction to an explicit finite range
 
-Put $N=10^{10^{554}}$. For both central staircases the rank sequence is unimodal whenever $n\ge N$. Consequently any counterexample to Conjecture 3.4 must have $257\le n<N$, using the [exact checks](README.md#exact-coefficient-checks) for the lower bound. This upper bound on possible exceptional sizes is far beyond feasible exhaustive computation.
+Put $N=10^{1700}$. For both central staircases the rank sequence is unimodal whenever $n\ge N$. Consequently any counterexample to Conjecture 3.4 must have $321\le n<N$, using the [exact checks](README.md#exact-coefficient-checks) for the lower bound. This upper bound on possible exceptional sizes is far beyond feasible exhaustive computation.
 
-The point requiring a rate is the compact interval between the [effective small-area estimate](effective-small-area.md) and the [effective increasing-side estimate](effective-middle.md). A [Brownian embedding of the ballot walk](peak-rate.md) controls the first two lattice differences there. The exact moment formulas below give a second way to obtain a finite threshold. All estimates apply to both parities of the word length.
+The proof joins the [small-area bridge estimate](effective-small-area.md#a-wider-window-at-large-sizes) to a [Brownian comparison after tilting](tilted-peak.md) and the [increasing-side estimate](effective-middle.md). The exact moment formulas and the untilted comparison below give independent finite thresholds. All estimates apply to both parities of the word length.
+
+## Joining the three intervals
+
+Write $m=2n$ for the odd-part staircase and $m=2n+1$ for the even-part staircase. The degree of the rank polynomial is $D=\lfloor m^2/4\rfloor$, and rank $j$ corresponds to corank $k=D-j$. At $n\ge N$ the following results give $a_j^2>a_{j-1}a_{j+1}$ on their respective corank intervals.
+
+| Integer corank $k$ | Estimate |
+| --- | --- |
+| $1\le k\le 2n$ | [Sparse and bounded tilts](upper-curvature.md#joining-the-tilts-between-the-sparse-and-peak-regimes) |
+| $2n\le k\le 10^{-37}n^{3/2}$ | [Small-area bridge estimate](effective-small-area.md#a-wider-window-at-large-sizes) |
+| $2000m^{59/40}\le k\le D/2$ | [Tilted Brownian comparison and increasing-side estimate](tilted-peak.md#a-range-of-coranks-with-strict-log-concavity) |
+
+For the last two rows, $m\le3n$ gives
+$$\frac{2000m^{59/40}}{n^{3/2}}\le 2000\cdot3^{3/2}m^{-1/40}<4\cdot10^{-39}$$
+at $m\ge10^{1700}$. Thus the second interval extends more than two whole ranks beyond the start of the third. Every interior rank $j\ge D/2$ lies in the union. On this interval the adjacent coefficient ratios decrease and hence cross one at most once. The [lower-half inequality](monotonicity.md#1-lower-half-for-all-sizes) gives weak growth up to $\lceil D/2\rceil$. This proves unimodality of both rank sequences throughout the stated size range.
 
 ## Exact area moments
 
@@ -44,13 +58,14 @@ All nonvanishing terms in (1) have $h\ge-3r-1$. Otherwise the smallest such expo
 
 ## Density lower bound and inversion
 
-Choose the rational numbers
+For every $0<u\le10^{-5}$ the density has the lower bound $b=2^{-\lceil10^8/u^2\rceil}$ on $[u,201]$. To verify the constant, use Imhof's relation from the [density argument](peak-window.md#curvature-of-the-limiting-density). For three-dimensional Brownian motion $W$ started at zero, the meander law is the law of $|W|$ reweighted by $\sqrt{\pi/2}/|W(1)|$. About each of the two straight paths $4xt e_1$, $x=u/2$ or $202$, take a tube of radius $a=u/8$ in uniform Euclidean distance. The half-area is within $a/2$ of $x$ there. The constant-drift change of measure bounds the Brownian tube mass below by $\exp(-8x^2-4xa)$ times the centered tube mass. Each Brownian coordinate stays within $[-a/2,a/2]$ through time one with probability at least $\exp(-\pi^2/(2a^2))$, by the killed eigenfunction $y\mapsto\cos(\pi y/a)$ on that interval. The coordinates are independent and the corresponding cube fits in the centered tube. The Imhof factor exceeds $1/810$ on both tubes. Each of the two area intervals therefore has mass at least $\exp(-10^7/u^2)>b$ and length less than one. Each contains a point of density at least $b$, one below $u$ and one above $201$. Log-concavity gives the assertion.
+
+The untilted inversion below uses the specific rational numbers
 $$u=10^{-272},\qquad b=2^{-10^{552}},\qquad \varepsilon=b^2/10^{40}.$$
-Then $f(x)\ge b$ for $u\le x\le201$. To verify the constant, use Imhof's relation from the [density argument](peak-window.md#curvature-of-the-limiting-density). For three-dimensional Brownian motion $W$ started at zero, the meander law is the law of $|W|$ reweighted by $\sqrt{\pi/2}/|W(1)|$. About each of the two straight paths $4xt e_1$, $x=u/2$ or $202$, take a tube of radius $a=u/8$ in uniform Euclidean distance. The half-area is within $a/2$ of $x$ there. The constant-drift change of measure bounds the Brownian tube mass below by $\exp(-8x^2-4xa)$ times the centered tube mass. Each Brownian coordinate stays within $[-a/2,a/2]$ through time one with probability at least $\exp(-\pi^2/(2a^2))$, by the killed eigenfunction $y\mapsto\cos(\pi y/a)$ on that interval. The coordinates are independent and the corresponding cube fits in the centered tube. The Imhof factor exceeds $1/810$ on both tubes. Each of the two area intervals therefore has mass at least $\exp(-10^7/u^2)>b$ and length less than one. Each contains a point of density at least $b$, one below $u$ and one above $201$. Log-concavity gives the assertion.
 
 Let $P_m(k)=b_k/\binom{m}{n}$ with $b_k$ the corank coefficient, and $\Delta P_m(k)=P_m(k+1)-P_m(k)$. We derive a uniform error at most $\varepsilon$ when approximating $s^{r+1}\Delta^r P_m(k)$ by $f^{(r)}(k/s)$ for $r=0,1,2$. The fair-walk characteristic function on the scaled interval $[-\pi s,\pi s]$ is bounded by $10e^{-|t|^{2/3}/4000}$. This is the [paired-label estimate](effective-middle.md#restoring-the-wall-without-losing-a-lattice-difference) using a surviving prefix to $\lceil m/2\rceil$ and the explicit ballot ratio $\Pr(E_{\lceil m/2\rceil})/\Pr(E_m)\le4$ for $m\ge4$. The same bound holds for the limiting characteristic function by weak convergence. Its integral with weight $1+|t|^3$ over the line is below $10^{30}$ by the substitution $y=|t|^{2/3}/4000$. In particular all derivatives of $f$ through order three have absolute value below $10^{30}$.
 
-The [quantitative derivative estimate](peak-rate.md) bounds all three errors by $10^{21}m^{-1/4}$. For $n\ge N$ this is less than $\varepsilon$, and $10^{30}/s<\varepsilon$ as well. Indeed $(10^{554}/4)\log 10>2\cdot10^{552}\log 2+61\log 10$.
+The [untilted derivative estimate](peak-rate.md) bounds all three errors by $10^{21}m^{-1/4}$. At the earlier sufficient threshold $n\ge10^{10^{554}}$ this is less than $\varepsilon$, and $10^{30}/s<\varepsilon$ as well. Indeed $(10^{554}/4)\log 10>2\cdot10^{552}\log 2+61\log 10$.
 
 For the independent moment-based estimate take the integers and rational tolerance
 $$
@@ -67,10 +82,6 @@ The sum of the moment errors is bounded by $(Q+1)(1+T)^Q E/\sqrt n<\tau$. Thus t
 In the identity
 $$P_m(k)^2-P_m(k-1)P_m(k+1)
  =\Delta P_m(k-1)\Delta P_m(k)-P_m(k)\Delta^2 P_m(k-1),$$
-multiply by $s^4$ and put $x=k/s$. Evaluation at $(k-1)/s$ in place of $x$ costs at most $10^{30}/s$ per limiting derivative. The scaled determinant therefore differs from $f'(x)^2-f(x)f''(x)$ by at most $12\cdot10^{30}\varepsilon$. On $[u,201]$ the latter determinant is at least $12f(x)^2\ge12 b^2$. This proves strict log-concavity at every such lattice point for $n\ge N$, and independently under (3).
+multiply by $s^4$ and put $x=k/s$. Evaluation at $(k-1)/s$ in place of $x$ costs at most $10^{30}/s$ per limiting derivative. The scaled determinant therefore differs from $f'(x)^2-f(x)f''(x)$ by at most $12\cdot10^{30}\varepsilon$. On $[u,201]$ the latter determinant is at least $12f(x)^2\ge12 b^2$. This proves strict log-concavity at every such lattice point for $n\ge10^{10^{554}}$, and independently under (3).
 
-## Joining the three intervals
-
-For $n\ge N$, $us+2<c_* n^{3/2}$ since $s\le(3n)^{3/2}$ and $u<c_*/12$. The [small-area and linear bounds](effective-small-area.md) give increasing corank coefficients through the left edge of the interval of strict log-concavity. On its right the [increasing-side estimate](effective-middle.md) makes the corank coefficients decrease from $200s$ up to the midpoint. The [lower-half inequality](monotonicity.md#1-lower-half-for-all-sizes) continues weak decrease to the end. The overlaps contain adjacent ranks. Strict log-concavity on the intervening interval allows the adjacent coefficient ratios to pass through one at most once. This gives unimodality for both parities.
-
-The [upper-half curvature argument](upper-curvature.md) also gives strict log-concavity at every interior rank $j\ge D/2$ for $n\ge N$. The computation through 256 does not cover the remaining finite interval.
+For either untilted threshold, $u(3n)^{3/2}+2<10^{-270}n^{3/2}$, so this window meets the [original small-area bound](effective-small-area.md). At its other end $201s>200s+2$ meets the [increasing-side bound](effective-middle.md). The bounded-tilt and lower-half arguments above then finish the independent reduction.

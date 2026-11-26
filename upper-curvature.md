@@ -3,9 +3,9 @@
 Write $k=D-j$ for corank and $b_k=a_{D-k}$. Both statements below apply to the odd-part and even-part staircases.
 
 * At every size $n$, $b_k^2>b_{k-1}b_{k+1}$ for $1\le k\le n/105$.
-* Every $n\ge10^{10^{554}}$ satisfies strict log-concavity at **every interior rank $j\ge D/2$**.
+* Every $n\ge10^{1700}$ satisfies strict log-concavity at **every interior rank $j\ge D/2$**.
 
-The second assertion strengthens the [finite reduction](finite-reduction.md), which needed only the sign of the first difference at the high-rank end. The exact upper-half checks begin at $n=9$. The results here leave sizes below the large threshold open outside the proved ranges.
+The second assertion gives the [finite reduction](finite-reduction.md) after applying the lower-half growth inequality. The exact upper-half checks begin at $n=9$. The results here leave sizes below the large threshold open outside the proved ranges.
 
 ## A finite polynomial at small positive tilt
 
@@ -63,4 +63,4 @@ In particular for $10^{-22}\le|\theta|\le\pi$ the power loses a factor at least 
 
 For $n\ge10^{160}$ put $\sigma^2=np''(\beta)$ and $x=\sigma\theta$. In $|\theta|\le10^{-22}$, cancel the linear phase by $e^{ik\theta}$. Taylor's theorem gives principal exponent $-x^2/2$ with error at most $10^{14}n|\theta|^3/6$, so its real part is at most $-x^2/4$. For $|x|\le12$ the same error and the amplitude error $4\cdot10^5 |x|/\sigma$ are each below $.001$ using $\sigma^2\ge10^{-5}n$. The real centered principal term there is at least $.99e^{-x^2/2}$. Multiply by $4\sigma^2\sin^2(x/(2\sigma))$ and integrate in $x$. This multiplier lies between $.99x^2$ and $x^2$ on $[-12,12]$, giving a contribution greater than one. The principal tail still in the small disk costs at most $20\int_{|x|>12}x^2e^{-x^2/4}\,dx<.01$. The complementary powers and off-disk frequencies together cost at most $10^4\sigma^3((.4)^n+e^{-10^{-59}n})<.01$ by $\sigma^2\le10^9n$. The integral is positive. Inversion again gives strict negative centered second difference of the tilted mass at $k$, and hence strict log-concavity after removing the tilt.
 
-This covers $1\le k\le2n$ for $n\ge10^{531}$. Now suppose $n\ge10^{10^{554}}$. From $2n$ to $c_* n^{3/2}$ use the [small-area theorem](effective-small-area.md). The [compact-interval determinant bound](finite-reduction.md#density-lower-bound-and-inversion) overlaps it and gives strict log-concavity through $201m^{3/2}$. The [increasing-side curvature theorem](effective-middle.md) takes over at $200m^{3/2}$ and reaches rank $\lceil D/2\rceil$. These ranges cover every interior upper-half rank.
+This covers $1\le k\le2n$ for $n\ge10^{531}$. At $n\ge10^{1700}$ the [large-size bridge bound](effective-small-area.md#a-wider-window-at-large-sizes) takes over at $2n$ and meets the [tilted comparison](tilted-peak.md#a-range-of-coranks-with-strict-log-concavity). The [overlap calculation](finite-reduction.md#joining-the-three-intervals) covers every interior upper-half rank.

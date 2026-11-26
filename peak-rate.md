@@ -6,7 +6,7 @@ $$
 \ \le\ E_m=\frac{10^{15}(1+\log m)^6}{\sqrt m}
 \ \le\ 10^{21}m^{-1/4}. \tag{1}
 $$
-Here $\log$ is natural. Every maximizing corank lies between $s/5000$ and $7s$ for every $n\ge2$. For $m\ge10^{90}$ the ranks at half the maximum form an interval of strict log-concavity. The derivative estimate also gives a smaller [upper bound on all possible exceptional sizes](finite-reduction.md).
+Here $\log$ is natural. Every maximizing corank lies between $s/5000$ and $7s$ for every $n\ge2$. For $m\ge10^{90}$ the ranks at half the maximum form an interval of strict log-concavity. The [tilted extension](tilted-peak.md) controls second differences in the tails.
 
 ## Coupling the area while retaining the wall
 

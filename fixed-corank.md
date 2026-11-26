@@ -3,10 +3,10 @@
 Let $b_{n,k}$ count partitions missing $k$ cells from one of the two central staircases of size parameter $n$. Fix the parity of its largest part. We prove three assertions.
 
 1. For $n\ge k$, $b_{n,k}$ is a polynomial in $n$ of degree $k$ with leading coefficient $1/k!$.
-2. For every $1\le k\le256$ and every $n\ge\max(4,k+1)$, $b_{n,k}^2>b_{n,k-1}b_{n,k+1}$. This uses exact integer certificates of polynomial positivity.
+2. For every $1\le k\le320$ and every $n\ge\max(4,k+1)$, $b_{n,k}^2>b_{n,k-1}b_{n,k+1}$. This uses exact integer certificates of polynomial positivity.
 3. For arbitrary $k\ge1$, the same strict inequality holds whenever $n\ge4(k+1)^2$. This uses only row counting.
 
-Together with the [full rank checks](README.md#exact-coefficient-checks), assertion 2 gives strict log-concavity at every interior upper-half rank of corank at most 256 for **all** $n\ge9$. An upper-half rank is a rank $j=D-k\ge D/2$, where $D$ is the area of the shape.
+Together with the [full rank checks](README.md#exact-coefficient-checks), assertion 2 gives strict log-concavity at every interior upper-half rank of corank at most 320 for **all** $n\ge9$. An upper-half rank is a rank $j=D-k\ge D/2$, where $D$ is the area of the shape.
 
 ## Removing row ends
 
@@ -25,10 +25,10 @@ Expand the denominator as a geometric series in the nonempty runs, keeping the f
 For $n\ge k+1$, the determinant $L_k(n)=b_{n,k}^2-b_{n,k-1}b_{n,k+1}$ is a polynomial of degree $2k$. Its leading coefficient is $1/((k+1)(k!)^2)$. At any integer $a\ge k+1$, Newton interpolation gives
 $$L_k(n)=\sum_{h=0}^{2k}(\Delta^h L_k)(a)\binom{n-a}{h},\qquad
 (\Delta L)(a)=L(a+1)-L(a).$$
-For each $1\le k\le256$ take $a=\max(4,k+1)$. Every one of the $2k+1$ integer coefficients is strictly positive for both families. The script recomputes each coefficient, checks that the next difference vanishes, and compares the underlying corank rows against direct enumeration at small sizes. Since the constant term is positive and all binomial factors are nonnegative for $n\ge a$, this certifies every such $n$.
+For each $1\le k\le320$ take $a=\max(4,k+1)$. Every one of the $2k+1$ integer coefficients is strictly positive for both families. The script recomputes each coefficient, checks that the next difference vanishes, and compares the underlying corank rows against direct enumeration at small sizes. Since the constant term is positive and all binomial factors are nonnegative for $n\ge a$, this certifies every such $n$.
 
 ~~~sh
-python3 -B verify_corank.py --max-corank 256 --direct-n 12
+python3 -B verify_corank.py --max-corank 320 --direct-n 12
 ~~~
 
 The verifier keeps the endpoint height of the ballot walk and discards coefficients above the requested degree. All prefix areas are nondecreasing. Reaching height $2h$ already costs at least $h^2$, the sum of the contributions at the first visits to heights $1,\ldots,2h$. A prefix ending at $2h+1$ costs at least as much. The truncations therefore preserve every retained count. The direct checks also cover coefficients beyond the true degree, where the truncated array is padded with zeros.
