@@ -10,7 +10,7 @@ The conjecture says that for each shape and every $n$, the sequence from $a_0$ t
 
 ## Partial results for arbitrary sizes
 
-Write $m=2n$ or $2n+1$ for the word length, $D$ for the degree and $k=D-j$ for the number of missing cells at rank $j$. On each fixed window $u m^{3/2}\le k\le v m^{3/2}$ with $0<u<v$, the coefficients are strictly log-concave for all sufficiently large $n$. Every global maximum has $k/m^{3/2}$ tending to the same positive constant in both families. The outer ranges admit further adjacent-coefficient inequalities. The notes give the proofs and the gaps in full unimodality. [Peak window](peak-window.md) · [Tail inequalities](monotonicity.md)
+Write $m=2n$ or $2n+1$ for the word length, $D$ for the degree and $k=D-j$ for the number of missing cells at rank $j$. On each fixed window $u m^{3/2}\le k\le v m^{3/2}$ with $0<u<v$, the coefficients are strictly log-concave for all sufficiently large $n$. Every global maximum has $k/m^{3/2}$ tending to the same positive constant in both families. The rising-side bound reaches the peak window. In any sequence of arbitrarily large counterexamples a reversal would have to occur at coranks with $k/n\to\infty$ and $k/m^{3/2}\to0$. Full unimodality remains unresolved. [Peak window](peak-window.md) · [Tail inequalities](monotonicity.md) · [Rising-side proof](rising-side.md)
 
 ## Literature check
 

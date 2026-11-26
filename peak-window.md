@@ -11,19 +11,16 @@ There is a common constant $x_*>0$ for both families such that every global maxi
 Give the $m$ independent steps equal probabilities before conditioning. Let $E$ be the event of staying nonnegative, let $S$ be the sum of the labels of the down steps (labels decrease from $m$ to 1), and put $K=D-S$. Write $\Phi_m(\theta)=\mathbb E[e^{i\theta K}\mid E]$. There are absolute positive constants $c,C$ such that
 $$|\Phi_m(\theta)|\le C\exp(-cm|\theta|^{2/3})\qquad(-\pi\le\theta\le\pi).$$
 
-To prove this, take a block of $2l$ consecutive labels. Its unrestricted complex transition kernel takes a starting height to an ending height with weight $e^{-i\theta S_{\rm block}}$ times the fair-word probability. On interchanging the two halves of a block the endpoint stays fixed, and the difference of the two label sums is, up to sign, $l(d_1-d_2)$, where $d_1,d_2$ are the numbers of downs in the two halves. Average the two orders before applying the triangle inequality at each endpoint. The sum of the absolute entries of any row is bounded by
-$$\mathbb E|\cos(\theta l(d_1-d_2)/2)|
- \le \left((1+\cos^{2l}(\theta l/2))/2\right)^{1/2}.$$
-Here $d_1,d_2$ are independent binomials with parameters $(l,1/2)$, which gives the last expression on squaring the cosine and taking its expectation.
+For a block, the complex kernel entry from one height to another is the expected phase $e^{-i\theta S_{\rm block}}$ restricted to that endpoint. The block estimate also holds for independent down probabilities $p_i\in[\eta,1-\eta]$ with any fixed $\eta>0$. Take a block of $2l$ consecutive labels and pair each label in its first half with the label $l$ places later. Condition on the number of downs in each pair. The block endpoint is fixed given these counts. In a mixed pair the down step has two possible positions, with conditional probabilities $w,1-w$ bounded below in terms of $\eta$. These choices are independent across pairs. The modulus of the mixed pair's Fourier factor is at most $\exp(-c_\eta\sin^2(l\theta/2))$, by squaring its modulus. Each pair is mixed with probability at least $2\eta^2$, independently across pairs. Averaging the product of the moduli gives a bound $\exp(-c'_\eta l\sin^2(l\theta/2))$ on the unrestricted maximum absolute row sum, by applying the triangle inequality within each endpoint and then summing over all pair counts.
 
-For $0<|\theta|\le1$, set $l=\lfloor|\theta|^{-2/3}\rfloor$. Then $|\theta|l\le1$ and $\theta^2 l^3\ge1/8$. The elementary bound $\cos t\le e^{-t^2/2}$ for $|t|\le1$ makes the displayed expression at most an absolute $\rho<1$. For $1\le|\theta|\le\pi$, take $l=1$ and use $|\cos(\theta/2)|\le\cos(1/2)$. Enlarge $\rho<1$ to cover both ranges.
+For $0<|\theta|\le1$, set $l=\lfloor|\theta|^{-2/3}\rfloor$. Then $|\theta|l\le1$ and $\theta^2l^3\ge1/8$. For $1\le|\theta|\le\pi$, take $l=1$. In both cases the row bound is at most a constant $\rho_\eta<1$. Below write $\rho=\rho_\eta$.
 
 For a fixed nonnegative starting height let $p$ be the probability of surviving the block. Killing paths at the wall gives a row of absolute sum at most $p$. Deleting the rejected paths from the unrestricted kernel also gives the bound $\rho+1-p$ (regard both rows as indexed by all integer endpoints). Thus every killed row has absolute sum at most $(1+\rho)/2<1$. This bound is independent of the starting height and of the position of the block.
 
 Split after $h=\lfloor m/2\rfloor$ steps. The complex row of surviving prefixes has absolute sum at most $\Pr(E_h)$. In the remainder use as many full blocks as fit, and bound the final partial block by one in maximum absolute row sum. The conditional expectation is bounded by
 $$\frac{\Pr(E_h)}{\Pr(E_m)}
   \left(\frac{1+\rho}{2}\right)^{\lfloor(m-h)/(2l)\rfloor}.$$
-The prefactor is bounded by the ballot counts $2^{-j}\binom{j}{\lfloor j/2\rfloor}$. Since $1/l\gg|\theta|^{2/3}$ throughout the Fourier interval, this proves the claim, including the case in which fewer than $2l$ steps remain.
+For fair words the prefactor is bounded by the ballot counts $2^{-j}\binom{j}{\lfloor j/2\rfloor}$. Since $1/l\gg|\theta|^{2/3}$ throughout the Fourier interval, this proves the claim, including the case in which fewer than $2l$ steps remain.
 
 ## Differentiable local limits
 
@@ -60,4 +57,4 @@ The zeroth-order limit is uniform over *all* ranks. Outside each fixed neighborh
 
 ## Remaining ranges
 
-Together with the [two tail estimates](monotonicity.md), the result identifies two possible ways that a sequence of arbitrarily large counterexamples could escape these arguments. Extra reversals could occur with $k/n\to\infty$ and $k/m^{3/2}\to0$, or with $k/m^{3/2}\to\infty$ while $k=O(m^{3/2}\log m)$. The absolute error in the difference limits gives no relative control as $f$ tends to zero. An eventual result on both remaining ranges would also require a way to cover the sizes below its threshold to settle the conjecture for every $n$.
+The [tilted ballot argument](rising-side.md) controls the large-corank side all the way to this window. On the other side, the [fixed-linear tail estimate](monotonicity.md#3-decrease-near-the-top) still leaves the regime $k/n\to\infty$, $k/m^{3/2}\to0$. The absolute error in the difference limits gives no relative control there as the density tends to zero.
