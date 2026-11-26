@@ -1,6 +1,6 @@
 # Reduction to an explicit finite range
 
-Put $N=10^{290}$. For both central staircases the rank sequence is unimodal whenever $n\ge N$. Consequently any counterexample to Conjecture 3.4 must have $321\le n<N$, using the [exact checks](README.md#exact-coefficient-checks) for the lower bound. This upper bound on possible exceptional sizes is far beyond feasible exhaustive computation.
+Put $N=10^{290}$. For both central staircases the rank sequence is unimodal whenever $n\ge N$. Consequently any counterexample to Conjecture 3.4 must have $385\le n<N$, using the [exact checks](README.md#exact-coefficient-checks) for the lower bound. This upper bound on possible exceptional sizes is far beyond feasible exhaustive computation.
 
 The proof joins a [frequency comparison for the area transfer matrix](harmonic-small-area.md) to a [Brownian comparison after tilting](tilted-peak.md) and the [increasing-side estimate](first-passage.md). The exact moment formulas and the untilted comparison below give independent finite thresholds. All estimates apply to both parities of the word length.
 

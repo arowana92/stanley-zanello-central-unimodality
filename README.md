@@ -10,7 +10,7 @@ The conjecture says that for each shape and every $n$, the sequence from $a_0$ t
 
 ## Asymptotic result and finite-size gap
 
-The research draft proves unimodality for **both central families** whenever $n\ge N=10^{290}$. Exact computation verifies every $1\le n\le320$. The outstanding sizes lie between 321 and $N-1$. The upper bound is far too large for exhaustive verification. [Proof of the finite reduction](finite-reduction.md)
+The research draft proves unimodality for **both central families** whenever $n\ge N=10^{290}$. Exact computation verifies every $1\le n\le384$. The outstanding sizes lie between 385 and $N-1$. The upper bound is far too large for exhaustive verification. [Proof of the finite reduction](finite-reduction.md)
 
 At $n\ge10^{550}$ the coefficients satisfy the stronger inequality $a_j^2>a_{j-1}a_{j+1}$ at every interior upper-half rank $j\ge D/2$, where $D=|\lambda|$. At **every size**, writing $k=D-j$, the determinant $a_j^2-a_{j-1}a_{j+1}$ exceeds $a_j^2/(40k)$ for $1\le k\le n/3$. The all-size proof uses the exact recurrence after pairing ballot steps and a rational polynomial certificate. [Paired-step proof and verifier](paired-steps.md) · [Upper-half curvature proof](upper-curvature.md)
 
@@ -65,11 +65,11 @@ $$P_{m,d}=q^d(P_{m-1,d}+P_{m-1,d-1}),\qquad 0\le d\le\lfloor m/2\rfloor.$$
 Start at $P_{0,0}=1$, use zero outside the admissible range, and sum over $d$ to obtain the rank polynomial.
 
 ```sh
-python3 -B verify.py --max-n 320 --direct-n 12 --upper-curvature
+python3 -B verify.py --max-n 384 --direct-n 12 --upper-curvature
 ```
 
-All 640 rank sequences pass the weak unimodality test. The script checks every coefficient against recursive enumeration of the actual parts and the Catalan recurrences for $1\le n\le12$, verifies each total against $\binom{m}{n}$, and detects the published valley $17,16,17$ at ranks 16–18 of $(9,7,5,3)$. At $n=320$ the unique peaks are at rank 96645 of 102400 and rank 96949 of 102720, respectively. The calculation uses arbitrary-precision integers. Add `--verbose` for the peak ranks and sizes of every shape. These are finite checks.
+All 768 rank sequences pass the weak unimodality test. The script checks every coefficient against recursive enumeration of the actual parts and the Catalan recurrences for $1\le n\le12$, verifies each total against $\binom{m}{n}$, and detects the published valley $17,16,17$ at ranks 16–18 of $(9,7,5,3)$. At $n=384$ the unique peaks are at rank 139840 of 147456 and rank 140206 of 147840, respectively. The calculation uses arbitrary-precision integers. Add `--verbose` for the peak ranks and sizes of every shape. These are finite checks.
 
-The curvature scan finds $a_j^2>a_{j-1}a_{j+1}$ at every interior rank $j\ge D/2$ for both families and every $9\le n\le320$. At $n=8$ direct enumeration gives the triple $(448,465,483)$ centered at rank 44 in the odd-part shape and $(392,423,457)$ centered at rank 38 in the even-part shape. Their log-concavity determinants are $-159$ and $-215$, respectively, and both triples are increasing. Proving upper-half log-concavity for the outstanding sizes would suffice for Conjecture 3.4 by the lower-half increase and the direct checks for $n<9$.
+The curvature scan finds $a_j^2>a_{j-1}a_{j+1}$ at every interior rank $j\ge D/2$ for both families and every $9\le n\le384$. At $n=8$ direct enumeration gives the triple $(448,465,483)$ centered at rank 44 in the odd-part shape and $(392,423,457)$ centered at rank 38 in the even-part shape. Their log-concavity determinants are $-159$ and $-215$, respectively, and both triples are increasing. Proving upper-half log-concavity for the outstanding sizes would suffice for Conjecture 3.4 by the lower-half increase and the direct checks for $n<9$.
 
 At fixed corank $k=D-j$, the coefficient agrees with a polynomial in $n$ through $k=2n+1$. At $k=2n+2$ the polynomial exceeds the count by one. Exact Newton coefficients certify strict log-concavity with relative determinant greater than $1/(40k)$ for both families when $1\le k\le640$ and $n\ge\max(9,\lceil k/2\rceil)$. Together with the rank scan this gives strict log-concavity at every interior upper-half rank of corank at most 640 for all $n\ge9$. [Stabilization proof](paired-steps.md#an-exact-stabilization-identity) · [Newton certificate](fixed-corank.md)
