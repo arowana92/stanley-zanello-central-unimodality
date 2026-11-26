@@ -1,6 +1,6 @@
 # Reduction to an explicit finite range
 
-Put $N=10^{78}$. For both central staircases the rank sequence is unimodal whenever $n\ge N$. Consequently any counterexample to Conjecture 3.4 must have $385\le n<N$, using the [exact checks](README.md#exact-coefficient-checks) for the lower bound. This upper bound on possible exceptional sizes is far beyond feasible exhaustive computation.
+Put $N=10^{78}$. For both central staircases the rank sequence is unimodal whenever $n\ge N$. Consequently any counterexample to Conjecture 3.4 must have $1001\le n<N$, using the [finite verification through 1000 rows](certified-window.md) for the lower bound. This upper bound on possible exceptional sizes is far beyond feasible exhaustive computation.
 
 The [odd-height flat pairs](flat-pairs.md) and the [linear-potential estimate](linear-potential.md) give growth through $10^{-5}n^{3/2}$ at $n\ge10^{61}$. The [tilted concentration proof](tilt-concentration.md) overlaps this interval and joins the [increasing-side estimate](first-passage.md) at $4m^{3/2}$. It also proves strict log-concavity on the upper half for $n\ge10^{134}$. The earlier proofs below give independent thresholds using a smaller complex neighborhood of the saddle. All estimates apply to both word parities.
 
