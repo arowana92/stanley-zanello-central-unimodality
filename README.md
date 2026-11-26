@@ -25,6 +25,8 @@ There is an explicit result for the high-rank end. For both families and every $
 
 There is also an explicit bound on the increasing side. For both families the coefficients increase strictly and are strictly log-concave at every rank $D/2\le j\le D-200m^{3/2}$. This leaves at most $200m^{3/2}+O(1)$ ranks to examine at any size, before applying the linear tail bound. The constant is large enough that the new interval first becomes nonempty at $m=2{,}560{,}000$. [Finite-size proof with constants](effective-middle.md)
 
+A separate uniform transfer estimate reaches the scale of the peak from the high-rank end. With $c_*=exp(-10^{311})$, the corank coefficients increase strictly and are strictly log-concave for $2n\le k\le c_*n^{3/2}$. The constant makes this a theoretical improvement on the linear bound only at extremely large sizes. [Effective small-area proof](effective-small-area.md)
+
 The final subsequence argument combining the four estimates is in [the conclusion](small-area.md#consequence-and-finite-size-gap). The proof is a research draft.
 
 ## Literature check
