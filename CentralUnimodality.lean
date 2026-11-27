@@ -16,3 +16,6 @@ public import CentralUnimodality.MomentSeries
 public import CentralUnimodality.EulerBase
 public import CentralUnimodality.ExactMoments
 public import CentralUnimodality.WallisTrial
+public import CentralUnimodality.SecondWitnessCheck
+public import CentralUnimodality.ReflectedMoments
+public import CentralUnimodality.StaircasePrefix

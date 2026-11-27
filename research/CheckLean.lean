@@ -103,3 +103,15 @@ example : (List.range 4).map (fun r =>
       [10,27,105,477] := by decide +kernel
 
 #print axioms Wallis.uniform
+
+#print axioms Laurent.cellNumerator_exact
+#print axioms Witness.normalizedCell_exact
+#print axioms Witness.weightedSum_expectation
+#print axioms Witness.second_expectation
+#print axioms odd_prefix_from_bounds
+#print axioms even_prefix_from_bounds
+
+-- Integrating the unit cells of the directly enumerated two-row shapes
+-- gives these four unnormalized moments in each parity.
+example : (List.range 4).map (Witness.rawCell 2 0) = [6,32,182,1096] := by decide +kernel
+example : (List.range 4).map (Witness.rawCell 2 1) = [10,72,1654/3,4464] := by decide +kernel
