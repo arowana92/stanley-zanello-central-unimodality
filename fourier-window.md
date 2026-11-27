@@ -139,6 +139,18 @@ The following inequalities are required after all the preceding error deductions
 
 Convex combinations preserve each strict margin. Integrating $T'$ over one lattice spacing, or $T''$ against the centered triangular kernel of mass one in scaled difference units, transfers the corresponding sign to the lattice difference. On the asserted corank window one has $.1364<x<.623$ and $1/S<.000004$. Thus forward steps with $x\le.338$ increase, those with $x\ge.399$ decrease, and consecutive forward differences decrease strictly between these regions, including the joins. This proves unimodality on the entire window. Lean checks the transfer from convolution residuals to rank differences, interpolation between the measured spatial nodes and endpoint sizes, and the implication from the derivative signs to unimodality. The numerical enclosures and margins used as inputs to these Lean theorems are supplied by the external verifier. [Residual theorem](CentralUnimodality/FourierCertificate.lean) · [Mesh and sign theorems](CentralUnimodality/SpatialWindow.lean)
 
+### Independent integer check of the three signs
+
+For the first group, a second implementation checked all three continuous spatial intervals using the exact survival probabilities and an integer dot product at each mesh node. At every retained frequency and length, it encloses the true amplitude by the input and convolution checks above, divides the stored candidate by the exact $r_N$, then rounds down to multiples of $2^{-80}$. The largest discrepancy from the chord between the two rounded endpoints, plus the rounding and amplitude allowances, bounds the length interpolation error. This gives one error per frequency and parity for the weighted sums at derivative orders 1 and 2. [Group verifier](verify_spatial_mesh.py)
+
+For the spatial test, let $D=2^{112}$ and $H=32768$. The dot product for order $r$ uses the rounded cosine at tick $(it+rH/4)\bmod H$ and the integer amplitude numerator multiplied by $t^r$. The dyadic half-angle bounds enclose every table entry to within $653/D$. The verifier deducts the phase error, the $h^2/8$ interpolation allowance with $h=Q/(HS)$, the weighted amplitude error and the truncation and alias reserves. It checks every node from the floor of the left endpoint to the ceiling of the right endpoint of each spatial interval, at both length endpoints and in both parities. [Dot product identity and error](CentralUnimodality/MeshDot.lean)
+
+For $2049\le N\le2069$, the resulting lower margins were **0.084630** for the increasing interval, **104.088543** for the negative second derivative and **0.961176** for the decreasing interval. Each value is rounded down. Here $N$ is the strict walk half-length, so the odd-part staircase has $n=N$ rows and the even-part staircase has $n=N-1$ rows. Lean checks the cosine table bound $653/D$ for the entire period. The amplitude and node inequalities for the full group were verified externally. [Kernel proof of the table bound](CentralUnimodality/MeshRadius.lean)
+
+~~~sh
+python3 -B verify_spatial_mesh.py /tmp/sz_fourier_window 2049 2069 --jobs 4
+~~~
+
 ## Reproduction
 
 From this checkout run

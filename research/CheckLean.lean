@@ -217,3 +217,6 @@ example (hD : DyckComparisons)
 #print axioms SmallGrid.retained_quadrant_cut
 #print axioms SmallGrid.cut_sound
 #print axioms SmallGrid.cut_amplitude
+#print axioms MeshPhase.uniform_sample_error
+#print axioms MeshPhase.production_radius
+#print axioms MeshPhase.derivative_dot_error
