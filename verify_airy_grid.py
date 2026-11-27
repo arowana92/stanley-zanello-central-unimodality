@@ -1,7 +1,8 @@
 """Rational residual bounds for sampling the Dirichlet Airy eigenfunction."""
 
+from decimal import Decimal, localcontext
 from fractions import Fraction as Q
-from math import comb
+from math import ceil, comb, floor
 
 from verify_rising import PI_LO, decay, exp_small_upper, sqrt_hi, sqrt_lo
 
@@ -76,7 +77,6 @@ def check_residual():
     b = E/2 + E**2*D**2/60
     assert b**3/6 + E**3/120 + E**4*D**2/7200 < 1
     assert b*b/2 + E**2/60 < Q("1.3")
-    return airy, corrected, F0
 
 
 def check_energy():
@@ -148,9 +148,64 @@ def check_growth_integral():
     assert 500**2*(Q("1.10")-Q(".016"))**2/(Q("2.001")**3*Q(".565")**2) > n
 
 
+def finite_energy(h):
+    """Enclose the infinite real Jacobi norm by two finite Sturm tests."""
+    scale = 2**64
+    size = 16*h
+    # Bound exp(-1/(2 h^3)) between adjacent alternating Taylor sums.
+    term = value = Q(1)
+    for j in range(1, 13):
+        term *= Q(-1, 2*h**3*j)
+        value += term
+    lower = value + term*Q(-1, 26*h**3)
+    lo_q = floor(lower*scale)
+    hi_q = ceil(value*scale)
+    lo_edges, hi_edges = [scale], [scale]
+    for _ in range(1, size):
+        lo_edges.append(lo_edges[-1]*lo_q//scale)
+        hi_edges.append(-(-hi_edges[-1]*hi_q//scale))
+
+    def bracket(edges, final_diagonal):
+        def above_root(x):
+            last, previous = 1, 0
+            for j in range(size):
+                diag = final_diagonal if j == size-1 else 0
+                minor = (x-diag)*last
+                if j:
+                    minor -= edges[j-1]**2*previous
+                if minor <= 0:
+                    return False
+                previous, last = last, minor
+            return True
+
+        low, high = scale, 2*scale+1
+        assert not above_root(low) and above_root(high)
+        while high-low > 1:
+            middle = (low+high)//2
+            if above_root(middle):
+                high = middle
+            else:
+                low = middle
+        return low, high
+
+    lo = bracket(lo_edges, 0)[0]
+    hi = bracket(hi_edges, hi_edges[-1])[1]
+    assert 2*hi_edges[-1] < lo  # Tail norm after cutting the last edge.
+    assert 0 < hi-lo < 4096
+    # Decimal exp/ln are correctly rounded to nearest in this context.
+    # Only use the midpoint for displaying an estimate of the Airy zero.
+    with localcontext() as ctx:
+        ctx.prec = 40
+        rho_over_two = Decimal(lo+hi)/(4*scale)
+        target = -2*h*h*rho_over_two.ln() + Decimal(3)/(2*h)
+        return 2*target/(1+(1+2*target/(15*h*h)).sqrt())
+
+
 if __name__ == "__main__":
     check_residual()
     check_energy()
     check_warm_blocks()
     check_growth_integral()
+    for h in (8,16,32):
+        print(f"H = {h:2d}, corrected energy estimate of a = {finite_energy(h):.10f}")
     print("Verified the corrected Airy residual, complex energy disk and 100000-block growth saddle.")

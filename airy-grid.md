@@ -79,6 +79,12 @@ This uses (1)'s cubic estimate, the real-part bound, and the integral of the exp
 
 To undo the tilt it suffices that $\int \Re J\,dx>\int 1.001|yJ|\,dx$. Indeed the ratio of the adjacent tilted mass change to the tilted mass at $k$ is bounded in modulus by $\int |\theta J|/\int\Re J$, and $\beta/(1-e^{-\beta})<1.001$. Outside the local interval pay the single absolute integral with weight $1+1.001|y|$. In the intervals $[u,v]=[.08,.2],[.2,1]$ (including negative frequencies), the two costs are below $1.27$ and $.002$ respectively. The bound in each case is $1.01(1+1.001 v)d_0 e^{-C u^2}/(Cu)$ with $C=.0034(N-42)$ or $.00249(N-42)$. From 1 through 45 the costs are below $.002$ by the constant lower bounds on $B$. Beyond 45 the stretched exponential costs less than $.001$ using $d_0<\sqrt{.60N}$ and the weaker rate $1/80$ throughout. For instance split off $e^{-N45^{2/3}/160}$ and integrate $6 d_0(1+1.001y)e^{-y^{2/3}}$. All bounds improve beyond $N=100000$. Subtraction leaves a positive margin, proving the corank sign.
 
+## Independent finite-matrix check of the correction
+
+The verifier also brackets the top eigenvalue of the infinite **real** single-step matrix $T_\beta$ at $H=8,16,32$. Cut after $16H$ vertices. Deleting the last edge gives a lower bound by restriction. To obtain an upper bound, replace that edge by its weight on both incident diagonal entries, using $2uv\le u^2+v^2$. The tail norm is at most twice the cut-edge weight, below the computed lower bound. Dyadic enclosures of the finite nonnegative matrices give bounds by entrywise monotonicity. The program bisects their top eigenvalues by testing positivity of all leading principal minors of $xI-T$ in integer arithmetic. The bracket widths are below $4096\cdot2^{-64}$.
+
+Using the bracket midpoint for display, solve $a_H+a_H^2/(30H^2)=-H^2p+3/(2H)$ for its positive root. This gives $2.3381137674$, $2.3381078088$, $2.3381074354$ respectively, approaching the first Airy zero in absolute value ($2.3381074105$ to ten decimal places). These three finite samples check the sign and scaling of the correction independently of the residual argument. [Tabulated Airy zeros](https://dlmf.nist.gov/9.9#v)
+
 ~~~sh
 python3 -B verify_airy_grid.py
 ~~~
