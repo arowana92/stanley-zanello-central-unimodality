@@ -1,8 +1,8 @@
 # Reduction to an explicit finite range
 
-Put $N=10^{36}$. For both central staircases the rank sequence is unimodal whenever $n\ge N$. Consequently any counterexample to Conjecture 3.4 must have $2049\le n<N$, using the [finite verification through 2048 rows](certified-window.md) for the lower bound. This upper bound on possible exceptional sizes is far beyond feasible exhaustive computation.
+Put $N=10^{30}$. For both central staircases the rank sequence is unimodal whenever $n\ge N$. Consequently any counterexample to Conjecture 3.4 must have $2049\le n<N$, using the [finite verification through 2048 rows](certified-window.md) for the lower bound. This upper bound on possible exceptional sizes is far beyond feasible exhaustive computation.
 
-The [comparison at two real tilts](holder-blocks.md) joins the small-area argument to the peak using the common ground energy of the Dirichlet linear potential. It covers the peak up to corank $4m^{3/2}$, where the [first-passage inequality](first-passage.md) applies. The earlier [two-harmonic estimate](two-harmonics.md) gives strict log-concavity on the upper half for $n\ge10^{88}$. Earlier size bounds follow from the [tilted concentration argument](tilt-concentration.md) and the estimates below. All arguments apply to both word parities.
+The [maximum-height estimate](tilted-height.md) sharpens the clock comparison near the peak. The [Fourier block at two real tilts](holder-blocks.md) supplies the adjacent signs at smaller coranks. It covers the peak up to corank $4m^{3/2}$, where the [first-passage inequality](first-passage.md) applies. The earlier [two-harmonic estimate](two-harmonics.md) gives strict log-concavity on the upper half for $n\ge10^{88}$. Earlier size bounds follow from the [tilted concentration argument](tilt-concentration.md) and the estimates below. All arguments apply to both word parities.
 
 ## Unimodality from the first difference
 
