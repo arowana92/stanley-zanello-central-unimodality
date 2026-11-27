@@ -14,3 +14,4 @@ public import CentralUnimodality.MomentWitnesses
 public import CentralUnimodality.PrefixInduction
 public import CentralUnimodality.MomentSeries
 public import CentralUnimodality.EulerBase
+public import CentralUnimodality.MomentUniqueness

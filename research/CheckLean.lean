@@ -76,3 +76,7 @@ example {n : ℕ} (hn : n ≤ 95) :
 #print axioms momentColumn_rescale
 #print axioms catalanRoot_mul_ballotBase
 #print axioms sizeEuler_dyckBase
+
+#print axioms rootPower_coeff
+#print axioms MomentBase.eval_divided
+#print axioms certify_moment_series
