@@ -1,6 +1,6 @@
 # Descent to fewer than 300,000 rows
 
-**Theorem.** If either central staircase fails unimodality at some $n\ge300000$, then the odd-part staircase fails at some $33000<h<300000$. In particular Conjecture 3.4 for both families is equivalent to unimodality in both families for $2049\le n<300000$. The [existing finite certificate](certified-window.md) covers the smaller sizes. The equivalence leaves the indicated finite problem open.
+**Theorem.** If either central staircase fails unimodality at some $n\ge300000$, then the odd-part staircase fails at some $33000<h<300000$. In particular Conjecture 3.4 for both families is equivalent to unimodality in both families for $2049\le n<300000$. The [existing finite certificate](certified-window.md) covers the smaller sizes. The equivalence leaves the indicated finite problem open. A [moment argument](moment-comparisons.md) further restricts which coranks need checking at these sizes.
 
 The single-step statement is stronger. A failure at $n\ge300000$ forces an odd-part failure at $.11n<h\le n$, with $h<n$ if the starting row is odd-part. The strict decrease in row count comes directly from Stump's recurrence. For comparison, it already gives a cutoff of one million by using the earlier [reflected comparisons and peak bounds](type-b-transfer.md) in the same argument. Neither descent theorem needs the conjectural type $B$ diagonal coinvariant specialization.
 
