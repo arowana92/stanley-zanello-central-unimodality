@@ -221,3 +221,7 @@ example (hD : DyckComparisons)
 #print axioms MeshPhase.production_radius
 #print axioms MeshPhase.derivative_dot_error
 #print axioms MeshLength.checked_chord
+#print axioms WeightOperators.raise_power_injective_on
+#print axioms WeightOperators.reflected_finrank
+#print axioms WeightOperators.dyck_comparisons_of_operators
+#print axioms WeightOperators.conjecture34_of_weight_sums_and_midpoints

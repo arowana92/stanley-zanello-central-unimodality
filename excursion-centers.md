@@ -25,6 +25,18 @@ Antisymmetrizing monomials spans the alternating polynomials. Repetition of an e
 
 For the weaker endpoint bound needed by the staircase induction, Lean also gives a direct calculation with the area/dinv formula. In the area word of a Dyck path of semilength $l$, label each entry $a$ by $(a,b)$ with $b$ its number of later equal entries. These $l$ pairs are distinct. The sum of their first coordinates is area, and the sum of their second coordinates counts only equal-height inversions. Hence area plus dinv is at least $E(l)$. Each nonempty total-degree slice therefore has degree at least the required cutoff. Its symmetry and unimodality give the reflected inequalities for that slice, and summing over the slices proves them for $C_l(q)$. The identification of the area/dinv enumerator with the diagonal harmonic character is the published input to this argument. Lean checks the degree bound and summation, with the symmetry and unimodality of the slices as an explicit hypothesis. [Area/dinv and character formulas, equations (50)–(51)](https://arxiv.org/abs/math/0310424) · [Lean proof](CentralUnimodality/DyckDiagonalSlices.lean)
 
+### Reflected dimensions from raising and lowering
+
+There is a direct operator proof of the inequality needed in the induction. In total degree $d$, let $V_k$ be the subspace of first degree $k$. Suppose $E$ raises this degree by one, $F$ lowers it by one, $FV_0=0$, and $(EF-FE)v=(2k-d)v$ on $V_k$. Then $E^{j-i}:V_i\to V_j$ is injective whenever $i\le j$ and $i+j\le d$. The statement holds over the rationals for all $d$.
+
+Indeed, commuting $F$ through $s+1$ copies of $E$ gives, for $v\in V_k$,
+$$
+ E^{s+1}Fv=FE^{s+1}v+(s+1)(2k-d+s)E^s v.
+$$
+Suppose $2k+s<d$ and $E^{s+1}v=0$. The identity with $s+1$ in place of $s$ gives $E^{s+2}Fv=0$. Induction on $k$ gives $E^{s+1}Fv=0$ since $Fv\in V_{k-1}$, with $Fv=0$ at $k=0$. The displayed scalar is nonzero, so $E^s v=0$. Repeating this implication proves injectivity. Summing the resulting dimension inequalities over the total degrees above the cutoff gives the reflected coefficients of the univariate polynomial. Lean checks this argument and its use in the staircase induction. [Operator and dimension theorems](CentralUnimodality/DyckWeightOperators.lean)
+
+For the diagonal coinvariants the intended operators are $E=\sum_i x_i\partial_{y_i}$ and $F=\sum_i y_i\partial_{x_i}$. The formal theorem still requires a realization of the graded spaces, their degree cutoff, and the identification of the summed dimensions with $[q^k]C_l(q)$. The specialization at $t=1$ in the cited type A result supplies the univariate identification in the written proof.
+
 ## Unmatched up-steps and the minimum sum of interval endpoints
 
 Match each down-step of a surviving walk with the last available up-step. If its final height is $e=2u+\delta$, its $e$ unmatched up-steps separate ordinary excursions at heights $i=0,\ldots,e$. Let their semilengths be $l_i$. Matched pairs cannot enclose an unmatched step, and inserting any excursions among these single up-steps recovers a unique walk. Here $\sum_i l_i=n-u$. The polynomial for fixed $u,(l_i)$ is

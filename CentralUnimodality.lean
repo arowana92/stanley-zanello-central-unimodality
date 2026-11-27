@@ -34,6 +34,7 @@ public import CentralUnimodality.ReflectedPolynomials
 public import CentralUnimodality.SignedArcBounds
 public import CentralUnimodality.RankTruncation
 public import CentralUnimodality.DyckDiagonalSlices
+public import CentralUnimodality.DyckWeightOperators
 public import CentralUnimodality.SpatialWindow
 public import CentralUnimodality.PackedAmplitude
 public import CentralUnimodality.QuadrantCheck

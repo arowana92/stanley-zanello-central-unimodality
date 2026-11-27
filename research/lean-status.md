@@ -57,6 +57,8 @@
 
 The kernel-checked 63-row base theorem uses only arithmetic on natural numbers. In the formal proof every positive row with ballot length at most 127 is evaluated at base $2^{128}$. Reading its digits from low to high tests every adjacent pair through the degree of the shape. The 95-row theorem uses base $2^{192}$ to check the additional sizes and the reflected comparisons. Both verifiers compute their coefficients and detect the peak inside Lean.
 
+Lean also proves that a raising operator on a rational graded space injects degree $i$ into degree $j$ whenever $i\le j$ and $i+j\le d$, given the degree-$d$ commutator, the lowering operator and its bottom boundary. This gives the ordinary Dyck comparisons if its area coefficients are sums of those weight dimensions over total degrees above the cutoff. Realizing the type A diagonal coinvariants and identifying their Hilbert series remain formal proof obligations. [Kernel proof](../CentralUnimodality/DyckWeightOperators.lean) · [Derivation](../excursion-centers.md#reflected-dimensions-from-raising-and-lowering)
+
 ## Remaining proof obligations
 
 The theorem `conjecture34_of_comparisons_and_midpoints` reduces the universal strict-partition statement to two hypotheses. [Lean reduction](../CentralUnimodality/ReflectedPolynomials.lean)
