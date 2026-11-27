@@ -301,3 +301,10 @@ example (hD : DyckComparisons)
 #print axioms MarkedExcursion.short_free_differences
 #print axioms MarkedExcursion.first_hit_rank_bound
 #print axioms MarkedExcursion.first_hit_rank_marked
+#print axioms MarkedExcursion.homogeneous_live_upper
+#print axioms MarkedExcursion.middle_displacement_bound
+#print axioms MarkedExcursion.first_hit_three_blocks
+#print axioms MarkedExcursion.pinned_hit_bin
+#print axioms MarkedExcursion.pinned_rank_loss
+#print axioms MarkedExcursion.late_event_probability
+#print axioms MarkedExcursion.difference_hit_decomposition

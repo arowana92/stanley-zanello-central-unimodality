@@ -64,7 +64,7 @@ theorem suffix_transform_words (c θ : ℝ) (m : ℕ) : suffixTransform c θ m =
     rw [Finset.sum_congr rfl (fun w hw => he false w hw),Finset.sum_congr rfl (fun w hw => he true w hw),
       ← Finset.mul_sum,← Finset.mul_sum,← add_mul,hK,ih,mul_comm]
 
-private theorem integral_lattice_phase (b : ℤ) :
+theorem integral_lattice_phase (b : ℤ) :
     (∫ θ in -π..π, phase (θ*b)) = if b=0 then ((2*π:ℝ):ℂ) else 0 := by
   by_cases hb : b=0
   · simp [hb,intervalIntegral.integral_const,Complex.real_smul]; ring

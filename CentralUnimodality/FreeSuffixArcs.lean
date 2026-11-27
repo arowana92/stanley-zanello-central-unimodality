@@ -103,7 +103,7 @@ theorem suffix_small_error (c θ : ℝ) (m : ℕ) (D : ℝ)
   dsimp only [p] at *
   linarith only [h₂,h₃]
 
-private theorem sine_chord_one {x : ℝ} (hx : 0 ≤ x) (h₁ : x ≤ 1) : (161/192)*x ≤ sin x := by
+theorem sine_chord_one {x : ℝ} (hx : 0 ≤ x) (h₁ : x ≤ 1) : (161/192)*x ≤ sin x := by
   have hs : 23/48 ≤ sin (1/2) := by linarith only [sin_gt_sub_cube (by norm_num : (0:ℝ)<1/2)]
   have hc : 7/8 ≤ cos (1/2) := by linarith only [one_sub_sq_div_two_le_cos (x := 1/2)]
   have hsin : 161/192 ≤ sin 1 := by

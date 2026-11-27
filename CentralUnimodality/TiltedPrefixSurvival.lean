@@ -189,7 +189,7 @@ private theorem ballot_snoc_iff (w : List Bool) (b : Bool) :
   exact ⟨fun h => ⟨fun y hy => h y (Or.inl hy),h _ (Or.inr rfl)⟩,
     fun ⟨h₁,h₂⟩ y hy => hy.elim (h₁ y) (fun he => he ▸ h₂)⟩
 
-private theorem prefix_partition {w : List Bool} {t : ℕ} (hw : w ∈ words (t+1)) :
+theorem prefix_partition {w : List Bool} {t : ℕ} (hw : w ∈ words (t+1)) :
     (w.take t ∈ ballots t ↔ BallotFrom 0 w ∨ FirstHitPath 1 w) ∧
     ¬(BallotFrom 0 w ∧ FirstHitPath 1 w) := by
   induction w using List.reverseRecOn with

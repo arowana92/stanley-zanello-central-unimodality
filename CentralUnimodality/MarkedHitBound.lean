@@ -31,7 +31,7 @@ private theorem fair_anchor : (25:ℝ)*(2*64+1)*(survival 64)^2 < 16 := by
   rw [survival,Nat.centralBinom,Nat.choose_eq_factorial_div_factorial (by decide)]
   norm_num1
 
-private theorem survival_scaled_lt (d : ℕ) : survival d * √(2*d) < 4/5 := by
+theorem survival_scaled_lt (d : ℕ) : survival d * √(2*d) < 4/5 := by
   have mono : Monotone (fun j : ℕ => (2*(j:ℝ))*(survival j)^2) := by
     apply monotone_nat_of_le_succ
     intro j

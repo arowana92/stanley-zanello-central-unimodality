@@ -303,6 +303,57 @@ def check_marked(max_d=10):
     print(f"Marked heights and exact tilted first-hit probabilities agree through semilength {max_d}.")
 
 
+def check_pinned_first_hits(max_d=5):
+    """Compare exact three-block products with every sign word at two intercepts."""
+    def endpoint_law(length, intercept, survival):
+        law = Counter({0: Q(1)})
+        for i in range(length):
+            odds = Q(4)**(intercept-i)
+            up = odds / (1+odds)
+            following = Counter()
+            for height, mass in law.items():
+                following[height+1] += mass * up
+                if not survival or height > 0:
+                    following[height-1] += mass * (1-up)
+            law = following
+        return law
+
+    tests = 0
+    for d in range(max_d+1):
+        t = 2*d+1
+        for intercept in (d, d+1):
+            weights = [(4**max(0, intercept-i), 4**max(0, i-intercept)) for i in range(t)]
+            total = prod(up+down for up, down in weights)
+            splits = {(t//3, max(0, t//3-1)), (0, 0), (0, t-1), (t-1, 0)}
+            relaxed = Counter()
+            first_hit = 0
+            for signs in product((-1, 1), repeat=t):
+                if signs[-1] != -1 or sum(signs) != -1:
+                    continue
+                mass = prod(pair[sign < 0] for pair, sign in zip(weights, signs))
+                heights = [0]
+                for sign in signs:
+                    heights.append(heights[-1]+sign)
+                if min(heights[:-1]) >= 0:
+                    first_hit += mass
+                for a, b in splits:
+                    if min(heights[:a+1]) >= 0 and min(heights[t-b-1:t]) >= 0:
+                        relaxed[a, b] += mass
+            for a, b in splits:
+                q = t-a-b-1
+                front = endpoint_law(a, intercept, True)
+                middle = endpoint_law(q, intercept-a, False)
+                reverse_intercept = t-1-intercept
+                back = endpoint_law(b, reverse_intercept-1, True)
+                odds = Q(4)**reverse_intercept
+                last = odds / (1+odds)
+                pinned = last * sum(p*s*middle[y-x] for x, p in front.items() for y, s in back.items())
+                assert pinned == Q(relaxed[a, b], total)
+                assert Q(first_hit, total) <= pinned <= last*sum(front.values())*sum(back.values())*max(middle.values())
+                tests += 1
+    print(f"Three-block first-hit estimates agree with exact enumeration for {tests} splits and tilts.")
+
+
 def check_hit_rank_mixtures(m, literal):
     """Rebuild each first-hit rank polynomial from independently generated pieces."""
     suffixes = [[1]]
@@ -485,6 +536,7 @@ if __name__ == "__main__":
     check_suffix()
     check_marked()
     check_rank_tilt()
+    check_pinned_first_hits()
     check_joint_tilt()
     check_prefix_variance()
     check_peak_bound()
