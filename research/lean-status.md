@@ -59,6 +59,8 @@ The kernel-checked 63-row base theorem uses only arithmetic on natural numbers. 
 
 Lean constructs the raising and lowering operators on the rational polynomial ring in paired variables and on the quotient by the ideal of positive-degree simultaneous invariants. In the image of the alternating polynomials of total degree $d$, raising injects degree $i$ into degree $j$ whenever $i\le j$ and $i+j\le d$. The kernel also proves that these spaces vanish below the induction cutoff. The sole additional ordinary Dyck input on this route is the univariate Hilbert-series specialization for the explicit quotient spaces. [Raising and lowering](../CentralUnimodality/DyckWeightOperators.lean) · [Polynomial realization](../CentralUnimodality/DiagonalPolarization.lean) · [Quotient and cutoff](../CentralUnimodality/DiagonalCoinvariants.lean)
 
+The signed averaging theorem `Polarization.coinvariantSpace_iff` identifies each image above with all classes in the quotient bidegree that transform by the sign of every simultaneous permutation. [Alternating lifts](../CentralUnimodality/AlternatingLift.lean)
+
 ## Remaining proof obligations
 
 The theorem `conjecture34_of_comparisons_and_midpoints` reduces the universal strict-partition statement to two hypotheses. [Lean reduction](../CentralUnimodality/ReflectedPolynomials.lean)

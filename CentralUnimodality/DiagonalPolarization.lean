@@ -154,7 +154,7 @@ noncomputable def polynomialOperators (n d : ℕ) : WeightOperators d (Poly n) w
     have h := congrArg (fun (D : Derivation ℚ (Poly n) (Poly n)) => D p) (commutator (n := n))
     simp only [Derivation.commutator_apply,sub_apply,euler_column false hp.1,euler_column true hp.2,
       Int.cast_natCast,Int.cast_sub] at h
-    apply eq_add_of_sub_eq' 
+    apply eq_add_of_sub_eq'
     change move false true (move true false p) - move true false (move false true p) = _
     rw [h,← sub_smul]
     congr 1

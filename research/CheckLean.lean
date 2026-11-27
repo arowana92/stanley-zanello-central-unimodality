@@ -230,3 +230,4 @@ example (hD : DyckComparisons)
 #print axioms Polarization.coinvariant_reflected
 #print axioms Polarization.alternating_degree_cutoff
 #print axioms Polarization.conjecture34_of_hilbert_and_midpoints
+#print axioms Polarization.coinvariantSpace_iff
