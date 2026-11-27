@@ -159,3 +159,15 @@ example : (List.range 4).map (Witness.rawCell 2 1) = [10,72,1654/3,4464] := by d
 #print axioms killed_arc_032
 #print axioms rank_fourier_blocks
 #print axioms conditional_rank_arc
+
+#print axioms Laurent.binomial_cell
+#print axioms Laurent.cachedRow_eq
+#print axioms Witness.evenCells_exact
+#print axioms Witness.oddCells_exact
+#print axioms Witness.first_expectation
+#print axioms reflected_of_unimodal
+#print axioms conjecture34_of_comparisons_and_midpoints
+
+example (hD : DyckComparisons)
+    (hc : ∀ n ≥ 96, ∀ δ ≤ 1, CentralToMidpoint n δ) : Conjecture34 :=
+  conjecture34_of_comparisons_and_midpoints hD hc
