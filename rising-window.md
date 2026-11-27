@@ -40,6 +40,12 @@ Taylor through the cubic term uses the fourth moment $w(1-3w)$, and the quadrati
 $$e_r=.002+\frac{.187d_{\max}J_{r+3}(0,.45)/a+.047 J_{r+4}(0,.45)/a^2}{\pi}.$$
 Specifically the comparison is with $\varphi(X)$ and $\varphi''(X)$ for the scaled suffix mass and centered second difference at $j-U$, where $\varphi$ is the standard normal density.
 
+Lean proves the single-factor error and the damped product bound on the inner arc. It obtains the fourth-order constant by applying Taylor's integral remainder in the closed left half-plane, where the exponential has modulus at most one. The centered characteristic function is the product over the actual suffix labels, and its inverse on $[-\pi,\pi]$ recovers the rank mass at every integer, including sites outside its support. For $V=\sigma_B^2\theta^2$, $B|\theta|\le1$ and drift bound $d_{\max}$, its difference from $e^{-V/2}$ has norm at most
+$$
+ e^{9/80-9V/20} V\left(d_{\max} B|\theta|/6+(B|\theta|)^2/24\right).
+$$
+The factor $e^{9/80}$ accounts for one omitted Bernoulli factor in the product comparison. Lean also proves the four modulus bounds with exponents $.35V$, $2V/\pi^2$, $p_*B/2$ and $15p_*B/16$ on their respective arcs. At a saddle of length $m\ge4096$ with $2cm\sqrt m\le25$, it checks $p_*\ge6/25$, $d_{\max}\le25/128$ and $\sigma_B^2\ge 2B^3/25$ for the actual suffix variance. [Taylor remainder](CentralUnimodality/BernoulliTaylor.lean) · [Exact Fourier inversion](CentralUnimodality/FreeSuffixFourier.lean) · [Damped product](CentralUnimodality/BernoulliArcs.lean) · [Arc and saddle bounds](CentralUnimodality/FreeSuffixArcs.lean)
+
 ## First hits up to the late cut
 
 Put $h=\lceil7m/8\rceil$. Normalize the law with the full wall by $\Pr(E_L)$, writing $F(j)=\Pr(S=j,E_m)/\Pr(E_L)$. Dropping the wall after $L$ gives $F_L(j)=\Pr(S=j\mid E_L)$. For a first hit after $\lceil vm\rceil$ and up to $\lceil em\rceil\le h$, condition on the entire prefix through that hit. The remaining labels are independent. If the conditional hit probability given $E_L$ is at most $P$, the cost in $\sigma^{r+1}\|D_r(F_L-F)\|_\infty$ from this group is at most
@@ -53,6 +59,8 @@ $$P\le \frac{.81(1+d_{\max})}{2(1-\ell)\kappa\sqrt v}
 For $v\ge1/2$, a negative height at any time in the interval is a decreasing event in the up signs. Product-measure association bounds its probability given $E_L$ by its unrestricted probability. Each of these times has mean height at least $d_0 m v(1-v/2)$ by concavity of the drift as a function of the label. The exponential maximal inequality for independent centered increments up to $\lceil em\rceil$ gives
 $$P\le\exp\left[-\kappa^2 v^2(1-v/2)^2/(2(e+1/770))\right].$$
 Denote the sum of these seven bounds on the scaled difference by $A_r$, including the suffix norm and variance-ratio factors. For the first three terms $B\ge384$. All later terms have $B\ge95$.
+
+For the Gaussian reference, Lean checks the full-line Fourier integral with the same $2\pi$ convention as the integer inversion. Setting $h=1/\sigma$, it proves $|\sigma(\varphi(x+h)-\varphi(x))-\varphi'(x)|\le 1/\sigma$ and $|\sigma^2(\varphi(x-h)+\varphi(x+h)-2\varphi(x))-\varphi''(x)|\le 1/\sigma^2$ at every real $x$. The proof bounds the second and fourth derivatives in Taylor's theorem. [Normal density and lattice differences](CentralUnimodality/NormalRankReference.lean)
 
 ## Fourier bound for a hit after the cut
 

@@ -44,3 +44,4 @@ public import CentralUnimodality.MeshLength
 public import CentralUnimodality.HitTiltBins
 public import CentralUnimodality.TiltedDifferences
 public import CentralUnimodality.PrefixDifferenceBounds
+public import CentralUnimodality.RightSuffixApproximation
