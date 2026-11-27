@@ -53,6 +53,14 @@ def check (B s : ℤ) (L : ℕ) (F R V E : List ℤ) : Bool :=
   decide (0 < B ∧ 0 ≤ s ∧ s*magnitude F+(L:ℤ)*magnitude R*magnitude V+magnitude E < B ∧
     (s*evaluateRow B F-evaluateRow B R*evaluateRow B V-evaluateRow B E) % B^L = 0)
 
+theorem check_prefix {B s : ℤ} {l L : ℕ} {F R V E : List ℤ} (hl : l ≤ L)
+    (h : check B s L F R V E = true) : check B s l F R V E = true := by
+  obtain ⟨hB,hs,hsize,hmod⟩ := of_decide_eq_true h
+  apply decide_eq_true
+  refine ⟨hB,hs,?_,Int.emod_eq_zero_of_dvd ((pow_dvd_pow B hl).trans (Int.dvd_of_emod_eq_zero hmod))⟩
+  apply lt_of_le_of_lt _ hsize
+  gcongr
+
 theorem check_sound {B s : ℤ} {L : ℕ} {F R V E : List ℤ} (h : check B s L F R V E = true) :
     ∀ i < L, s*(rowPolynomial F).coeff i-((rowPolynomial R)*(rowPolynomial V)).coeff i = (rowPolynomial E).coeff i := by
   obtain ⟨hB,hs,hsize,hc⟩ := of_decide_eq_true h

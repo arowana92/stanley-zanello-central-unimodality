@@ -99,6 +99,17 @@ lake env lean /tmp/SZFourierSample.lean
 
 For the first group, $2049\le N\le2069$, the external integer audit covered all 2,608 retained positive frequencies, both parities and all 2,070 coefficients needed at each frequency. The maximum among the 10,797,120 absolute residuals was $128690229305192554555/10384593717069655257060992658440192<1.24\times10^{-14}$, at frequency 1, even walk length, half-length 1,182. The term-by-term calculation and the generated Lean proof each checked the 4,140 coefficients at frequency 2, whose maximum was below $5.86\times10^{-15}$. The Lean proof concludes these bounds for the stored dyadic inputs. For this same group, the C++ verifier gave lower bounds $.08457$, $103.70$ and $.96111$ on the three sign margins using the input and interpolation estimates in this certificate.
 
+### Enclosing the exact walk inputs
+
+For $Q=2^{k+1}$ and $\omega=f\pi/Q$, Lean can enclose the true free and bridge transforms through half-length $M$ whenever $(2M+1)f\le Q/2$ and the integer lower bounds for the bridge denominators are positive. Start with integer endpoints for $d(1+\cos x)$ at scale $d=2^{112}$. The identity $2(d\cos(x/2))^2=d^2(1+\cos x)$ gives new endpoints by integer square roots. Reflection determines the cosine sign, and the complementary angle gives the sine. From the first grid phase, use the sine and cosine addition formulas to enclose each successive phase. Outward integer multiplication and division then enclose the free cosine product and the cross-multiplied bridge recurrence. The proof uses the exact angle $f\pi/Q$ throughout. [Dyadic angles](CentralUnimodality/DyadicAngle.lean) · [Phase addition](CentralUnimodality/DyadicRotation.lean) · [Walk input recurrence](CentralUnimodality/SmallGridInputs.lean)
+
+The command below generates a theorem about the actual conditional signed amplitude in both families. For $Q=2097152$, $f=2$, $1\le N=n+\delta\le2069$, the bridge input error is at most $16/2^{59}$ and the free input error is at most $32/2^{59}$. Combining them with the packed convolution proves an absolute error at most $1.166\times10^{-11}$ for the stored candidate divided by the exact survival probability $r_N$. This checks one retained frequency of the first group. The other frequencies and the endpoint derivative signs still need Lean certificates. [Input checker](CentralUnimodality/SmallGridCheck.lean) · [Conditional amplitude theorem](CentralUnimodality/SmallGridAmplitude.lean)
+
+~~~sh
+python3 -B verify_packed_residual.py /tmp/sz_fourier_window 2069 2097152 2 2 --direct --emit-lean /tmp/SZTrueAmplitude.lean --prove-inputs
+lake env lean /tmp/SZTrueAmplitude.lean
+~~~
+
 ## Signs on entire size and corank intervals
 
 Choose $Q$ as the least power of two at least $5(\lfloor s_0\rfloor+1)$, and group consecutive half-lengths $A\le N\le B$ with common $Q$ and $B\le1.01A$. Put $S=\lfloor(2A)^{3/2}\rfloor$, $x=(k+d)/S$, and $J=\lceil2048Q/(6.28S)\rceil$. This gives $S\le s_0\le1.016S$ and $s_0\theta_J\ge2048$ for the whole group. At any retained frequency interpolate its two *computed* real conditional transforms at $A,B$ linearly in $N$. The program measures the absolute difference from this interpolation at **every** $N$ and adds the certified transform error using the smallest survival, $\widehat r_B$. Call the bound $e_j$ for a given parity. A single-size group uses its sole endpoint.

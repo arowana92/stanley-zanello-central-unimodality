@@ -3,6 +3,7 @@
 import argparse
 import subprocess
 from fractions import Fraction
+from math import isqrt
 from pathlib import Path
 
 
@@ -50,8 +51,95 @@ def lean_row(name, values):
     return f"def {name} : List ℤ := List.flatten [\n" + ",\n".join(f"  [{b}]" for b in blocks) + "]\n"
 
 
-def emit_lean(path, last, period, frequency, scale, columns, checks):
-    lines = ["import CentralUnimodality.CheckResidual",
+def small_grid_errors(period, frequency, scale, columns, bits=112):
+    """Outward integer bounds for both true free inputs and the true bridge."""
+    d = 1 << bits
+    k = period.bit_length() - 2
+    bridge, free_even, free_odd = columns[:3]
+    if (2 * len(bridge) - 1) * frequency > period // 2:
+        raise ValueError("input proof requires all sampled angles in the first quadrant")
+
+    def roots(a):
+        return min(d, isqrt(d*a[0]//2)), min(d, isqrt(d*a[1]//2)+1)
+
+    def bounds(depth, tick):
+        if depth == 0:
+            return (2*d, 2*d) if tick == 0 else (0, 0)
+        half = 1 << (depth-1)
+        low, high = roots(bounds(depth-1, min(tick, 2*half-tick)))
+        return (d+low, d+high) if tick <= half else (d-high, d-low)
+
+    cosine = roots(bounds(k, frequency))
+    sine = roots(bounds(k, (1 << k)-frequency))
+
+    def mul(a, b):
+        return a[0]*b[0]//d, a[1]*b[1]//d+1
+
+    def advance(phase):
+        c, s = phase
+        cc, ss = mul(c, cosine), mul(s, sine)
+        sc, cs = mul(s, cosine), mul(c, sine)
+        return ((max(0, cc[0]-ss[1]), max(0, cc[1]-ss[0])),
+                (sc[0]+cs[0], sc[1]+cs[1]))
+
+    def error(interval, stored):
+        return (max(abs(endpoint*scale-stored*d) for endpoint in interval)+d-1)//d
+
+    one = d, d
+    half, odd = (one, (0, 0)), (cosine, sine)
+    r, even_free, odd_free = one, one, cosine
+    er = ef = 0
+    for j, (rv, ev, ov) in enumerate(zip(bridge, free_even, free_odd)):
+        if j:
+            half = advance(half)
+            numerator = mul(mul(r, half[0]), odd[1])
+            lo, hi = half[1]
+            if lo == 0:
+                raise ArithmeticError("bridge denominator enclosure touches zero")
+            r = d*numerator[0]//(2*hi), d*numerator[1]//(2*lo)+1
+            even_phase = advance(odd)
+            odd = advance(even_phase)
+            even_free = mul(odd_free, even_phase[0])
+            odd_free = mul(even_free, odd[0])
+        er = max(er, error(r, rv))
+        ef = max(ef, error(even_free, ev), error(odd_free, ov))
+    return d, k, er, ef
+
+
+def amplitude_proof(last, period, frequency, scale, columns, checks, input_bounds):
+    d, k, er, ef = input_bounds
+    bases = [item[2] for item in checks]
+    e = max(abs(x) for item in checks for x in item[3])
+    v = max(abs(x) for col in columns[3:] for x in col)
+    root_bound = isqrt(last-1) + 1
+    residual = Fraction(ef, scale) + Fraction(e+(last+1)*er*v, scale*scale)
+    scaled = 4*root_bound*residual*10**15
+    upper = -(-scaled.numerator//scaled.denominator)
+    return [
+        "open CentralUnimodality CentralUnimodality.SmallGrid",
+        f"theorem inputsChecked : SmallGrid.check {d} {k} {frequency} {scale} {er} {ef}",
+        f"    (start {d} {k} {frequency}) bridge freeEven freeOdd = true := by decide +kernel",
+        "def candidates := parityRow candidateEven candidateOdd",
+        "def errors := parityRow errorEven errorOdd",
+        f"def bases (σ : ℕ) : ℤ := if σ=0 then {bases[0]} else {bases[1]}",
+        f"theorem sampledAmplitude (n δ : ℕ) (hδ : δ ≤ 1) (h₁ : 1 ≤ n+δ) (hN : n+δ ≤ {last}) :",
+        f"    |signedAmplitude n δ (gridFrequency {period} {frequency}) -",
+        f"      (PowerSeries.coeff (n+δ) (scaledSeries {scale} (rowPolynomial (candidates (1-δ))))).re /",
+        f"        survival (n+δ)| ≤ ({upper}:ℝ)/10^15 := by",
+        f"  have h := input_amplitude (d := {d}) (k := {k}) (f := {frequency}) (L := {last+1})",
+        f"    (n := n) (v := {v}) (e := {e}) (by decide) hδ (by omega) (by omega) (by decide)",
+        "    bridge freeEven freeOdd candidates errors bases (by decide +kernel) inputsChecked",
+        "    (by intro σ hσ; rcases Nat.le_one_iff_eq_zero_or_eq_one.mp hσ with rfl|rfl",
+        "        · exact residualEven", "        · exact residualOdd)",
+        "    (by intro σ hσ; rcases Nat.le_one_iff_eq_zero_or_eq_one.mp hσ with rfl|rfl <;> decide +kernel)",
+        "    (by intro σ hσ; rcases Nat.le_one_iff_eq_zero_or_eq_one.mp hσ with rfl|rfl <;> decide +kernel)",
+        f"  apply (uniform_error (M := {root_bound}) h₁ (by omega) (by positivity) h).trans",
+        "  norm_num", "#print axioms sampledAmplitude"]
+
+
+def emit_lean(path, last, period, frequency, scale, columns, checks, input_bounds):
+    module = "SmallGridAmplitude" if input_bounds else "CheckResidual"
+    lines = [f"import CentralUnimodality.{module}",
              f"/- Exact binary64 arrays for N ≤ {last}, Q = {period}, mode {frequency}. -/",
              "set_option maxRecDepth 30000", "set_option maxHeartbeats 0",
              "open CentralUnimodality.Residual", "namespace FourierSample"]
@@ -61,16 +149,20 @@ def emit_lean(path, last, period, frequency, scale, columns, checks):
         lines.append(lean_row(f"error{label}", residual))
         bound = max(map(abs, residual))
         lines.extend([
+            f"theorem residual{label} : check {base} {scale} {last+1} free{label} bridge",
+            f"    candidate{label} error{label} = true := by decide +kernel",
             f"theorem bound{label} : ∀ i < {last+1},",
             f"    |({scale}:ℤ)*(rowPolynomial free{label}).coeff i -",
             f"      (rowPolynomial bridge * rowPolynomial candidate{label}).coeff i| ≤ {bound} := by",
             f"  apply checked_bound (B := {base}) (E := error{label}) (e := {bound})",
-            "  · decide +kernel", "  · decide +kernel", f"#print axioms bound{label}"])
+            f"  · exact residual{label}", "  · decide +kernel", f"#print axioms bound{label}"])
+    if input_bounds:
+        lines.extend(amplitude_proof(last, period, frequency, scale, columns, checks, input_bounds))
     lines.append("end FourierSample")
     path.write_text("\n".join(lines) + "\n")
 
 
-def check_frequency(program, last, period, frequency, direct=False, lean_path=None):
+def check_frequency(program, last, period, frequency, direct=False, lean_path=None, prove_inputs=False):
     data = subprocess.check_output([program, "--residual-inputs", str(last), str(period), str(frequency)])
     rows = [[float.fromhex(token.decode()).as_integer_ratio() for token in line.split()]
             for line in data.splitlines()]
@@ -82,7 +174,8 @@ def check_frequency(program, last, period, frequency, direct=False, lean_path=No
     checks = [check_convolution(scale, bridge, f, v, direct)
               for f, v in [(free_even, candidate_even), (free_odd, candidate_odd)]]
     if lean_path is not None:
-        emit_lean(lean_path, last, period, frequency, scale, columns, checks)
+        input_bounds = small_grid_errors(period, frequency, scale, columns) if prove_inputs else None
+        emit_lean(lean_path, last, period, frequency, scale, columns, checks, input_bounds)
     return [(error, index) for error, index, _, _ in checks]
 
 
@@ -95,15 +188,18 @@ def main():
     parser.add_argument("last_mode", type=int)
     parser.add_argument("--direct", action="store_true", help="also sum every convolution coefficient term by term")
     parser.add_argument("--emit-lean", type=Path, metavar="FILE", help="write a kernel-replayable certificate for one mode")
+    parser.add_argument("--prove-inputs", action="store_true", help="include true walk input and conditional amplitude enclosures for first-quadrant samples")
     args = parser.parse_args()
     if args.emit_lean is not None and args.first_mode != args.last_mode:
         parser.error("--emit-lean requires a single mode")
+    if args.prove_inputs and args.emit_lean is None:
+        parser.error("--prove-inputs requires --emit-lean")
     if not 1 <= args.first_mode <= args.last_mode:
         parser.error("expected a nonempty interval of positive modes")
     worst = (Fraction(-1), 0, 0, 0)
     for mode in range(args.first_mode, args.last_mode + 1):
         for parity, (error, index) in enumerate(check_frequency(
-                args.program, args.last, args.period, mode, args.direct, args.emit_lean)):
+                args.program, args.last, args.period, mode, args.direct, args.emit_lean, args.prove_inputs)):
             worst = max(worst, (error, mode, parity, index))
     error, mode, parity, index = worst
     print(f"Exact dyadic residual maximum {error} ({float(error):.6g})")

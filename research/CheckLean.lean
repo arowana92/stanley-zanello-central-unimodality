@@ -209,3 +209,7 @@ example (hD : DyckComparisons)
 #print axioms dyadic_residual_bound
 #print axioms interleaved_residual
 #print axioms checked_half_amplitude
+#print axioms DyadicAngle.bounds_sound
+#print axioms SmallGrid.inputs_sound
+#print axioms SmallGrid.check_sound
+#print axioms SmallGrid.input_amplitude
