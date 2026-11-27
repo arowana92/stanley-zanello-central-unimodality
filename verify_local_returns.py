@@ -118,10 +118,10 @@ def symbol_bounds(b,c,quadratic,quintic,lo,hi,wide_lo,wide_hi,tau):
     return upper(lattice+gamma+EXCEPTION), upper(gauss(corr,b,wide_lo,wide_hi)+EXCEPTION)
 
 
-def residual_grid(cutoff, window=FINE):
+def residual_grid(cutoff, window=FINE, step=STEP, split_bound=None):
     free,bridge,correction,signed,V = [],[],[],[],[]
-    for i in range(int(cutoff/STEP)+1):
-        a,b = i*STEP,(i+1)*STEP
+    for i in range(int(cutoff/step)+1):
+        a,b = i*step,(i+1)*step
         lo = max(0,(1-window.relative)*a-window.additive)
         hi = (1+window.relative)*b+window.additive
         free.append(max(symbol_bounds(24,Q(1),p,Q(1,1920),a,b,lo,hi,window.tau)[0]
@@ -137,16 +137,22 @@ def residual_grid(cutoff, window=FINE):
         # If the input bin indices are a,b then floor(v/step)=a+b or a+b+1.
         worst = max(bridge[a]*signed[b]+correction[a]*V[b]
                     for a in range(i+1) for b in (i-a-1,i-a) if b>=0)
+        if split_bound is not None:
+            worst = min(worst, split_bound(i, step, window.tau, bridge, signed, correction, V))
         residual.append(upper(p+worst))
     return residual
 
 
-def return_inversion(n, cutoff, residual, window=FINE):
+def gamma_removal_error(n, lo, hi, window):
+    _,first,second,corr = airy((1-window.final_relative)*lo,(1+window.final_relative)*hi)
+    return hi/n*(first/2+(1+Q(1,n))*hi*second/2+corr)+Q(1,n*n)
+
+
+def return_inversion(n, cutoff, residual, window=FINE, step=STEP, removal_error=gamma_removal_error):
     errors = [Q(0)]*3
-    for i in range(int(cutoff/STEP)):
-        lo,hi = i*STEP,(i+1)*STEP
-        _,first,second,corr = airy((1-window.final_relative)*lo,(1+window.final_relative)*hi)
-        averaging = hi/n*(first/2+(1+Q(1,n))*hi*second/2+corr)+Q(1,n*n)
+    for i in range(int(cutoff/step)):
+        lo,hi = i*step,(i+1)*step
+        averaging = removal_error(n,lo,hi,window)
         # Short first returns retain at least .95 of the scaled time.
         early = max(residual[(Q('.95')*i).__floor__():i+1])
         inverse = 2*sqrt_hi(n)*(residual[i]+early)
@@ -154,16 +160,33 @@ def return_inversion(n, cutoff, residual, window=FINE):
             # Each later return is individually rare. Sum in bins of v,
             # the time remaining after the return, in frequency units.
             for b in range((Q('.95')*(i+1)).__floor__()+1):
-                frac = max(Q('.05'),1-(b+1)*STEP/lo)
-                elapsed = max(Q('.05')*lo,lo-(b+1)*STEP)
+                frac = max(Q('.05'),1-(b+1)*step/lo)
+                elapsed = max(Q('.05')*lo,lo-(b+1)*step)
                 point = Q('1.01')/(frac*sqrt_lo(frac))
                 osc = min(1,240*exp_neg(Q('.13')*elapsed))
-                inverse += upper((STEP/lo+Q(1,n))*point*osc*residual[b])
+                inverse += upper((step/lo+Q(1,n))*point*osc*residual[b])
         # At i=0 the early bound covers the full inverse.
         for order in range(3):
-            errors[order] += (Q(3,2)*STEP*sqrt_hi(hi)*(hi*sqrt_hi(hi))**order
+            errors[order] += (Q(3,2)*step*sqrt_hi(hi)*(hi*sqrt_hi(hi))**order
                               *(averaging+inverse*(hi/n)**2))
     return [2*v/PI_LO for v in errors]
+
+
+def continuum_multiplier_costs(n):
+    # Sharpen the continuum multiplier moments using the Airy sum, including
+    # the entire tail u>=40, where value <= 10 sqrt(u) exp(-.58u).
+    mult = []
+    for order in [2,4]:
+        total = 0
+        for j in range(80):
+            a,b = j*STEP,(j+1)*STEP
+            total += Q(3,2)*STEP*sqrt_hi(b)*(b*sqrt_hi(b))**order*airy(a,b)[0]
+        power = Q(3*order,2)+1
+        total += 15*40**power*exp_neg(Q('.58')*40)/(Q('.58')-power/40)
+        mult.append(total)
+    assert (1+Q('2.339'))+EXCITED[0]*exp_neg((Q('3.837')-Q('2.337'))*10) < 7
+    s = 2*n*sqrt_lo(2*n)
+    return [0,mult[0]/(2*s),mult[1]/(12*s*s)]
 
 
 def check_fourier_envelopes(n, cutoff, density_only=False):
@@ -199,20 +222,7 @@ def check_fourier_envelopes(n, cutoff, density_only=False):
         p = 3*(i+1)
         return Q(3,2)*sqrt_hi((1/rate)**p)*gamma_half(p)
     far = 16*exp_neg(Q(2*n,20200))*(moment(0,Q(1,202))+moment(2,Q(1,202)))
-    # Sharpen the continuum multiplier moments using the Airy sum, including
-    # the entire tail u>=40, where value <= 10 sqrt(u) exp(-.58u).
-    mult = []
-    for order in [2,4]:
-        total = 0
-        for j in range(80):
-            a,b = j*STEP,(j+1)*STEP
-            total += Q(3,2)*STEP*sqrt_hi(b)*(b*sqrt_hi(b))**order*airy(a,b)[0]
-        power = Q(3*order,2)+1
-        total += 15*40**power*exp_neg(Q('.58')*40)/(Q('.58')-power/40)
-        mult.append(total)
-    assert (1+Q('2.339'))+EXCITED[0]*exp_neg((Q('3.837')-Q('2.337'))*10) < 7
-    s = 2*n*sqrt_lo(2*n)
-    reserve = [far,far+mult[0]/(2*s),far+mult[1]/(12*s*s)]
+    reserve = [far+cost for cost in continuum_multiplier_costs(n)]
     for j in range(3):
         power = Q(3*(j+1),2)-1
         reserve[j] += (300*sqrt_hi(cutoff)**(3*(j+1)-2)*exp_neg(Q('.162')*cutoff)
@@ -220,7 +230,7 @@ def check_fourier_envelopes(n, cutoff, density_only=False):
     return [2*v/PI_LO for v in reserve]
 
 
-def check_gamma(n, cutoff, window=FINE):
+def check_gamma(n, cutoff, window=FINE, max_argument=Q('.8')):
     lam = window.tilt
     assert lam*window.relative-lam*lam/(2*(1-lam)) > Q('.004')
     # Cauchy--Schwarz with E|T-j|^8 <= 2^8 (j+8)^8.
@@ -228,9 +238,9 @@ def check_gamma(n, cutoff, window=FINE):
     assert (10**4*window.tau*(8+Q(4)/Q('.002'))**4
             * exp_neg(lam*window.additive/(2*window.tau)) < EXCEPTION)
     assert Q(cutoff,n) <= window.tau
-    assert (2+Q(1,n))*cutoff*sqrt_hi(cutoff)/sqrt_lo(32*n) < Q('.8')
-    assert Q(2,3)*Q(1,12)/(PI_LO/2)**2/(1-(Q('.8')/(PI_LO/2))**2) < Q('.05')
-    assert Q(2,3)*Q(1,180)/PI_LO**2/(1-(Q('.8')/PI_LO)**2) < Q('.001')
+    assert (2+Q(1,n))*cutoff*sqrt_hi(cutoff)/sqrt_lo(32*n) < max_argument
+    assert Q(2,3)*Q(1,12)/(PI_LO/2)**2/(1-(max_argument/(PI_LO/2))**2) < Q('.05')
+    assert Q(2,3)*Q(1,180)/PI_LO**2/(1-(max_argument/PI_LO)**2) < Q('.001')
     lam = window.final_tilt
     assert window.final_relative*lam-lam*lam/(2*(1-lam)) > window.final_rate
     assert window.final_rate*n/2 > 2
