@@ -79,17 +79,19 @@ theorem integral_lattice_phase (b : ℤ) :
       rw [ha,Complex.exp_add,he,mul_one]
     rw [hphase,sub_self,zero_div]
 
-theorem suffix_rank_inversion (c : ℝ) (m : ℕ) (k : ℤ) :
-    (∫ θ in -π..π, suffixTransform c θ m * phase (-θ*((k:ℝ)-meanRank c m))) =
-      ((2*π:ℝ):ℂ)*(freeRankMass c m k:ℂ) := by
-  simp_rw [suffix_transform_words,Finset.sum_mul]
+/-- Fourier inversion for any finite event of words, with an arbitrary
+real weight and phase center. Sites outside the rank support are included. -/
+theorem word_rank_inversion (A : Finset (List Bool)) (weight : List Bool → ℝ) (μ : ℝ) (k : ℤ) :
+    (∫ θ in -π..π, (∑ w ∈ A, (weight w:ℂ)*phase (θ*((wordParts w).sum-μ)))*phase (-θ*((k:ℝ)-μ))) =
+      ((2*π:ℝ):ℂ)*((∑ w ∈ A, if ((wordParts w).sum:ℤ)=k then weight w else 0:ℝ):ℂ) := by
+  simp_rw [Finset.sum_mul]
   rw [intervalIntegral.integral_finsetSum]
-  · rw [freeRankMass,Complex.ofReal_sum,Finset.mul_sum]
+  · rw [Complex.ofReal_sum,Finset.mul_sum]
     apply Finset.sum_congr rfl
     intro w _
     let a := ((wordParts w).sum:ℤ)
-    have he (θ : ℝ) : (signMass c (c*m) w:ℂ)*phase (θ*((wordParts w).sum-meanRank c m))*
-        phase (-θ*((k:ℝ)-meanRank c m)) = (signMass c (c*m) w:ℂ)*phase (θ*((a-k:ℤ):ℝ)) := by
+    have he (θ : ℝ) : (weight w:ℂ)*phase (θ*((wordParts w).sum-μ))*
+        phase (-θ*((k:ℝ)-μ)) = (weight w:ℂ)*phase (θ*((a-k:ℤ):ℝ)) := by
       rw [mul_assoc,← phase_add]
       congr 2; dsimp [a]; simp only [Int.cast_sub,Int.cast_natCast]; ring
     simp_rw [he]
@@ -102,5 +104,11 @@ theorem suffix_rank_inversion (c : ℝ) (m : ℕ) (k : ℤ) :
     apply Continuous.intervalIntegrable
     dsimp [phase]
     fun_prop
+
+theorem suffix_rank_inversion (c : ℝ) (m : ℕ) (k : ℤ) :
+    (∫ θ in -π..π, suffixTransform c θ m * phase (-θ*((k:ℝ)-meanRank c m))) =
+      ((2*π:ℝ):ℂ)*(freeRankMass c m k:ℂ) := by
+  simp_rw [suffix_transform_words]
+  exact word_rank_inversion (words m) (signMass c (c*m)) (meanRank c m) k
 
 end CentralUnimodality.MarkedExcursion

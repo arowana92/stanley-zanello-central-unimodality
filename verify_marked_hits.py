@@ -486,6 +486,66 @@ def check_joint_tilt(max_length=10):
     print(f"Joint tilt and late-hit masses agree at {cuts} cuts through length {max_length}.")
 
 
+def check_late_rank_rows(max_length=10):
+    """Compare late-hit endpoint transforms at theta=pi/2 and pi using Gaussian integers."""
+    def rotate(pair, turns):
+        x, y = pair
+        return ((x, y), (-y, x), (-x, -y), (y, -x))[turns % 4]
+
+    def add(row, key, x, y):
+        a, b = row.get(key, (0, 0))
+        row[key] = (a+x, b+y)
+
+    def walk(labels, start, frequency, height_shift, kill):
+        row = {(start, False): (1, 0)}
+        for label in labels:
+            after = {}
+            for (height, hit), (x, y) in row.items():
+                up_weight = 4**(label-height_shift)
+                add(after, (height+1, hit), up_weight*x, up_weight*y)
+                if height or not kill:
+                    a, b = rotate((x, y), frequency*label)
+                    add(after, (height-1, hit or height == 0), a, b)
+            row = after
+        return row
+
+    checks = 0
+    for m in range(1, max_length+1):
+        for frequency in (1, 2):
+            direct = [{} for _ in range(m+1)]
+            for signs in product((-1, 1), repeat=m):
+                height = rank = 0
+                weight = 1
+                first = None
+                for t, step in enumerate(signs, 1):
+                    height += step
+                    label = m+1-t
+                    if step == 1:
+                        weight *= 4**label
+                    else:
+                        rank += label
+                    if first is None and height < 0:
+                        first = t
+                if first is not None:
+                    x, y = rotate((weight, 0), frequency*rank)
+                    for t in range(first):
+                        add(direct[t], height, x, y)
+            for cut in range(m+1):
+                prefix = walk(range(m, m-cut, -1), 0, frequency, 1, True)
+                combined = {}
+                for (height, _), (x, y) in prefix.items():
+                    # At c=b=log 2, the ratio of unnormalized prefix weights
+                    # is 4^(number of up-steps) = 2^(cut+height).
+                    factor = 2**(cut+height)
+                    suffix = walk(range(m-cut, 0, -1), height, frequency, 0, False)
+                    for (end, hit), (a, b) in suffix.items():
+                        if hit:
+                            add(combined, end, factor*(x*a-y*b), factor*(x*b+y*a))
+                assert combined == direct[cut], (m, frequency, cut)
+                checks += 1
+    print(f"Late-hit rank and endpoint transforms agree at {checks} frequency/cut pairs through length {max_length}.")
+
+
 def check_prefix_variance(max_length=10):
     """Enumerate prefixes at c=log(5/4) and stop the centered square on the first hit."""
     cuts = 0
@@ -538,6 +598,7 @@ if __name__ == "__main__":
     check_rank_tilt()
     check_pinned_first_hits()
     check_joint_tilt()
+    check_late_rank_rows()
     check_prefix_variance()
     check_peak_bound()
     cases = [(Q(3, 5), Q(9), 0, Q(3, 40)), (Q(3, 4), Q("11.25"), 1, Q(1, 16))]

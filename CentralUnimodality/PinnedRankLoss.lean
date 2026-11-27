@@ -1,7 +1,7 @@
 module
 
 public import CentralUnimodality.PinnedFirstHit
-public import CentralUnimodality.TiltedDifferences
+public import CentralUnimodality.RankEventLoss
 
 /-! The three-block first-hit bound at an original saddle and the signed
 costs of restoring the original label tilt at its two neighbours. -/
@@ -39,9 +39,7 @@ theorem pinned_rank_loss {m d : ℕ} (hm : 4096 ≤ m) {c z γ Δ v e : ℝ} (hc
   let S := prefixEventSiteMass (c+z) m (2*d+1) (hitWords 1 (2*d+1))
   let W : ℤ → ℝ := R • S
   have hm' : (4096:ℝ) ≤ m := by exact_mod_cast hm
-  have hr : (64:ℝ) ≤ √m := (le_sqrt (by norm_num) (Nat.cast_nonneg _)).mpr (by linarith only [hm'])
-  have hσ : (262144:ℝ) ≤ m*√m := by nlinarith only [mul_le_mul hm' hr (by norm_num) (Nat.cast_nonneg (α:=ℝ) m)]
-  have hstep : 2*z ≤ 1/8192 := by nlinarith only [hΔ,hshift,mul_le_mul_of_nonneg_left hσ hz]
+  have hstep := small_rank_shift hm hz hΔ hshift
   have hΔ' : 0 ≤ Δ := by rw [hΔ]; positivity
   have hγ' : 0 ≤ γ := by rw [hγ]; positivity
   have hγ₂ := pow_le_pow_left₀ hγ' (by linarith only [hmax,hΔ'] : γ ≤ 57) 2
@@ -61,26 +59,6 @@ theorem pinned_rank_loss {m d : ℕ} (hm : 4096 ≤ m) {c z γ Δ v e : ℝ} (hc
   have hX (k : ℕ) : W (k:ℤ)=X k := by
     change R*prefixEventSiteMass _ _ _ _ _=_
     rw [prefixEventSiteMass_rankEvent]
-  have H₀ : X (j+1) ≤ U 0 := by
-    rw [← hX]; exact (le_abs_self _).trans (bound 0 _)
-  have H₁ (k : ℕ) : |X (k+1)-X k| ≤ U 1 := by
-    simp only [← hX,Nat.cast_add,Nat.cast_one]; exact bound 1 k
-  have H₂ : -(X j-2*X (j+1)+X (j+2)) ≤ U 2 := by
-    have H := bound 2 ((j:ℤ)+1)
-    change |W ((j:ℤ)+1-1)+W ((j:ℤ)+1+1)-2*W ((j:ℤ)+1)| ≤ _ at H
-    rw [add_sub_cancel_right,show (j:ℤ)+1+1=(j+2:ℕ) by push_cast; ring,
-      show (j:ℤ)+1=(j+1:ℕ) by push_cast; rfl,hX,hX,hX] at H
-    linarith only [(neg_le_abs _).trans H]
-  have cost := change_difference_bounds (m := m) c hz hstep j A (Finset.filter_subset ..)
-  have Xeq (k : ℕ) : rankChange c z (j+1:ℕ) m*rankEvent (c+z) m k A=X k := by dsimp [X,R]; rw [hj]
-  dsimp only at cost ⊢
-  simp only [Xeq] at cost
-  have hmid : rankEvent c m (j+1) A=X (j+1) := by
-    simpa only [sub_self,mul_zero,exp_zero,one_mul,Xeq] using change_at_neighbor c z (j+1) (j+1) A (Finset.filter_subset ..)
-  refine ⟨hmid.le.trans H₀,?_,?_⟩
-  · exact cost.1.trans (add_le_add (mul_le_mul_of_nonneg_left (H₁ (j+1)) (by norm_num))
-      (mul_le_mul_of_nonneg_left H₀ (by positivity)))
-  · have h := mul_le_mul_of_nonneg_left (add_le_add (H₁ (j+1)) (H₁ j)) (by positivity : 0 ≤ (1001/1000)*(2*z))
-    exact cost.2.trans ((add_le_add H₂ h).trans_eq (by ring))
+  exact rank_event_loss hz hstep hj A (Finset.filter_subset ..) W U hX bound
 
 end CentralUnimodality.MarkedExcursion

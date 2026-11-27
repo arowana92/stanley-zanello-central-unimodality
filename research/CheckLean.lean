@@ -308,3 +308,9 @@ example (hD : DyckComparisons)
 #print axioms MarkedExcursion.pinned_rank_loss
 #print axioms MarkedExcursion.late_event_probability
 #print axioms MarkedExcursion.difference_hit_decomposition
+#print axioms MarkedExcursion.tilted_retained_pair
+#print axioms MarkedExcursion.paired_wall_powers
+#print axioms MarkedExcursion.late_endpoint_bound
+#print axioms MarkedExcursion.late_rank_arcs
+#print axioms MarkedExcursion.late_rank_moments
+#print axioms MarkedExcursion.late_rank_loss

@@ -36,15 +36,6 @@ private theorem reversed_ballot_mass (c u : ℝ) (b : ℕ) :
   · intro w hw
     rw [signMass_reverse,mem_words.mp hw,show c*((b:ℝ)-1)-(c*(b-1)-u)=u by ring]
 
-private theorem split_word_sum (a b : ℕ) (F : List Bool → ℝ) :
-    (∑ w ∈ words (a+b), F w) = ∑ p ∈ words a, ∑ q ∈ words b, F (p++q) := by
-  have H := prefix_sum (m := a+b) (t := a) (by omega) (words a) (fun _ h => h) F
-  have he : (words (a+b)).filter (fun w => w.take a ∈ words a) = words (a+b) := by
-    apply Finset.filter_true_of_mem
-    intro w hw
-    simp [mem_words,List.length_take,mem_words.mp hw]
-  rwa [he,Nat.add_sub_cancel_left] at H
-
 private theorem front_ballot {p q : List Bool} (h : BallotFrom 0 (p++q)) : BallotFrom 0 p := by
   rw [ballot_iff_heights,heights_append] at h
   exact (ballot_iff_heights 0 p).mpr (fun z hz => h z (List.mem_append_left _ hz))

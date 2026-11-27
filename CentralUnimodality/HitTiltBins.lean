@@ -55,14 +55,15 @@ theorem first_hit_bin {m d : ℕ} (ht : 2*d+1 ≤ m) {c z s γ Δ v e : ℝ}
 
 /-- Equation (7) in the verifier's variables. The lower endpoint g of a
 parameter bin can be used throughout it; the cut need only be at least hm. -/
-theorem late_hit_bin {m t : ℕ} (hM : 4096 ≤ m) (ht : t ≤ m) {c z g h : ℝ}
+theorem late_bin_parameters {m t : ℕ} (hM : 4096 ≤ m) (ht : t ≤ m) {c z g h : ℝ}
     (hc : 0 ≤ c) (hz : 0 ≤ z) (hg : 0 ≤ g) (hg' : g ≤ 2*c*((m:ℝ)*√m))
     (hsmall : g^2 ≤ 12*4096) (hh : 0 ≤ h) (hh' : h ≤ 1) (hcut : h*m ≤ t) :
     let s := (m:ℝ)*√m
     let Δ := 2*z*s
     let a := (g/2*(1-g^2/(12*4096))+Δ/2)*(h*(1-h/2))
-    rankChange c z (meanRank c m) m * lateHitMass (c+z) m t ≤
-      exp (Δ^2*(labelSquares m/(m:ℝ)^3)/8-a^2/2) := by
+    let b := a/√m
+    0 ≤ b ∧ b*m ≤ (tanh (c*m)/m+z)*prefixLabels m t ∧
+      z^2*labelSquares m/2-m*b^2/2 = Δ^2*(labelSquares m/(m:ℝ)^3)/8-a^2/2 := by
   dsimp only
   let M := (m:ℝ)
   let r := √M
@@ -123,11 +124,23 @@ theorem late_hit_bin {m t : ℕ} (hM : 4096 ≤ m) (ht : t ≤ m) {c z g h : ℝ
     apply le_of_mul_le_mul_left _ hm'
     dsimp only [a,s] at hboth ⊢
     linarith only [hboth]
-  apply (late_hit_change_bound (by omega : 0 < m) ht hc hz hb hcond).trans_eq
-  change exp _ = exp ((2*z*s)^2*(labelSquares m/M^3)/8-a^2/2)
+  refine ⟨hb,hcond,?_⟩
+  change _ = (2*z*s)^2*(labelSquares m/M^3)/8-a^2/2
   rw [scaled_cost hm' hs]
   congr 1
-  change _ - M*(a/r)^2/2 = _
+  change M*(a/r)^2/2 = a^2/2
   rw [div_pow,hr2]; field_simp
+
+theorem late_hit_bin {m t : ℕ} (hM : 4096 ≤ m) (ht : t ≤ m) {c z g h : ℝ}
+    (hc : 0 ≤ c) (hz : 0 ≤ z) (hg : 0 ≤ g) (hg' : g ≤ 2*c*((m:ℝ)*√m))
+    (hsmall : g^2 ≤ 12*4096) (hh : 0 ≤ h) (hh' : h ≤ 1) (hcut : h*m ≤ t) :
+    let s := (m:ℝ)*√m
+    let Δ := 2*z*s
+    let a := (g/2*(1-g^2/(12*4096))+Δ/2)*(h*(1-h/2))
+    rankChange c z (meanRank c m) m * lateHitMass (c+z) m t ≤
+      exp (Δ^2*(labelSquares m/(m:ℝ)^3)/8-a^2/2) := by
+  obtain ⟨hb,hcond,he⟩ := late_bin_parameters hM ht hc hz hg hg' hsmall hh hh' hcut
+  apply (late_hit_change_bound (by omega : 0 < m) ht hc hz hb hcond).trans_eq
+  rw [he]
 
 end CentralUnimodality.MarkedExcursion

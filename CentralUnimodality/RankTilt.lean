@@ -136,7 +136,8 @@ theorem append_mass (c u : ℝ) (v w : List Bool) :
     rw [show u-c*(v.length+1) = u-c-c*v.length by ring]
 
 /-- Split a word into its prescribed prefix and its unrestricted suffix. -/
-theorem prefix_sum {m t : ℕ} (ht : t ≤ m) (A : Finset (List Bool)) (hA : A ⊆ words t) (F : List Bool → ℝ) :
+theorem prefix_sum {R : Type*} [AddCommMonoid R] {m t : ℕ} (ht : t ≤ m) (A : Finset (List Bool))
+    (hA : A ⊆ words t) (F : List Bool → R) :
     (∑ w ∈ (words m).filter (fun w => w.take t ∈ A), F w) =
       ∑ v ∈ A, ∑ w ∈ words (m-t), F (v++w) := by
   let pairs := A ×ˢ words (m-t)
@@ -164,6 +165,15 @@ theorem prefix_sum {m t : ℕ} (ht : t ≤ m) (A : Finset (List Bool)) (hA : A �
     exact Prod.ext ((parts p hp).1.symm.trans ((congrArg (List.take t) hj).trans (parts q hq).1))
       ((parts p hp).2.symm.trans ((congrArg (List.drop t) hj).trans (parts q hq).2))
   rw [he,Finset.sum_image inj,Finset.sum_product]
+
+theorem split_word_sum {R : Type*} [AddCommMonoid R] (a b : ℕ) (F : List Bool → R) :
+    (∑ w ∈ words (a+b), F w) = ∑ p ∈ words a, ∑ q ∈ words b, F (p++q) := by
+  have H := prefix_sum (m := a+b) (t := a) (by omega) (words a) (fun _ h => h) F
+  have he : (words (a+b)).filter (fun w => w.take a ∈ words a) = words (a+b) := by
+    apply Finset.filter_true_of_mem
+    intro w hw
+    simp [mem_words,List.length_take,mem_words.mp hw]
+  rwa [he,Nat.add_sub_cancel_left] at H
 
 /-- Summing over the independent suffix recovers the probability of the
 prefix event under the same tilted law. -/
