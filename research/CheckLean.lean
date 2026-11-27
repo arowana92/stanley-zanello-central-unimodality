@@ -171,3 +171,14 @@ example : (List.range 4).map (Witness.rawCell 2 1) = [10,72,1654/3,4464] := by d
 example (hD : DyckComparisons)
     (hc : ∀ n ≥ 96, ∀ δ ≤ 1, CentralToMidpoint n δ) : Conjecture34 :=
   conjecture34_of_comparisons_and_midpoints hD hc
+
+#print axioms pointMass_le_square
+#print axioms first_hit_half
+#print axioms free_cubic_block
+#print axioms parity_bins
+#print axioms two_inner_caps
+#print axioms killed_inner_001
+#print axioms killed_inner_008
+#print axioms corank_inner_001
+#print axioms signed_inner_frequency
+#print axioms signed_outer_frequency

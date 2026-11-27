@@ -31,3 +31,4 @@ public import CentralUnimodality.FirstHitCount
 public import CentralUnimodality.KilledBlock
 public import CentralUnimodality.RankArcBounds
 public import CentralUnimodality.ReflectedPolynomials
+public import CentralUnimodality.SignedArcBounds
