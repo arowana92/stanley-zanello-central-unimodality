@@ -196,3 +196,10 @@ example (hD : DyckComparisons)
 #print axioms dyck_diagonal_cutoff
 #print axioms dyck_comparisons_of_diagonal_unimodality
 #print axioms conjecture34_of_diagonal_unimodality_and_midpoints
+
+#print axioms retained_inverse_pairs
+#print axioms cosine_inverse_error
+#print axioms residual_rank_differences
+#print axioms spatial_second_difference
+#print axioms spatial_group_mesh
+#print axioms rank_window_of_spatial_signs

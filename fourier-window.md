@@ -101,7 +101,7 @@ The following inequalities are required after all the preceding error deductions
 | $[.333,.404]$ | $T''<0$ |
 | $[.398,.631]$ | $T'<0$ |
 
-Convex combinations preserve each strict margin. Integrating $T'$ over one lattice spacing, or $T''$ against the centered triangular kernel of mass one in scaled difference units, transfers the corresponding sign to the lattice difference. On the asserted corank window one has $.1364<x<.623$ and $1/S<.000004$. Thus forward steps with $x\le.338$ increase, those with $x\ge.399$ decrease, and consecutive forward differences decrease strictly between these regions, including the joins. This proves unimodality on the entire window.
+Convex combinations preserve each strict margin. Integrating $T'$ over one lattice spacing, or $T''$ against the centered triangular kernel of mass one in scaled difference units, transfers the corresponding sign to the lattice difference. On the asserted corank window one has $.1364<x<.623$ and $1/S<.000004$. Thus forward steps with $x\le.338$ increase, those with $x\ge.399$ decrease, and consecutive forward differences decrease strictly between these regions, including the joins. This proves unimodality on the entire window. Lean checks the transfer from convolution residuals to rank differences, interpolation between the measured spatial nodes and endpoint sizes, and the implication from the derivative signs to unimodality. The numerical enclosures and margins used as inputs to these Lean theorems are supplied by the external verifier. [Residual theorem](CentralUnimodality/FourierCertificate.lean) · [Mesh and sign theorems](CentralUnimodality/SpatialWindow.lean)
 
 ## Reproduction
 
