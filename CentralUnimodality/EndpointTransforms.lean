@@ -9,7 +9,7 @@ the endpoint itself. -/
 
 namespace CentralUnimodality
 
-private theorem sum_cons_words {R : Type*} [AddCommMonoid R] (f : List Bool → R) (n : ℕ) :
+theorem sum_cons_words {R : Type*} [AddCommMonoid R] (f : List Bool → R) (n : ℕ) :
     (∑ w ∈ words (n+1), f w) =
       (∑ w ∈ words n, f (false::w)) + ∑ w ∈ words n, f (true::w) := by
   have dis : Disjoint ((words n).image (false :: ·)) ((words n).image (true :: ·)) := by

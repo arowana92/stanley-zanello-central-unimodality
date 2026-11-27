@@ -41,4 +41,5 @@ public import CentralUnimodality.PackedAmplitude
 public import CentralUnimodality.QuadrantCheck
 public import CentralUnimodality.MeshRadius
 public import CentralUnimodality.MeshLength
-public import CentralUnimodality.RankTilt
+public import CentralUnimodality.HitTiltBins
+public import CentralUnimodality.TiltedDifferences

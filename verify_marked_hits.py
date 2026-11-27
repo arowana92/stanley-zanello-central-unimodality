@@ -339,10 +339,67 @@ def check_rank_tilt(max_length=13):
     print(f"Rank tilt agrees at {rank_sites} ranks and {hit_times} first-hit times.")
 
 
+def check_joint_tilt(max_length=10):
+    """Exact simultaneous reweighting at c=log 2, c+z=log 3 and b=log 2."""
+    cuts = 0
+    for m in range(1, max_length+1):
+        labels = range(m, 0, -1)
+        total_label = sum(labels)
+        normalizer = {q: prod(1 + q**(2*r) for r in labels) for q in (2, 3)}
+        # Z(log q) uses down-rank weights. The integer word weights below use up signs.
+        ratio = Q(normalizer[3], normalizer[2]) * Q(2, 3)**(2*total_label)
+        j = m//2
+        shift = ratio * Q(3, 2)**(2*j)
+        mean = Q(0)
+        moments = {q: [Q(0)]*(m+1) for q in (2, 3)}
+        late = [Q(0)]*(m+1)
+        for signs in product((-1, 1), repeat=m):
+            rank = sum(r for r, x in zip(labels, signs) if x == -1)
+            masses = {q: Q(q**(2*(total_label-rank)), den) for q, den in normalizer.items()}
+            mean += rank*masses[2]
+            height = 0
+            first_hit = None
+            for t in range(m+1):
+                if t:
+                    height += signs[t-1]
+                    if height == -1 and first_hit is None:
+                        first_hit = t
+                test = Q(2)**(-height)
+                moments[3][t] += masses[3]*test
+                moments[2][t] += masses[2]*Q(3, 2)**(-2*(rank-j))*test
+            if first_hit is not None:
+                for t in range(first_hit):
+                    late[t] += masses[3]
+        assert mean == sum(Q(r, 1+2**(2*r)) for r in labels)
+        # A killed height recursion counts survival by prefix; subtract final survival.
+        alive = {0: Q(1)}
+        survival = [Q(1)]
+        laplace = Q(1)
+        for t in range(m+1):
+            if t:
+                r = m+1-t
+                down = Q(1, 1+3**(2*r))
+                up = 1-down
+                laplace *= up/2 + 2*down
+                after = Counter()
+                for height, mass in alive.items():
+                    after[height+1] += up*mass
+                    if height:
+                        after[height-1] += down*mass
+                alive = after
+                survival.append(sum(alive.values()))
+            assert moments[3][t] == laplace
+            assert moments[2][t] == shift*laplace
+        assert late == [p-survival[-1] for p in survival]
+        cuts += m+1
+    print(f"Joint tilt and late-hit masses agree at {cuts} cuts through length {max_length}.")
+
+
 if __name__ == "__main__":
     check_suffix()
     check_marked()
     check_rank_tilt()
+    check_joint_tilt()
     check_peak_bound()
     cases = [(Q(3, 5), Q(9), 0, Q(3, 40)), (Q(3, 4), Q("11.25"), 1, Q(1, 16))]
     for start, stop, order, fraction in cases:

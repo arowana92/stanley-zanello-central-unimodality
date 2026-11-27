@@ -84,14 +84,7 @@ theorem tilted_hit_gaussian (d : ℕ) {c : ℝ} (hc : 0 ≤ c) :
   simp only [hex] at harea
   have hnum := mul_le_mul_of_nonneg_left harea (exp_pos (c*d)).le
   rw [← hit_mass_identity,← card_first_hits] at hnum
-  have hpos : 0 ≤ A := by
-    apply Finset.sum_nonneg
-    intro w _
-    have positive (u : ℝ) (v : List Bool) : 0 < signMass c u v := by
-      induction v generalizing u with
-      | nil => exact one_pos
-      | cons b v ih => exact mul_pos (div_pos (exp_pos _) (mul_pos (by norm_num) (cosh_pos _))) (ih _)
-    exact (positive _ _).le
+  have hpos : 0 ≤ A := Finset.sum_nonneg (fun _ _ => (signMass_pos ..).le)
   have hden := mul_le_mul_of_nonneg_left (centered_cosh_lower c d) (by positivity : 0 ≤ (2:ℝ)^(2*d+1))
   have h := (mul_le_mul_of_nonneg_left hden hpos).trans hnum
   change A * (_ * exp L) ≤ exp (c*d) * ((hitWords 1 (2*d+1)).card * (exp (y^2/4)*B)) at h

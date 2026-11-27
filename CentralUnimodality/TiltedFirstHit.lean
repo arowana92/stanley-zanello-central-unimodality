@@ -15,6 +15,11 @@ noncomputable def signMass (c u : ℝ) : List Bool → ℝ
   | [] => 1
   | b::w => exp (u*step b)/(2*cosh u) * signMass c (u-c) w
 
+theorem signMass_pos (c u : ℝ) (w : List Bool) : 0 < signMass c u w := by
+  induction w generalizing u with
+  | nil => exact one_pos
+  | cons b w ih => exact mul_pos (div_pos (exp_pos _) (mul_pos (by norm_num) (cosh_pos _))) (ih _)
+
 noncomputable def coshProduct (c u : ℝ) (t : ℕ) : ℝ :=
   ∏ i ∈ Finset.range t, cosh (u-c*i)
 

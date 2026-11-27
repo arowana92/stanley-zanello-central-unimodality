@@ -101,7 +101,7 @@ theorem change_rank_tilt (c v : ℝ) {m : ℕ} (j : ℕ) (A : Finset (List Bool)
   rw [hx,← mul_left_comm,← he]
   field_simp [(rankNormalizer_pos c m).ne']
 
-private theorem coshProduct_pos (c u : ℝ) (t : ℕ) : 0 < coshProduct c u t :=
+theorem coshProduct_pos (c u : ℝ) (t : ℕ) : 0 < coshProduct c u t :=
   Finset.prod_pos (fun _ _ => cosh_pos _)
 
 /-- Removing a constant from every prefix parameter on a hit contributes
@@ -127,7 +127,7 @@ theorem recenter_first_hit (c u v : ℝ) (t : ℕ) :
     (mul_pos (by positivity) (coshProduct_pos ..)).ne'))
   rw [h₁]; field_simp [(coshProduct_pos c u t).ne']
 
-private theorem append_mass (c u : ℝ) (v w : List Bool) :
+theorem append_mass (c u : ℝ) (v w : List Bool) :
     signMass c u (v++w) = signMass c u v * signMass c (u-c*v.length) w := by
   induction v generalizing u with
   | nil => simp [signMass]
@@ -135,10 +135,10 @@ private theorem append_mass (c u : ℝ) (v w : List Bool) :
     simp only [List.cons_append,signMass,List.length_cons,Nat.cast_add,Nat.cast_one,ih,mul_assoc]
     rw [show u-c*(v.length+1) = u-c-c*v.length by ring]
 
-/-- Summing over the independent suffix recovers the probability of the
-prefix event under the same tilted law. -/
-theorem mass_prefix (c u : ℝ) {m t : ℕ} (ht : t ≤ m) (A : Finset (List Bool)) (hA : A ⊆ words t) :
-    (∑ w ∈ (words m).filter (fun w => w.take t ∈ A), signMass c u w) = ∑ v ∈ A, signMass c u v := by
+/-- Split a word into its prescribed prefix and its unrestricted suffix. -/
+theorem prefix_sum {m t : ℕ} (ht : t ≤ m) (A : Finset (List Bool)) (hA : A ⊆ words t) (F : List Bool → ℝ) :
+    (∑ w ∈ (words m).filter (fun w => w.take t ∈ A), F w) =
+      ∑ v ∈ A, ∑ w ∈ words (m-t), F (v++w) := by
   let pairs := A ×ˢ words (m-t)
   let join := fun p : List Bool × List Bool => p.1++p.2
   have parts (p : List Bool × List Bool) (hp : p ∈ pairs) :
@@ -164,9 +164,15 @@ theorem mass_prefix (c u : ℝ) {m t : ℕ} (ht : t ≤ m) (A : Finset (List Boo
     exact Prod.ext ((parts p hp).1.symm.trans ((congrArg (List.take t) hj).trans (parts q hq).1))
       ((parts p hp).2.symm.trans ((congrArg (List.drop t) hj).trans (parts q hq).2))
   rw [he,Finset.sum_image inj,Finset.sum_product]
+
+/-- Summing over the independent suffix recovers the probability of the
+prefix event under the same tilted law. -/
+theorem mass_prefix (c u : ℝ) {m t : ℕ} (ht : t ≤ m) (A : Finset (List Bool)) (hA : A ⊆ words t) :
+    (∑ w ∈ (words m).filter (fun w => w.take t ∈ A), signMass c u w) = ∑ v ∈ A, signMass c u v := by
+  rw [prefix_sum ht A hA]
   apply Finset.sum_congr rfl
   intro v _
-  simp only [join,append_mass,← Finset.mul_sum,signMass_total,mul_one]
+  simp only [append_mass,← Finset.mul_sum,signMass_total,mul_one]
 
 /-- The individual first-hit estimate in a full length-m rank tilt.
 Its left-hand side sums the probabilities of the actual words that first

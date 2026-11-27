@@ -241,3 +241,15 @@ example (hD : DyckComparisons)
 #print axioms MarkedExcursion.rank_step_iff
 #print axioms MarkedExcursion.change_rank_tilt
 #print axioms MarkedExcursion.rank_prefix_hit_bound
+#print axioms MarkedExcursion.log_cosh_shift
+#print axioms MarkedExcursion.meanRank_expectation
+#print axioms MarkedExcursion.saddle_rank
+#print axioms MarkedExcursion.joint_cost_bound
+#print axioms MarkedExcursion.prefix_height_shift
+#print axioms MarkedExcursion.height_laplace
+#print axioms MarkedExcursion.first_hit_change_bound
+#print axioms MarkedExcursion.suffix_ruin
+#print axioms MarkedExcursion.first_hit_bin
+#print axioms MarkedExcursion.late_hit_bin
+#print axioms MarkedExcursion.change_difference_bounds
+#print axioms MarkedExcursion.rank_curvature_of_tilt
