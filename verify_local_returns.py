@@ -3,15 +3,29 @@
 from fractions import Fraction as Q
 from functools import lru_cache
 from math import comb, factorial
+from typing import NamedTuple
 
 from verify_hit_tilts import exp_bound
 from verify_return_bounds import add, cube_hi, diff, gaussian_norm, scale, times
 from verify_rising import PI_HI, PI_LO, gamma_half, sqrt_hi, sqrt_lo
 
 STEP = Q(1, 2)
-TAU = Q(1, 5000)
 EXCEPTION = Q(1, 10**16)
 TINY = Q(1, 10**30)
+
+
+class GammaWindow(NamedTuple):
+    tau: Q
+    relative: Q
+    additive: Q
+    tilt: Q
+    final_relative: Q
+    final_tilt: Q
+    final_rate: Q
+
+
+FINE = GammaWindow(Q(1,5000), Q('.1'), Q('.5'), Q('.06'), Q('.02'), Q('.015'), Q(1,6000))
+COARSE = GammaWindow(Q('.0007'), Q('.12'), Q(1), Q('.12'), Q('.05'), Q('.04'), Q(1,1000))
 
 
 @lru_cache(None)
@@ -79,7 +93,7 @@ def airy(lo, hi):
     return tuple(map(upper,(value,first,second,corr)))
 
 
-def symbol_bounds(b,c,quadratic,quintic,lo,hi,wide_lo,wide_hi):
+def symbol_bounds(b,c,quadratic,quintic,lo,hi,wide_lo,wide_hi,tau):
     """Bounds in units tau^2 for W_j-[g+tau D_g], and on [D_g]."""
     ell = [0,0,quadratic,0,0,quintic]
     powers = [[Q(1)]]
@@ -87,36 +101,37 @@ def symbol_bounds(b,c,quadratic,quintic,lo,hi,wide_lo,wide_hi):
         powers.append(diff(powers[-1],b))
     corr = add(scale(ell,-1),add(scale(powers[1],-c),[0]+scale(powers[2],-Q(1,2))))
     if b == 24:
-        log_rem = (13*hi/192+TAU/64+(hi+TAU)**4/384
-                   +Q('.05')*(hi+TAU)**7/1792)
+        log_rem = (13*hi/192+tau/64+(hi+tau)**4/384
+                   +Q('.05')*(hi+tau)**7/1792)
     else:
-        log_rem = ((7*hi**4+2*TAU*hi**3)/(180*32**2)
-                   +Q('.001')*(hi+TAU)**7/1792)
+        log_rem = ((7*hi**4+2*tau*hi**3)/(180*32**2)
+                   +Q('.001')*(hi+tau)**7/1792)
     lattice = log_rem*exp_neg(lo**3/b)+gauss(times(ell,ell),b,lo,hi)/2
     gamma = (c*(1+c)*gauss(powers[2],b,lo,hi)/2
-             +((2+3*c)*hi+6*TAU)*gauss(powers[3],b,lo,hi)/6
-             +(3*hi**2+26*hi*TAU+24*TAU**2)*gauss(powers[4],b,wide_lo,wide_hi)/24)
+             +((2+3*c)*hi+6*tau)*gauss(powers[3],b,lo,hi)/6
+             +(3*hi**2+26*hi*tau+24*tau**2)*gauss(powers[4],b,wide_lo,wide_hi)/24)
     first = diff(corr,b)
     second = diff(first,b)
-    gamma += c*gauss(first,b,lo,hi)+(hi+2*TAU)*gauss(second,b,wide_lo,wide_hi)/2
+    gamma += c*gauss(first,b,lo,hi)+(hi+2*tau)*gauss(second,b,wide_lo,wide_hi)/2
     assert max(gaussian_norm(powers[4],b),gaussian_norm(second,b),
                gaussian_norm(corr,b)) < 100
     return upper(lattice+gamma+EXCEPTION), upper(gauss(corr,b,wide_lo,wide_hi)+EXCEPTION)
 
 
-def residual_grid(cutoff):
+def residual_grid(cutoff, window=FINE):
     free,bridge,correction,signed,V = [],[],[],[],[]
     for i in range(int(cutoff/STEP)+1):
         a,b = i*STEP,(i+1)*STEP
-        lo,hi = max(0,Q('.9')*a-Q('.5')),Q('1.1')*b+Q('.5')
-        free.append(max(symbol_bounds(24,Q(1),p,Q(1,1920),a,b,lo,hi)[0]
+        lo = max(0,(1-window.relative)*a-window.additive)
+        hi = (1+window.relative)*b+window.additive
+        free.append(max(symbol_bounds(24,Q(1),p,Q(1,1920),a,b,lo,hi,window.tau)[0]
                         for p in [Q(1,32),Q(3,32)]))
-        err,cnorm = symbol_bounds(96,Q(1,2),Q(1,192),Q(1,30720),a,b,lo,hi)
+        err,cnorm = symbol_bounds(96,Q(1,2),Q(1,192),Q(1,30720),a,b,lo,hi,window.tau)
         bridge.append(err)
         correction.append(cnorm)
         value,_,_,corr = airy(lo,hi)
         V.append(corr+EXCEPTION)
-        signed.append(value+EXCEPTION+TAU*V[-1])
+        signed.append(value+EXCEPTION+window.tau*V[-1])
     residual = []
     for i,p in enumerate(free):
         # If the input bin indices are a,b then floor(v/step)=a+b or a+b+1.
@@ -126,11 +141,11 @@ def residual_grid(cutoff):
     return residual
 
 
-def return_inversion(n, cutoff, residual):
+def return_inversion(n, cutoff, residual, window=FINE):
     errors = [Q(0)]*3
     for i in range(int(cutoff/STEP)):
         lo,hi = i*STEP,(i+1)*STEP
-        _,first,second,corr = airy(Q('.98')*lo,Q('1.02')*hi)
+        _,first,second,corr = airy((1-window.final_relative)*lo,(1+window.final_relative)*hi)
         averaging = hi/n*(first/2+(1+Q(1,n))*hi*second/2+corr)+Q(1,n*n)
         # Short first returns retain at least .95 of the scaled time.
         early = max(residual[(Q('.95')*i).__floor__():i+1])
@@ -151,7 +166,7 @@ def return_inversion(n, cutoff, residual):
     return [2*v/PI_LO for v in errors]
 
 
-def check_fourier_envelopes(n, cutoff):
+def check_fourier_envelopes(n, cutoff, density_only=False):
     from verify_folded_saddle import upper_exp
     # The fair block has L=ceil(9 |theta|^(-2/3)), L>=900.
     assert (1-Q('.451')**2/6)**2 > Q('.93')
@@ -174,6 +189,12 @@ def check_fourier_envelopes(n, cutoff):
     assert 2/(2-Q(1,j)) < Q('1.01')
     # The old full-period bound contributes only beyond theta=.001.
     assert Q(1,100)*(1-Q(1,2*n)) > Q(1,101)
+    if density_only:
+        # Integrate the order-zero tail from its actual lower endpoint.
+        start = Q(2*n,100)
+        far = 12*sqrt_hi(start)*exp_neg(start/101)/(Q(1,101)-1/(2*start))
+        near = 300*sqrt_hi(cutoff)*exp_neg(Q('.162')*cutoff)/(Q('.162')-Q(1,2*cutoff))
+        return [2*(far+near)/PI_LO]
     def moment(i,rate):
         p = 3*(i+1)
         return Q(3,2)*sqrt_hi((1/rate)**p)*gamma_half(p)
@@ -199,27 +220,27 @@ def check_fourier_envelopes(n, cutoff):
     return [2*v/PI_LO for v in reserve]
 
 
-def check_gamma(n, cutoff):
-    # |tau(T-j)| > .1 v + .5 has probability < 3 exp(-.004j-.03/tau).
-    lam = Q('.06')
-    assert lam/10-lam*lam/(2*(1-lam)) > Q('.004')
+def check_gamma(n, cutoff, window=FINE):
+    lam = window.tilt
+    assert lam*window.relative-lam*lam/(2*(1-lam)) > Q('.004')
     # Cauchy--Schwarz with E|T-j|^8 <= 2^8 (j+8)^8.
     # The polynomial factor is maximized at j+8 <= 4/.002.
-    assert (10**4*TAU*(8+Q(4)/Q('.002'))**4
-            * exp_neg(Q('.015')/TAU) < EXCEPTION)
-    assert Q(cutoff,n) <= TAU
+    assert (10**4*window.tau*(8+Q(4)/Q('.002'))**4
+            * exp_neg(lam*window.additive/(2*window.tau)) < EXCEPTION)
+    assert Q(cutoff,n) <= window.tau
     assert (2+Q(1,n))*cutoff*sqrt_hi(cutoff)/sqrt_lo(32*n) < Q('.8')
     assert Q(2,3)*Q(1,12)/(PI_LO/2)**2/(1-(Q('.8')/(PI_LO/2))**2) < Q('.05')
     assert Q(2,3)*Q(1,180)/PI_LO**2/(1-(Q('.8')/PI_LO)**2) < Q('.001')
-    lam = Q('.015')
-    assert Q('.02')*lam-lam*lam/(2*(1-lam)) > Q(1,6000)
-    # Polynomial times exp(-N/12000) decreases from the lower endpoint.
-    assert 2*10**6*n*n*exp_neg(Q(n,12000)) < 1
+    lam = window.final_tilt
+    assert window.final_relative*lam-lam*lam/(2*(1-lam)) > window.final_rate
+    assert window.final_rate*n/2 > 2
+    assert 2*10**6*n*n*exp_neg(n*window.final_rate/2) < 1
 
 
 if __name__ == '__main__':
     table = residual_grid(180)
-    for n,cutoff,limits in [(10**6,160,['.0033','.101','6.1']),
+    for n,cutoff,limits in [(750000,150,['.0045','.147','10.3']),
+                             (10**6,160,['.0033','.101','6.1']),
                              (10**10,180,['.000001','.00002','.04'])]:
         check_gamma(n,cutoff)
         extra = check_fourier_envelopes(n,cutoff)
@@ -227,3 +248,9 @@ if __name__ == '__main__':
         values = [v+w for v,w in zip(main,extra)]
         assert all(v < Q(bound) for v,bound in zip(values,limits)), list(map(float,values))
         print(f'N >= {n}: density and difference errors below', ', '.join(limits))
+    n,cutoff = 125000,85
+    check_gamma(n,cutoff,COARSE)
+    main = return_inversion(n,cutoff,residual_grid(cutoff,COARSE),COARSE)[0]
+    extra = check_fourier_envelopes(n,cutoff,density_only=True)[0]
+    assert main+extra < Q('.069'), float(main+extra)
+    print('N >= 125000: density error below .069')

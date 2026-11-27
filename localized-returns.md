@@ -6,14 +6,15 @@ We use the signed walk of length $m+1=2N+\delta$, $s_0=(2N)^{3/2}$ and $d=(m+1+\
 
 | Lower bound on $N$ | Density error | First-difference error | Second-difference error |
 | ---: | ---: | ---: | ---: |
+| $750000$ | $.0045$ | $.147$ | $10.3$ |
 | $10^6$ | $.0033$ | $.101$ | $6.1$ |
 | $10^{10}$ | $.000001$ | $.00002$ | $.04$ |
 
-The second line will be used at smaller coranks. The proof estimates errors at the time remaining after a return. A late return can leave a substantial error there but has small point probability and a decaying conditional area transform. [Previous bound with a uniform return error](return-bounds.md) · [Rational verifier](verify_local_returns.py)
+The last line also applies at smaller coranks. At $N\ge125000$ a separate estimate below bounds the density error by $.069$. The proof estimates errors at the time remaining after a return. A late return can leave a substantial error there but has small point probability and a decaying conditional area transform. [Previous bound with a uniform return error](return-bounds.md) · [Rational verifier](verify_local_returns.py)
 
 ## Local bounds for the input symbols
 
-We give the details of the discretization so that each inequality between mesh points is specified. Use the [last-return identity, equations (2)–(5)](return-expansion.md#splitting-at-zero) and the [corrected input approximation](return-bounds.md#a-bound-for-the-signed-transform). Put $u=|\xi|^{2/3}$ for $\theta=\xi/s_0$, $\tau=u/N$, $v=j\tau$, and use $0\le u\le U$, $U=160,180$ in the respective rows. Here $\tau\le\tau_*=1/5000$, and all cosine and sinc arguments have modulus below $.8$. Write $[g]_{j,c}=\mathbb E g(\tau T)$ for gamma shape $j+c$, rate one. Recall the free and bridge continuum functions $p=e^{-v^3/24}$, $\rho=e^{-v^3/96}$ and the corrections $D_g=-g\ell_g-cg'-vg''/2$ from the cited approximation. The inputs $W_j$ are the free transform ($g=p,c=1$) and the transform conditional on a bridge ($g=\rho,c=1/2$).
+We give the details of the discretization so that each inequality between mesh points is specified. Use the [last-return identity, equations (2)–(5)](return-expansion.md#splitting-at-zero) and the [corrected input approximation](return-bounds.md#a-bound-for-the-signed-transform). Put $u=|\xi|^{2/3}$ for $\theta=\xi/s_0$, $\tau=u/N$, $v=j\tau$, and use $0\le u\le U$, $U=150,160,180$ in the respective rows. Here $\tau\le\tau_*=1/5000$, and all cosine and sinc arguments have modulus below $.8$. Write $[g]_{j,c}=\mathbb E g(\tau T)$ for gamma shape $j+c$, rate one. Recall the free and bridge continuum functions $p=e^{-v^3/24}$, $\rho=e^{-v^3/96}$ and the corrections $D_g=-g\ell_g-cg'-vg''/2$ from the cited approximation. The inputs $W_j$ are the free transform ($g=p,c=1$) and the transform conditional on a bridge ($g=\rho,c=1/2$).
 
 Divide the time variable into half-unit bins $[a,b]$. For the suprema on a bin of any polynomial times $e^{-v^3/B}$ the verifier bounds each unsigned monomial separately. Its maximum is at the nearer endpoint if its unique maximum point $(jB/3)^{1/3}$ is outside the bin, or at that point if it is inside, for monomial degree $j>0$. Constants are bounded at the left endpoint.
 
@@ -74,7 +75,7 @@ $$
 $$
 in the normalized signed transform. This uses $1/r_N\le2\sqrt N$ and $\sum_j|H_j|\le1$. Bins may be taken half-open throughout, with the last endpoint handled by continuity. For $i=0$ the same bin contains all remaining times and the displayed bound covers the whole inverse.
 
-For $i>0$ and $j>N/20$, put $(N-j)\tau$ in bin $t$, $0\le t\le\lfloor.95(i+1)\rfloor$. There are at most $N\Delta/a+1$ such indices per bin. The absolute first-return probability is $q_j=r_j/(2j-1)$, so $q_j/r_N\le1.01(N/j)^{3/2}/N$ by Wallis at $j>N/20\ge50000$. Below we prove $|H_j|/q_j\le\min(1,240 e^{-.13uj/N})$ on the retained Fourier arc. Thus the additional error per bin is at most
+For $i>0$ and $j>N/20$, put $(N-j)\tau$ in bin $t$, $0\le t\le\lfloor.95(i+1)\rfloor$. There are at most $N\Delta/a+1$ such indices per bin. The absolute first-return probability is $q_j=r_j/(2j-1)$, so $q_j/r_N\le1.01(N/j)^{3/2}/N$ by Wallis at $j>N/20\ge37500$. Below we prove $|H_j|/q_j\le\min(1,240 e^{-.13uj/N})$ on the retained Fourier arc. Thus the additional error per bin is at most
 $$
  (b/N)^2 (\Delta/a+1/N)\,1.01\,p^{-3/2}\min(1,240 e^{-.13 w})E_t,\qquad
  p=\max(.05,1-(t+1)\Delta/a),\quad w=\max(.05a,a-(t+1)\Delta).
@@ -94,3 +95,13 @@ Here $L\theta^2/96<.00001$ and $L|\theta|^{2/3}\le9.01$. The rational check give
 For a first return at $2j$, remove the two exterior steps and translate the positive interior down one. It becomes a uniform nonnegative bridge of length $2j-2$, with an area phase of constant modulus one from the shift. Reflection bounds the signed transform by the same modulus. Set $b'=\lfloor(2j-2)/16\rfloor$. Keep a boundary segment of length $b'$ at each end, and a segment of that length immediately before the terminal boundary segment. The first segment and the reversed last have survival masses at most $1/\sqrt{b'}$. Each transition entry of the other short segment has modulus at most $1/\sqrt{b'}$ by the fair binomial point bound. On the remaining steps multiply complete killed-block row bounds. Divide by the nonnegative bridge mass $r_{j-1}/j\ge1/(2j^{3/2})$. Since $b'>.124j$ for $j>N/20$ and the middle has at least $13(2j-2)/16$ steps, this gives $240 e^{-.13uj/N}$ as used above.
 
 Beyond $U$ integrate the two transforms with $100e^{-.162u}$ through $|\theta|=.001$ and on the full continuum tail. Beyond that lattice frequency use the earlier full-period bound $8e^{-u/101}$, extracting $e^{-2N/20200}$. For the forward and centered lattice multipliers integrate $\xi^2/(2s_0)$ and $\xi^4/(12s_0^2)$ against the continuum cosine transform. Use the Airy bounds above through $u=40$ and $|f(u)|\le10\sqrt u e^{-.58u}$ thereafter. These calculations give the error table. The comparison of its errors with derivative signs, including the lower endpoint $.145$, is in the [cubic integral argument](cubic-tilt.md#the-peak-interval).
+
+## The density at 125000 pairs
+
+For $N\ge125000$ take $U=85$, $\tau_* = .0007$ and use the same half-unit bins and input polynomials. All cosine and sinc arguments still have modulus below $.8$. Enlarge the gamma windows to $W=[\max(0,.88a-1),1.12b+1]$. At tilt $\lambda=.12$ the probability of $|\tau(T-j)|>.12v+1$ is at most $3\exp(-.004j-.12/\tau)$, since $.12\lambda-\lambda^2/(2(1-\lambda))>.004$. In the Cauchy–Schwarz exceptional bound replace $.015/\tau_*$ by $.06/\tau_*$ and use the new $\tau_*$. The result is still below $10^{-16}$. For late returns $j>N/20\ge6250$ the Wallis and segment estimates still give factors $1.01$ and $240$, as checked at the lower endpoint.
+
+In removing the final gamma average take derivative suprema on $[.95a,1.05b]$. Tilt $\pm.04$ gives probability at most $3e^{-N/1000}$ outside that window, since $.05(.04)-(.04)^2/(2(1-.04))>.001$. The previous exceptional cost is at most $2\cdot10^6e^{-N/2000}<N^{-2}$. The sum of the averaging and return errors in the density integral, including $2/\pi$, is below $.05656$.
+
+Only the order-zero tail is needed. The existing $100e^{-.162u}$ bound for both laws costs at most $.01190$ beyond $U$. For the lattice arc past $|\theta|=.001$ integrate $8e^{-u/101}$ from $v=2N/100$. Its contribution including $2/\pi$ is at most
+$$ \frac{24\sqrt v\,e^{-v/101}}{\pi(1/101-1/(2v))}<.000001. $$
+This uses $\sqrt{v+t}\le\sqrt v\,e^{t/(2v)}$. Together the errors are below $.069$. All terms decrease as the size exceeds the stated lower bound, or are uniformly bounded there by the same fixed integral. The [verifier](verify_local_returns.py) uses rational enclosures for all three terms. The application to coefficients uses this density estimate at two separated sites. [Odd-part reflected comparisons](type-b-transfer.md#from-a-failed-comparison-to-an-odd-part-valley)
