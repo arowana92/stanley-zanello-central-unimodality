@@ -115,3 +115,10 @@ example : (List.range 4).map (fun r =>
 -- gives these four unnormalized moments in each parity.
 example : (List.range 4).map (Witness.rawCell 2 0) = [6,32,182,1096] := by decide +kernel
 example : (List.range 4).map (Witness.rawCell 2 1) = [10,72,1654/3,4464] := by decide +kernel
+
+#print axioms degree_sum_lower
+#print axioms periodized_ranks
+#print axioms recover_rank
+#print axioms rank_error_of_residual
+#print axioms inverse_periodicCount
+#print axioms periodicCount_bounds

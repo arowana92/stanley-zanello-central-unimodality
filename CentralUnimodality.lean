@@ -19,3 +19,5 @@ public import CentralUnimodality.WallisTrial
 public import CentralUnimodality.SecondWitnessCheck
 public import CentralUnimodality.ReflectedMoments
 public import CentralUnimodality.StaircasePrefix
+public import CentralUnimodality.AlternatingDegrees
+public import CentralUnimodality.AliasBounds
