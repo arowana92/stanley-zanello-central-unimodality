@@ -148,7 +148,7 @@ def check_growth_integral():
     assert 500**2*(Q("1.10")-Q(".016"))**2/(Q("2.001")**3*Q(".565")**2) > n
 
 
-def finite_energy(h):
+def finite_norm_bracket(h):
     """Enclose the infinite real Jacobi norm by two finite Sturm tests."""
     scale = 2**64
     size = 16*h
@@ -192,6 +192,11 @@ def finite_energy(h):
     hi = bracket(hi_edges, hi_edges[-1])[1]
     assert 2*hi_edges[-1] < lo  # Tail norm after cutting the last edge.
     assert 0 < hi-lo < 4096
+    return lo, hi, scale
+
+
+def finite_energy(h):
+    lo, hi, scale = finite_norm_bracket(h)
     # Decimal exp/ln are correctly rounded to nearest in this context.
     # Only use the midpoint for displaying an estimate of the Airy zero.
     with localcontext() as ctx:
