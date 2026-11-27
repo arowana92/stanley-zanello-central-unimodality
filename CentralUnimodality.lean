@@ -3,3 +3,6 @@ module
 public import CentralUnimodality.BaseCases
 public import CentralUnimodality.Unimodality
 public import CentralUnimodality.Statement
+public import CentralUnimodality.MomentTest
+public import CentralUnimodality.SignedRanks
+public import CentralUnimodality.FirstReturn

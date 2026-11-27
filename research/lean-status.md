@@ -11,12 +11,16 @@
 | `packedRow_digit` | Evaluating the rank polynomial at a power of two places each coefficient in its own digit when the bit width exceeds the ballot length. The cardinality bound rules out carries. [Digit proof](../CentralUnimodality/Packing.lean) · [Packed recurrence](../CentralUnimodality/PackedRows.lean) |
 | `central_through_63` | All ranks in all 126 positive-size shapes through 63 rows satisfy weak unimodality. Lean's kernel evaluates the integer verifier. [Finite check and its soundness](../CentralUnimodality/Finite.lean) · [Base theorem](../CentralUnimodality/BaseCases.lean) |
 | `unimodalOn_of_curvature`, `UnimodalOn.extend`, `unimodalOn_reverse_iff` | First-difference signs on the flanks and second-difference signs across the peak imply unimodality. Monotone adjacent intervals can be attached, and reversing the row preserves the conclusion. [Order lemmas](../CentralUnimodality/Unimodality.lean) |
+| `ballotEquiv`, `signed_ranks` | Nonnegative ballot words correspond bijectively to the literal partitions. For any test function of the integer signed area, the no-return sum is exactly its two reflected values summed against the rank counts. [Ballot bijection](../CentralUnimodality/Ballot.lean) · [Area identity](../CentralUnimodality/WalkArea.lean) · [Signed rank formula](../CentralUnimodality/SignedRanks.lean) |
+| `lastReturn_convolution` | Splitting the unrestricted walk at its last zero gives the exact product convolution for every additive area character and every length. [Last-return decomposition](../CentralUnimodality/LastReturn.lean) |
+| `firstReturn_renewal`, `firstReturn_kraft` | Positive-length bridge transforms split at their first return. The exact first-return probabilities through any horizon sum to at most one, by counting disjoint extensions of first-return words. [First-return proof](../CentralUnimodality/FirstReturn.lean) |
+| `reflected_of_negative_sum` | In every unimodal row, a negative weighted moment and the specified inequalities on its primitive force a reflected coefficient comparison. The proof sums over all integer superlevels. [Moment test](../CentralUnimodality/MomentTest.lean) |
 
 The kernel-checked base theorem uses only arithmetic on natural numbers. In the formal proof every positive row with ballot length at most 127 is evaluated at base $2^{128}$. Reading its digits from low to high tests every adjacent pair through the degree of the shape. No externally computed coefficients or proposed peak ranks enter the theorem.
 
 ## Remaining proof obligations
 
-The induction beyond 63 rows requires the moment inequalities on smaller odd-part rows and the ordinary Dyck interval bound. Its finite central and flank estimates cover sizes through 299,999. Its uniform analytic estimate applies at every larger size. These estimates still need Lean proofs linked to the rank counts. The Python and C++ verifiers and the bounds justifying them are documented in the [research proof](../proof.md).
+The two concrete polynomial witnesses still require formal bounds on their antiderivatives and expectations. The induction beyond 63 rows also uses the ordinary Dyck interval bound. Its finite central and flank estimates cover sizes through 299,999. Its uniform analytic estimate applies at every larger size. These estimates still need Lean proofs linked to the rank counts. The Python and C++ verifiers and the bounds justifying them are documented in the [research proof](../proof.md).
 
 ## Reproduction
 

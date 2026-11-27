@@ -33,3 +33,13 @@ example (n δ : ℕ) (hδ : δ ≤ 1) (μ : List ℕ) :
 #print axioms conjecture34_iff_staircase
 #print axioms packedRow_digit
 #print axioms unimodalOn_of_curvature
+
+example (n δ : ℕ) (hδ : δ ≤ 1) (F : ℤ → ℤ) :
+    (∑ w ∈ strictWords (2*n+δ+1), F (walkArea w)) =
+      ∑ j ∈ Finset.range (n*(n+δ)+1), rankCount (2*n+δ) j •
+        (F (signedAreaAtRank n δ j) + F (-signedAreaAtRank n δ j)) := signed_ranks F n δ hδ
+
+#print axioms lastReturn_convolution
+#print axioms reflected_of_negative_sum
+#print axioms firstReturn_renewal
+#print axioms firstReturn_kraft
