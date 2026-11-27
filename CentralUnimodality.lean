@@ -6,3 +6,5 @@ public import CentralUnimodality.Statement
 public import CentralUnimodality.MomentTest
 public import CentralUnimodality.SignedRanks
 public import CentralUnimodality.FirstReturn
+public import CentralUnimodality.FourierInputs
+public import CentralUnimodality.SurvivalBounds

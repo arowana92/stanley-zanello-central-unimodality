@@ -43,3 +43,17 @@ example (n δ : ℕ) (hδ : δ ≤ 1) (F : ℤ → ℤ) :
 #print axioms reflected_of_negative_sum
 #print axioms firstReturn_renewal
 #print axioms firstReturn_kraft
+
+example (ω : ℝ) (V : PowerSeries ℂ) (n : ℕ) (e : ℝ)
+    (h : ∀ j ≤ n, ‖PowerSeries.coeff j (fairSeries (areaCharacter ω) words -
+        fairSeries (areaCharacter ω) bridges * V)‖ ≤ e) :
+    ‖PowerSeries.coeff n (fairSeries (areaCharacter ω) strictWords - V)‖ ≤ 2*e :=
+  fairSeries_residual_bound _ (areaCharacter_zero ω) (areaCharacter_add ω)
+    (fun x => (norm_areaCharacter ω x).le) V n e h
+
+#print axioms fourier_signed_ranks
+#print axioms fourier_free_product
+#print axioms fairSeries_residual_bound
+#print axioms firstReturn_probability
+#print axioms survival_sq_lower
+#print axioms survival_sq_upper
