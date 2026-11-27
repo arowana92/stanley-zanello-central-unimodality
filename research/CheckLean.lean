@@ -262,3 +262,14 @@ example (hD : DyckComparisons)
 #print axioms MarkedExcursion.late_hit_bin
 #print axioms MarkedExcursion.change_difference_bounds
 #print axioms MarkedExcursion.rank_curvature_of_tilt
+#print axioms MarkedExcursion.homogeneous_live
+#print axioms MarkedExcursion.hit_time_first_moment
+#print axioms MarkedExcursion.prefixRank_full
+#print axioms MarkedExcursion.prefixMean_exact
+#print axioms MarkedExcursion.prefixVariance_exact
+#print axioms MarkedExcursion.stopped_variance_bound
+#print axioms MarkedExcursion.conditional_prefix_variance
+#print axioms MarkedExcursion.prefixSiteMass_mixture
+#print axioms MarkedExcursion.saddle_suffix_site
+#print axioms MarkedExcursion.gaussian_average
+#print axioms MarkedExcursion.conditional_prefix_differences

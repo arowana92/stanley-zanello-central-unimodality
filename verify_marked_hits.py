@@ -395,11 +395,58 @@ def check_joint_tilt(max_length=10):
     print(f"Joint tilt and late-hit masses agree at {cuts} cuts through length {max_length}.")
 
 
+def check_prefix_variance(max_length=10):
+    """Enumerate prefixes at c=log(5/4) and stop the centered square on the first hit."""
+    cuts = 0
+    base = Q(5, 4)
+    for m in range(1, max_length+1):
+        drift0 = 1 - 2/(1 + base**(2*m))
+        mean = variance = Q(0)
+        stopped = hit_moment = Q(0)
+        # Each state records height, rank, first hit time and exact probability.
+        states = [(0, 0, None, Q(1))]
+        for length in range(m+1):
+            if length:
+                label = m+1-length
+                down = 1/(1 + base**(2*label))
+                mean += label*down
+                variance += label**2 * down*(1-down)
+                states = [(height+step, rank+(label if step == -1 else 0),
+                           length if first is None and height+step == -1 else first,
+                           mass*probability)
+                          for height, rank, first, mass in states
+                          for step, probability in ((1, 1-down), (-1, down))]
+            assert sum(mass*rank for _, rank, _, mass in states) == mean
+            assert sum(mass*(rank-mean)**2 for _, rank, _, mass in states) == variance
+            live_mass = live_square = Q(0)
+            for _, rank, first, mass in states:
+                square = (rank-mean)**2
+                if first is None:
+                    live_mass += mass
+                    live_square += mass*square
+                elif first == length:
+                    stopped += mass*(square-variance)
+                    hit_moment += mass*length
+            assert live_square - live_mass*variance + stopped == 0
+            lo = max(0, m-length)
+            rho = base**(-2*m)
+            assert live_mass >= 1 - base**(-2*lo)
+            assert hit_moment <= length*(base**(-2*lo)-rho) + rho/drift0
+            if length < m:
+                f = Q(length, m)
+                bound = m**3*Q(1, 4)*(f + (1+drift0)/(1-f) *
+                                       (f**2 + 1/(2*m*drift0**2)))
+                assert live_square <= live_mass*bound
+            cuts += 1
+    print(f"Stopped prefix variance and hit moments agree at {cuts} cuts through length {max_length}.")
+
+
 if __name__ == "__main__":
     check_suffix()
     check_marked()
     check_rank_tilt()
     check_joint_tilt()
+    check_prefix_variance()
     check_peak_bound()
     cases = [(Q(3, 5), Q(9), 0, Q(3, 40)), (Q(3, 4), Q("11.25"), 1, Q(1, 16))]
     for start, stop, order, fraction in cases:

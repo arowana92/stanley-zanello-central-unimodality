@@ -43,3 +43,4 @@ public import CentralUnimodality.MeshRadius
 public import CentralUnimodality.MeshLength
 public import CentralUnimodality.HitTiltBins
 public import CentralUnimodality.TiltedDifferences
+public import CentralUnimodality.PrefixDifferenceBounds
