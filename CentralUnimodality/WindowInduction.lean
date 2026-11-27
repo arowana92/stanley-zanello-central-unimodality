@@ -46,12 +46,13 @@ private theorem attach_prefix {n δ : ℕ} (hδ : δ ≤ 1) (hs : CentralSuffix 
     simpa only [ballotPoly_coeff n δ k hδ (by omega),ballotPoly_coeff n δ (k+1) hδ (by omega)] using hp k hk
   · omega
 
-theorem central_from_windows (E : ℕ → ℤ)
+theorem central_from_inductive_windows (E : ℕ → ℤ)
     (hD : ∀ l, IntervalDecomposition (dyckPoly l) (E l))
     (hE : ∀ l, dyckLower l ≤ (E l:ℝ))
     (href : ∀ n, UnimodalOn (rankCount (2*n)) 0 (n*n) →
       ReflectedCoeffs (ballotPoly (2*n)) ⌊oddCutoff n⌋)
-    (hs : ∀ n ≥ 96, ∀ δ ≤ 1, CentralSuffix n δ) : Conjecture34 := by
+    (hs : ∀ n ≥ 96, ∀ δ ≤ 1,
+      (∀ h, h < n ∨ (δ = 1 ∧ h = n) → UnimodalOn (rankCount (2*h)) 0 (h*h)) → CentralSuffix n δ) : Conjecture34 := by
   have odd (n : ℕ) : UnimodalOn (rankCount (2*n)) 0 (n*n) := by
     induction n using Nat.strong_induction_on with
     | ind n ih =>
@@ -60,7 +61,7 @@ theorem central_from_windows (E : ℕ → ℤ)
       cases n with
       | zero => omega
       | succ n =>
-        have h := attach_prefix (δ := 0) (by decide) (hs (n+1) (by omega) 0 (by decide)) (by
+        have h := attach_prefix (δ := 0) (by decide) (hs (n+1) (by omega) 0 (by decide) (fun i hi => ih i (by omega))) (by
           intro k hk
           simp only [Nat.add_zero] at hk ⊢
           apply odd_prefix_from_bounds n k E (fun l _ => hD l) (fun l _ => hE l) (fun i hi => href i (ih i (by omega)))
@@ -70,9 +71,17 @@ theorem central_from_windows (E : ℕ → ℤ)
   refine ⟨odd n, ?_⟩
   by_cases hn : n ≤ 95
   · exact (central_through_95 hn).2
-  apply attach_prefix (δ := 1) (by decide) (hs n (by omega) 1 (by decide))
+  apply attach_prefix (δ := 1) (by decide) (hs n (by omega) 1 (by decide) (fun i _ => odd i))
   intro k hk
   exact even_prefix_from_bounds n k E (fun l _ => hD l) (fun l _ => hE l) (fun i _ => href i (odd i))
     (before_centralStart (by omega : 96 ≤ n) (le_refl _) hk)
+
+theorem central_from_windows (E : ℕ → ℤ)
+    (hD : ∀ l, IntervalDecomposition (dyckPoly l) (E l))
+    (hE : ∀ l, dyckLower l ≤ (E l:ℝ))
+    (href : ∀ n, UnimodalOn (rankCount (2*n)) 0 (n*n) →
+      ReflectedCoeffs (ballotPoly (2*n)) ⌊oddCutoff n⌋)
+    (hs : ∀ n ≥ 96, ∀ δ ≤ 1, CentralSuffix n δ) : Conjecture34 :=
+  central_from_inductive_windows E hD hE href (fun n hn δ hδ _ => hs n hn δ hδ)
 
 end CentralUnimodality

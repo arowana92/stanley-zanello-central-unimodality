@@ -136,3 +136,11 @@ example : (List.range 4).map (Witness.rawCell 2 1) = [10,72,1654/3,4464] := by d
 #print axioms blockSines_identity
 #print axioms blockSines_middle
 #print axioms pairFactor_arc
+
+#print axioms prefix_mean_bound
+#print axioms odd_first_moment
+#print axioms odd_prefix_peak_bound
+#print axioms dyck_degree_le
+#print axioms odd_midpoint_tail
+#print axioms even_midpoint_tail
+#print axioms central_from_midpoints

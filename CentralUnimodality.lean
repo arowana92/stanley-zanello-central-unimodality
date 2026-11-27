@@ -26,3 +26,4 @@ public import CentralUnimodality.BridgeProduct
 public import CentralUnimodality.TabulatedWitness
 public import CentralUnimodality.WindowInduction
 public import CentralUnimodality.SineArc
+public import CentralUnimodality.MidpointInduction

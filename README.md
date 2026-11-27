@@ -2,7 +2,7 @@
 
 **Computer-assisted research proof for both families.** Richard Stanley and Fabrizio Zanello posed this conjecture in 2013. In *Unimodality of partitions with distinct parts inside Ferrers shapes* it is Conjecture 3.4 in the authors’ MIT PDF and Conjecture 3.3 in the journal text.
 
-**Lean 4 formalization in progress.** Lean proves weak unimodality of both families through 95 rows. The all-size staircase recurrences, exact formulas for every corank moment, Fourier residual bound, and two polynomial witness tests are also formalized. [Lean status and reproduction](research/lean-status.md)
+**Lean 4 formalization in progress.** Lean proves weak unimodality of both families through 95 rows. Lean also proves the exact corank moments and derives the entire lower half of the induction from the earlier odd-part rows. The central estimates and the ordinary Dyck interval decomposition still require formal proofs. [Lean status and reproduction](research/lean-status.md)
 
 For each positive integer $n$, consider the two shapes $(2n-1,2n-3,\ldots,1)$ and $(2n,2n-2,\ldots,2)$. For either shape $\lambda$, let $a_j$ count the partitions of $j$ into distinct positive parts that fit inside $\lambda$. This means the partition has at most $n$ parts and its $i$th largest part is at most $\lambda_i$. The empty partition contributes $a_0=1$.
 
