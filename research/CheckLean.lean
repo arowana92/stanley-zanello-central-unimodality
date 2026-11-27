@@ -57,3 +57,8 @@ example (ω : ℝ) (V : PowerSeries ℂ) (n : ℕ) (e : ℝ)
 #print axioms firstReturn_probability
 #print axioms survival_sq_lower
 #print axioms survival_sq_upper
+
+#print axioms ballot_rank_polynomial
+#print axioms dyck_convolution
+#print axioms odd_ballot_convolution
+#print axioms stump_convolution
