@@ -61,6 +61,8 @@ Lean constructs the raising and lowering operators on the rational polynomial ri
 
 The signed averaging theorem `Polarization.coinvariantSpace_iff` identifies each image above with all classes in the quotient bidegree that transform by the sign of every simultaneous permutation. [Alternating lifts](../CentralUnimodality/AlternatingLift.lean)
 
+For the right flank, `MarkedExcursion.tilted_hit_gaussian` proves the individual first-hit mass bound for the centered linear tilt at every odd hitting time and every nonnegative slope. The kernel checks the marked-vertex binomial law, Jensen's inequality on excursion areas, the Gaussian integral and the centered hyperbolic-cosine normalizer. `fair_hit_upper` proves the $0.8/(t-1)^{3/2}$ fair prefactor bound for $t>1$. The signed sum over hitting times against the free suffix is still needed for the right-flank comparison. [Proof and formulas (1)–(3)](../marked-hits.md#an-excursion-with-a-marked-vertex) · [Lean bound](../CentralUnimodality/MarkedHitBound.lean)
+
 ## Remaining proof obligations
 
 The theorem `conjecture34_of_comparisons_and_midpoints` reduces the universal strict-partition statement to two hypotheses. [Lean reduction](../CentralUnimodality/ReflectedPolynomials.lean)

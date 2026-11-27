@@ -231,3 +231,10 @@ example (hD : DyckComparisons)
 #print axioms Polarization.alternating_degree_cutoff
 #print axioms Polarization.conjecture34_of_hilbert_and_midpoints
 #print axioms Polarization.coinvariantSpace_iff
+#print axioms MarkedExcursion.card_tail
+#print axioms MarkedExcursion.heightTail_gaussian
+#print axioms MarkedExcursion.area_exp_gaussian
+#print axioms MarkedExcursion.signMass_total
+#print axioms MarkedExcursion.centered_cosh_lower
+#print axioms MarkedExcursion.fair_hit_upper
+#print axioms MarkedExcursion.tilted_hit_gaussian

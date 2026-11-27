@@ -256,13 +256,35 @@ def check_rows(max_n=127, direct_n=12):
           f"Direct partitions agree through n={direct_n}.")
 
 
+def centered_first_hit(d):
+    """Exact first-hit probability at 2d+1 for the slope log(2)."""
+    surviving = {0: Q(1)}
+    normalizer = Q(1)
+    for index in range(2*d+1):
+        up_weight = Q(2)**(d-index)
+        step_total = up_weight + 1/up_weight
+        normalizer *= step_total
+        p_up = up_weight / step_total
+        hit = surviving.get(0, 0) * (1-p_up)
+        following = {}
+        for height, mass in surviving.items():
+            following[height+1] = following.get(height+1, 0) + mass*p_up
+            if height:
+                following[height-1] = following.get(height-1, 0) + mass*(1-p_up)
+        surviving = following
+    return hit, normalizer
+
+
 def check_marked(max_d=10):
     for d in range(max_d+1):
         counts = [0]*(d+1)
+        area_weight = 0
 
         def visit(path, ups):
+            nonlocal area_weight
             height = path[-1]
             if len(path) == 2*d+1:
+                area_weight += 2**sum(path)
                 for y in path:
                     counts[y] += 1
                 return
@@ -274,7 +296,9 @@ def check_marked(max_d=10):
         visit([0],0)
         for h in range(d+1):
             assert sum(counts[h:]) == comb(2*d+1,d-h)
-    print(f"Marked Dyck height counts agree through semilength {max_d}.")
+        hit, normalizer = centered_first_hit(d)
+        assert hit * normalizer == 2**d * area_weight
+    print(f"Marked heights and exact tilted first-hit probabilities agree through semilength {max_d}.")
 
 
 if __name__ == "__main__":

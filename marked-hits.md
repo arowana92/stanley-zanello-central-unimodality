@@ -46,6 +46,10 @@ $$
 $$
 These bounds apply to individual first hits at arbitrary length.
 
+Lean proves (1) by a bijection. For a path marked at height $h$, keep its prefix, insert an up-step and traverse the suffix backwards with every step reversed. The result is a ballot path ending at $2h+1$. Its last up-step out of height $h$ recovers the mark. A height of at least $b$ corresponds to at most $d-b$ down-steps, so the ballot triangle telescopes to the numerator in (1). The kernel then checks Jensen's inequality on the $2d+1$ vertices, integration against the Gaussian tail, and the lower bound on the product of hyperbolic cosines. With $c=\lambda/(2s)$, the resulting theorem bounds the actual probability of the first hit at $t=2d+1$ for independent signs with natural parameters $c(d-i)$ at zero-based step $i$. It includes the fair prefactor $2^{-t}C_d$ and the shift $e^{cd}$. [Marked paths](CentralUnimodality/MarkedExcursion.lean) · [Gaussian integral](CentralUnimodality/MarkedAreaIntegral.lean) · [Tilted first-hit bound](CentralUnimodality/MarkedHitBound.lean)
+
+The independent exact check chooses $c=\log 2$. It compares an absorbing walk on heights with the tilted area sum obtained by direct Dyck path enumeration. The remaining estimates in the sections below combine individual first hits with an independent suffix and bound their combined contribution to the staircase differences.
+
 ## The maximum at finite size
 
 Let $P(k)=a_{D-k}/\binom m{\lfloor m/2\rfloor}$. For $m\ge256$, $s\max P>1.805$. In the [exact variance argument](mode-bounds.md#height-of-the-maximum-from-the-exact-variance) use $\ell\ge128$ and $C^2\ge\pi\ell$. After division by $\ell^3$ the two numerator bounds have positive coefficients in $1/\ell$. Their maximum and the smallest allowed $m/\ell=2-\delta/\ell$ can be evaluated at $\ell=128$. The variance bound for a density bounded by $\max P$ gives the claimed number.
