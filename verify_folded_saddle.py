@@ -50,9 +50,8 @@ def check_real_moment():
     assert Q("1.001")/Q(".999") < Q("1.003")
 
 
-def check_sample_and_powers():
-    T, E, d = Q("1.74"), Q("3.4"), MESH
-    assert T*T > 1+Q("1.4")**2 and E**3 > ENERGY**3*T**2
+def power_residual(T, E, d):
+    """Upper bound in units of d^6 for the normalized two-step residual."""
     norm, f, corr = sample_bounds(T, E, Q(1), d)
     hyper = T*T/32*upper_exp(T*d**3/4)
     airy = (norm(f,6)/120 + norm(f,potential=3,grid=True)/48
@@ -67,7 +66,13 @@ def check_sample_and_powers():
     residual = (airy+correction+scalar*norm(f,grid=True)
                 + correction_scalar*norm(corr,grid=True))
     even = (1-2*d*sqrt_hi(E))/sqrt_hi(2)-d*d*norm(corr,grid=True)
-    assert 2*upper_exp(3*d**3/4)*residual/(even*(1-Q("2.6")*d*d)) < 2100
+    return 2*upper_exp(3*d**3/4)*residual/(even*(1-Q("2.6")*d*d))
+
+
+def check_sample_and_powers():
+    T, E, d = Q("1.74"), Q("3.4"), MESH
+    assert T*T > 1+Q("1.4")**2 and E**3 > ENERGY**3*T**2
+    assert power_residual(T, E, d) < 2100
     delta = 2100*d**4
     assert T**4 < Q("2.1")**3
     assert ENERGY**2/30*(1+Q("2.1"))+2000*d*d < Q(".80")

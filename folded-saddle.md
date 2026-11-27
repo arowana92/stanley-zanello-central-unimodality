@@ -8,6 +8,8 @@ Then
 $$ b_i<b_j\qquad (0\le i<j,\quad i+j\le L(\ell),\quad n\ge2). \tag{2} $$
 For example, (2) gives strict growth through coranks 25,143 and 25,160 at $n=2049$ for the odd- and even-part shapes. The earlier [unmatched-step comparison](excursion-centers.md) gives 20,284 and 20,290. The proof of (1) uses (2) at small corank and a Fourier estimate for the [ballot transfer](effective-small-area.md#real-transfer-operator) at larger corank. The [verifier](verify_folded_saddle.py) checks the overlaps and numerical inequalities using rational bounds.
 
+The [phase comparison for the leading eigenvalue](saddle-phase.md) extends the uniform growth bound to $s/34$ and gives $s/18$ in the size ranges stated there. It also extends the quantitative curvature interval to $177n\le k\le s/26$.
+
 ## Folding unmatched steps into returns
 
 For an ordinary Dyck path $P$ of semilength $\ell$, write $R(P)$ for the set of its positive return times in single-step units, including the terminal return. Write $A(P)=\sum_t\lfloor H_t/2\rfloor$ for its area. For the corank polynomials one has
