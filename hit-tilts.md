@@ -7,7 +7,7 @@ $$
  a_j^2>a_{j-1}a_{j+1} &\qquad (k\ge 15s/16).
 \end{aligned} \tag{1}
 $$
-In particular a possible failure of unimodality in either family is confined, up to the adjacent indices at the two ends, to $s/70\le k\le 3s/4$. The other two all-size inputs are [strict growth at small corank](excursion-centers.md) and [weak growth below the middle rank](monotonicity.md#1-lower-half-for-all-sizes). The normalized margins in the proof are uniform over the previously unverified sizes.
+In particular a possible failure of unimodality in either family is confined, up to the adjacent indices at the two ends, to $s/35\le k\le 3s/4$. The other two all-size inputs are [strict growth at small corank](folded-saddle.md) and [weak growth below the middle rank](monotonicity.md#1-lower-half-for-all-sizes). The normalized margins in the proof are uniform over the previously unverified sizes.
 
 For $m<4096$ use [the finite strict upper-half curvature certificate](certified-window.md) and the [global peak bound $k<.65s$](mode-bounds.md). Strict log-concavity on the upper half and a maximum strictly above the stated rank interval give the first inequality. At $n<9$ both intervals are empty. For $k\ge2s$ both conclusions follow from the [earlier first-passage bounds](rising-window.md). Take $m\ge4096$ and $k\le2s$ below.
 
