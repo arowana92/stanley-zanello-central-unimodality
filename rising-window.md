@@ -108,4 +108,4 @@ python3 -B verify_rising.py
 python3 -B verify_rising.py --exact-n 385
 ~~~
 
-The [finite curvature certificate](certified-window.md) tests the complementary interval through 1000 rows.
+The [finite curvature certificate](certified-window.md) covers the complementary interval through 2048 rows.

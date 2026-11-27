@@ -1,10 +1,10 @@
 # Finite verification of upper-half curvature
 
-For the odd-part and even-part central staircases, all interior ranks $j\ge D/2$ satisfy $a_j^2>a_{j-1}a_{j+1}$ for $9\le n\le1000$. Together with weak growth up to $\lceil D/2\rceil$ and direct enumeration at smaller sizes, this proves unimodality of both shapes for $1\le n\le1000$. [Lower-half inequality](monotonicity.md#1-lower-half-for-all-sizes)
+For the odd-part and even-part central staircases, all interior ranks $j\ge D/2$ satisfy $a_j^2>a_{j-1}a_{j+1}$ for $9\le n\le2048$. Together with weak growth up to $\lceil D/2\rceil$ and direct enumeration at smaller sizes, this proves unimodality of both shapes for $1\le n\le2048$. For every $n\ge9$ the same strict inequality also holds at upper-half coranks through 4096. [Lower-half inequality](monotonicity.md#1-lower-half-for-all-sizes) · [All-size corank certificate](#a-fixed-corank-range-at-every-size)
 
 Write $m=2n$ or $2n+1$, $D=\lfloor m^2/4\rfloor$ and $b_k=a_{D-k}$. The [first-passage estimate](rising-window.md) proves strict log-concavity at $2m^{3/2}\le k\le D/2$ for both parities. Its small-size input is the earlier [exact check through 384 rows](README.md#exact-coefficient-checks). For the rest of the upper half we certify the sign at each integer
 $$1\le k\le\min\{\lfloor D/2\rfloor,\lfloor 2m^{3/2}\rfloor\}.$$
-The upper endpoint is computed by taking an integer square root of $4m^3$, with the resulting integer and its successor checked by squaring. There are **143,235,952** such comparisons over both families at $9\le n\le1000$.
+The upper endpoint is computed by taking an integer square root of $4m^3$, with the resulting integer and its successor checked by squaring. The single-scale computation makes **150,138,442** such comparisons over both families at $9\le n\le1019$. The extension below uses a separate certificate for the first 4096 coranks.
 
 ## Truncated ballot recurrence
 
@@ -34,13 +34,57 @@ Compile with binary64 arithmetic and round-to-nearest. The C++17 program checks 
 python3 -B verify.py --max-n 12 --direct-n 12 --upper-curvature
 python3 -B verify_rising.py
 clang++ -std=c++17 -O3 -fno-fast-math -ffp-contract=off verify_window.cpp -o /tmp/sz_verify_window
-/tmp/sz_verify_window 1000
+/tmp/sz_verify_window 1019
 ~~~
 
 The final line of the C++ run is
 
 ~~~text
-Certified 143235952 strict determinants in both families for 9 <= n <= 1000. Direct counts agree through n = 12.
+Certified 150138442 strict determinants in both families for 9 <= n <= 1019. Direct counts agree through n = 12.
 ~~~
 
-The sign test stops at $n=1000$ in this run. The [large-size argument](finite-reduction.md) begins at $10^{46}$, leaving $1001\le n<10^{46}$ unresolved.
+The fixed unit $2^{-N}$ in this first calculation limits the admissible size. The next two certificates use integer exponents and a scale that varies with word length, respectively.
+
+## A fixed corank range at every size
+
+Write $b_k=a_{D-k}$ and $L_k=b_k^2-b_{k-1}b_{k+1}$. For both staircases and **every $n\ge9$**,
+$$
+ L_k>0\quad(1\le k\le\min(4096,\lfloor D/2\rfloor)),\qquad
+ L_k>b_k^2/(40k)\quad(1\le k\le\min(4096,2n)).
+$$
+For $k\le n/3$ this follows from the [paired-step estimate](paired-steps.md). Every remaining case with $k\le4096$ has $n<3\cdot4096$. The command below checks each integer $9\le n\le12288$ and $\lfloor n/3\rfloor<k\le\min(4096,\lfloor D/2\rfloor)$ in both families. It certifies 49,847,352 strictly positive determinants, including 41,951,106 with the stated relative margin.
+
+~~~sh
+/tmp/sz_verify_window --tail 4096
+~~~
+
+This run uses the same truncated ballot recurrence and represents each nonzero count by $M2^{e-47}$ with $2^{47}\le M<2^{48}$. To add, align the smaller mantissa by shifting right, dropping its low bits, then add and normalize. This rounds down to 48 significant bits. A dropped fractional part less than one before normalization cannot carry across the next integer after a further right shift. Each addition therefore retains a fraction between $1-v$ and one of its exact input sum, with $v=2^{-47}$. Zero stays exact. The exponents are signed integers and every exact count is at most $2^m$. Through the requested range $m\le24577$. At most $p=2m+1$ additions contribute to a row count along any path, giving
+$$ (1-v)^p b_k\le\widehat b_k\le b_k,\qquad (1-v)^{-2p}<1+2^{-27}.$$
+The second inequality follows from $-2p\log(1-v)\le2pv/(1-v)$. Thus it is sufficient to prove
+$$ (s-l)\widehat b_k^2 > s(1+2^{-27})\widehat b_{k-1}\widehat b_{k+1} $$
+with $(s,l)=(40k,1)$ for the relative margin or $(1,0)$ for strictness. The checker performs this comparison with integer mantissa products. It rounds the reserve on the right up, adding one even when the division by $2^{27}$ is exact. A difference of at least four between the left and right binary exponents already decides the comparison, since the ratio of the three mantissas in the determinant lies between $1/4$ and $4$ and $(s-l)/s\ge39/40$. For smaller differences the shifted products fit in an unsigned 128-bit integer ($s\le163840$). Direct enumeration checks all small counts through $n=12$. With corank limit 128, ordinary arbitrary-precision integer determinants also reproduce all 46,534 strict tests and 41,090 relative margins.
+
+## Scaling by the length in the larger window
+
+Above corank 4096, carry binary64 counts and multiply the active entries by $2^{-256}$ after every block of 256 steps. With $s_t=2^{t\bmod256}$, the ideal stored value divided by $s_t$ is the probability for the corresponding length-$t$ walk event under independent fair steps. All unscaled intermediate additions fit below $2^{257}$ by the bound below. The certificate includes a lower bound on the probabilities used in each comparison so that underflow in smaller intermediate entries is covered.
+
+Let $u=2^{-53}$ and $\tau=2^{-1022}$. A rounded positive operation with exact result $x$ lies in $[(1-u)x-\tau,(1+u)x+\tau]$, including subnormal results. In probability units each step averages two predecessor entries, counting a missing predecessor as zero. There is at most one addition and one power-of-two rescaling. Their two relative factors are bounded by $(1\pm u)^2$, and the combined additive error in probability units is at most $3\tau$, as $s_t\ge1$. Induction bounds each endpoint error by relative factors $(1\pm u)^{2t}$ and additive error $3t(1+u)^{2t}\tau$. The true endpoint probability is at most one. This also verifies the intermediate upper bound inductively, including the addition just before rescaling.
+
+Summing at most $t+1$ endpoint probabilities gives the following inequalities for the normalized computed coefficient $\widehat P$ and the true $P=2^{-t}b_k$, where $p=3t+1$ and $E=5(t+1)^2\tau$:
+$$
+ (1-u)^p P-E\le\widehat P\le(1+u)^pP+E .
+$$
+Here $t\le4097$. At every rank used in a determinant the checker requires the stored sum to be finite and at least $2^{-920}s_t$. Thus $E/\widehat P<2^{-75}$. Solving the two inequalities gives $|P/\widehat P-1|<v=2^{-38}$, using $p\le12292$. The sum and rank comparisons use the common stored scale without dividing by $s_t$.
+
+At adjacent ranks the ratio of true counts lies between $1/D$ and $D$ by the order-ideal edge count. The two binary64 quotient calculations therefore lie within the normal range. A nonpositive exact determinant could make the ratio of the two computed quotients at most
+$$
+ \left(\frac{1+v}{1-v}\right)^2\frac{1+u}{1-u}
+ <(1+2^{-35})(1-u).
+$$
+The checker requires the left quotient to exceed the rounded product of the right quotient and $1+2^{-35}$. This proves strictness whenever the comparison passes. The low-corank theorem above supplies the consecutive indices through 4096. The [first-passage estimate](rising-window.md) supplies strictness once $k\ge2m^{3/2}$ in the upper half.
+
+~~~sh
+/tmp/sz_verify_window --scaled 2048
+~~~
+
+The run certified **843,349,446** determinants. Its range is exactly $9\le n\le2048$ and $4097\le k\le\min(\lfloor D/2\rfloor,\lfloor2m^{3/2}\rfloor)$ for both shapes. The two commands with `--tail` and `--scaled`, together with the stated analytic estimates, reproduce the extended result. The [large-size argument](finite-reduction.md) begins at $10^{46}$, leaving $2049\le n<10^{46}$ unresolved.

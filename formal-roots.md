@@ -19,6 +19,8 @@ For a fixed $r$ the contribution at $k=2rn+\alpha_{\delta,r}+h$ is a polynomial 
 
 ## The common denominator and the two numerators
 
+Haug's thesis, which credits this chapter to work with Christoph Richard, gives the Bernoulli meander generating function $M(x,v)$ as a sum of endpoint contributions over a common $q$-Airy denominator. Its area is $\sum_t H_t=2k+n+\delta$ because exactly $n+\delta$ of the heights are odd. Consequently $[x^{2n+\delta}]M(x,v)=v^{n+\delta} Z_{n,\delta}(v^2)$. We give the endpoint argument in the staircase variables below and collect the numerator by length in (3). Proposition 7.4.1 in the thesis gives a scaling limit of the generating function. [Haug and Richard, equations (7.7)–(7.8) and Proposition 7.4.1 in Chapter 7](https://webspace.maths.qmul.ac.uk/t.prellberg/haug.pdf)
+
 Use $(q;q)_i=\prod_{j=1}^i(1-q^j)$, with empty product one. The ordinary generating function of Dyck excursions weighted by semilength $z$ and area $q$ is $C(z)=H(qz)/H(z)$, where
 $$H(z)=\sum_{i\ge0}\frac{(-1)^iq^{i(i-1)}z^i}{(q;q)_i}.$$
 This is the Carlitz–Riordan excursion series. Its first-return equation $C(z)=1+zC(z)C(qz)$ follows by cutting at the first return. The quotient solves it because $H(z)=H(qz)-zH(q^2z)$, as seen by comparing coefficients. [Haug and Prellberg, equations (6)–(8)](https://webspace.maths.qmul.ac.uk/t.prellberg/papers/pub100.pdf#page=3)
@@ -37,6 +39,8 @@ $$
 For even $l$, $s_l=1+O(q)$. For odd $l$, $s_l=-q+O(q^2)$ because pairing terms $2j,2j+1$ gives $-q^{2j+1}/(q;q)_{2j+1}$.
 
 ## The roots as integer power series
+
+Ismail and Zhang studied analytic representations and expansions of the large zeros of Ramanujan's entire function. Here we expand at $q=0$ for each root index and keep the residues of both staircase numerators to locate the first affected rank. [Ismail and Zhang, *Zeros of entire functions and a problem of Ramanujan*](https://www.sciencedirect.com/science/article/pii/S0001870806001605)
 
 Fix $r\ge0$. Substitute $z=q^{-2r}x$ in $H$ and multiply by $q^{r(r+1)}$. This gives
 $$
