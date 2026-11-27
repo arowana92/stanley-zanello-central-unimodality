@@ -213,3 +213,7 @@ example (hD : DyckComparisons)
 #print axioms SmallGrid.inputs_sound
 #print axioms SmallGrid.check_sound
 #print axioms SmallGrid.input_amplitude
+#print axioms quadrant_input_tail
+#print axioms SmallGrid.retained_quadrant_cut
+#print axioms SmallGrid.cut_sound
+#print axioms SmallGrid.cut_amplitude

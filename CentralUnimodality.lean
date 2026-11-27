@@ -36,4 +36,4 @@ public import CentralUnimodality.RankTruncation
 public import CentralUnimodality.DyckDiagonalSlices
 public import CentralUnimodality.SpatialWindow
 public import CentralUnimodality.PackedAmplitude
-public import CentralUnimodality.SmallGridAmplitude
+public import CentralUnimodality.QuadrantCheck
