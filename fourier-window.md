@@ -43,7 +43,7 @@ On each arc $[t,t']$ use the applicable rate $c$, the prefix survival ratio 16 a
 $$
  16e^{cL-c(63/64)(2N-1)}\big((t'-t)s_0+2\pi/5\big)(t's_0)^r .
 $$
-These bounds decrease from $N=2049$ since $2c(63/64)N>3(r+1)/2$. Together with the inner arc they give errors below $.00025$ and $.949$ for the first and centered second differences. Including aliases we use $.00026$ and $.95$.
+These bounds decrease from $N=2049$ since $2c(63/64)N>3(r+1)/2$. Together with the inner arc they give errors below $.00025$ and $.949$ for the first and centered second differences. Including aliases we use $.00026$ and $.95$. Lean checks these two allowances against the normalized strict-partition rank counts for every grid and site satisfying the stated hypotheses. [Formal truncation theorem](CentralUnimodality/RankTruncation.lean)
 
 ## A posteriori verification of the signed transforms
 

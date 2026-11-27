@@ -182,3 +182,11 @@ example (hD : DyckComparisons)
 #print axioms corank_inner_001
 #print axioms signed_inner_frequency
 #print axioms signed_outer_frequency
+
+#print axioms inner_grid_first
+#print axioms outer_grid_cap
+#print axioms omitted_fourier_grid
+#print axioms site_fourier_reflect
+#print axioms truncation_two_orders
+#print axioms full_reconstruction
+#print axioms rank_truncation_two_orders
