@@ -2,6 +2,8 @@
 
 **Computer-assisted research proof for both families.** Richard Stanley and Fabrizio Zanello posed this conjecture in 2013. In *Unimodality of partitions with distinct parts inside Ferrers shapes* it is Conjecture 3.4 in the authors’ MIT PDF and Conjecture 3.3 in the journal text.
 
+**Lean 4 formalization in progress.** The kernel proves the exact rank-count recurrence at all sizes and weak unimodality of both families through 63 rows. [Lean status and reproduction](research/lean-status.md)
+
 For each positive integer $n$, consider the two shapes $(2n-1,2n-3,\ldots,1)$ and $(2n,2n-2,\ldots,2)$. For either shape $\lambda$, let $a_j$ count the partitions of $j$ into distinct positive parts that fit inside $\lambda$. This means the partition has at most $n$ parts and its $i$th largest part is at most $\lambda_i$. The empty partition contributes $a_0=1$.
 
 The conjecture says that for each shape and every $n$, the sequence from $a_0$ through $a_{|\lambda|}$ rises weakly to a peak and then falls weakly. Equal adjacent counts are allowed.
