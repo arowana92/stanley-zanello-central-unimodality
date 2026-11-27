@@ -77,6 +77,31 @@ def determinant_character(n):
     return alternating_character(n, cap, cells, shifts)
 
 
+def alternating_relations(n, cap, by_degree, degree, shifts):
+    """Echelon basis over Q of the power-sum relations in one bidegree."""
+    x,y = degree
+    target = by_degree[degree]
+    index = {shape:i for i,shape in enumerate(target)}
+    pivots = {}
+    for a,b in shifts:
+        for src in by_degree.get((x-a,y-b), ()):
+            row = {}
+            for j,(u,v) in enumerate(src):
+                dest = u+a,v+b
+                if dest[0]>=cap or dest[1]>=cap or dest in src:
+                    continue
+                right = j+1
+                while right<n and src[right]<dest:
+                    right += 1
+                shape = src[:j]+src[j+1:right]+(dest,)+src[right:]
+                # Only the changed cell is new, so target rows are distinct.
+                row[index[shape]] = (-1)**(right-j-1)
+            insert_relation(row,pivots)
+        if len(pivots)==len(target):
+            break
+    return index, pivots
+
+
 def alternating_character(n, cap, cells, shifts):
     """Quotient the alternating monomial basis by the given power sum shifts."""
     by_degree = defaultdict(list)
@@ -85,24 +110,7 @@ def alternating_character(n, cap, cells, shifts):
         by_degree[degree].append(shape)
     result = Counter()
     for (x,y), target in by_degree.items():
-        index = {shape:i for i,shape in enumerate(target)}
-        pivots = {}
-        for a,b in shifts:
-            for src in by_degree.get((x-a,y-b), ()):
-                row = {}
-                for j,(u,v) in enumerate(src):
-                    dest = u+a,v+b
-                    if dest[0]>=cap or dest[1]>=cap or dest in src:
-                        continue
-                    right = j+1
-                    while right<n and src[right]<dest:
-                        right += 1
-                    shape = src[:j]+src[j+1:right]+(dest,)+src[right:]
-                    # Only the changed cell is new, so target rows are distinct.
-                    row[index[shape]] = (-1)**(right-j-1)
-                insert_relation(row,pivots)
-            if len(pivots)==len(target):
-                break
+        _, pivots = alternating_relations(n, cap, by_degree, (x,y), shifts)
         multiplicity = len(target)-len(pivots)
         if multiplicity:
             result[x,y] = multiplicity

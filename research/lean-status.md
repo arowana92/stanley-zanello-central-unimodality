@@ -74,6 +74,9 @@ The signed difference bounds transfer a common event across three adjacent ranks
 The theorem `conjecture34_of_comparisons_and_midpoints` reduces the universal strict-partition statement to two hypotheses. [Lean reduction](../CentralUnimodality/ReflectedPolynomials.lean)
 
 1. For every ordinary Dyck area polynomial, prove the reflected coefficient inequalities in `DyckComparisons`. The theorem `Polarization.dyck_comparisons_of_hilbert` reduces this to `DyckHilbertSpecialization`, the identification of each ordinary Dyck area count with the sum of the corresponding alternating coinvariant dimensions. Haiman's Corollary 3.14 and Garsia–Haiman's Theorem 4.4 at $m=1$ give the published ingredients. [Formal reduction](../CentralUnimodality/DiagonalCoinvariants.lean) · [Character argument and sources](../excursion-centers.md#ordinary-excursions-and-two-variable-characters)
+
+   A separate calculation checks the proposed Dyck-indexed determinants in the actual quotient. It proves their independence through semilength 10. A written determinant argument proves that every individual candidate survives in the quotient at every size and bidegree. The all-size Hilbert specialization remains open in Lean. [Determinant proof and exact tests](../excursion-centers.md#testing-the-dyck-determinants-after-quotienting)
+
 2. For each family and every $n\ge96$, prove unimodality from `centralStart` through $\lfloor n(n+\delta)/2\rfloor$. The written proof combines finite central-window calculations, a uniform large-size estimate and a right-flank bound. Lean already proves the extension past that midpoint. [Central interval statement](../CentralUnimodality/MidpointInduction.lean) · [Research proof and reproducible checks](../proof.md)
 
 ## Reproduction
