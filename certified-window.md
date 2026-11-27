@@ -43,4 +43,4 @@ The final line of the C++ run is
 Certified 143235952 strict determinants in both families for 9 <= n <= 1000. Direct counts agree through n = 12.
 ~~~
 
-The sign test stops at $n=1000$ in this run. The [large-size argument](finite-reduction.md) begins at $10^{61}$, leaving $1001\le n<10^{61}$ unresolved.
+The sign test stops at $n=1000$ in this run. The [large-size argument](finite-reduction.md) begins at $10^{46}$, leaving $1001\le n<10^{46}$ unresolved.

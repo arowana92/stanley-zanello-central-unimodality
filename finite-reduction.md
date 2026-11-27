@@ -1,8 +1,8 @@
 # Reduction to an explicit finite range
 
-Put $N=10^{61}$. For both central staircases the rank sequence is unimodal whenever $n\ge N$. Consequently any counterexample to Conjecture 3.4 must have $1001\le n<N$, using the [finite verification through 1000 rows](certified-window.md) for the lower bound. This upper bound on possible exceptional sizes is far beyond feasible exhaustive computation.
+Put $N=10^{46}$. For both central staircases the rank sequence is unimodal whenever $n\ge N$. Consequently any counterexample to Conjecture 3.4 must have $1001\le n<N$, using the [finite verification through 1000 rows](certified-window.md) for the lower bound. This upper bound on possible exceptional sizes is far beyond feasible exhaustive computation.
 
-The [odd-height flat pairs](flat-pairs.md) and [linear-potential estimate](linear-potential.md) give growth through $10^{-5}n^{3/2}$ at $n\ge10^{61}$. The [localized mode comparison](localized-mode.md) overlaps this interval and joins the [increasing-side estimate](first-passage.md) at $4m^{3/2}$. It also gives strict log-concavity on the upper half for $n\ge10^{118}$. Earlier thresholds follow from the [tilted concentration argument](tilt-concentration.md) and the estimates below. All arguments apply to both word parities.
+The [two-harmonic estimate](two-harmonics.md) joins the [flat-pair argument](flat-pairs.md) and the [localized mode comparison](localized-mode.md) using the common ground energy of the Dirichlet linear potential. It covers the peak up to corank $4m^{3/2}$, where the [first-passage inequality](first-passage.md) applies. The same argument gives strict log-concavity on the upper half for $n\ge10^{88}$. Earlier size bounds follow from the [tilted concentration argument](tilt-concentration.md) and the estimates below. All arguments apply to both word parities.
 
 ## Unimodality from the first difference
 

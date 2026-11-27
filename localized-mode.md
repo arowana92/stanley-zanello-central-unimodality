@@ -71,7 +71,7 @@ Since $f_h(x)>1$ and $f_h'(x)=0$, for $|h|\ge1$ the ratio $|\Delta P_{m,h}(k)|/P
 
 The [flat-pair theorem](flat-pairs.md) gives growth through $10^{-5}n^{3/2}$ for $n\ge10^{61}$. This exceeds $4s/(1.2\cdot10^6)$ by more than two steps. Above $4s$ the [first-passage inequality](first-passage.md) and then the [lower-half inequality](monotonicity.md#1-lower-half-for-all-sizes) continue the decrease in corank. Near $4s$ the limiting slope is below $-1$, as in the [interval join](mode-comparison.md#joining-the-signs). This proves unimodality for both word parities. For the stronger claim, the [linear-potential estimate](linear-potential.md) and [sparse corank bound](paired-steps.md) supply strict log-concavity below the overlap at $n\ge10^{118}$.
 
-The finite verification reaches $n=1000$ in each family. Thus the sizes still open in this research draft are **$1001\le n<10^{61}$**. The checker uses rational upper and lower bounds on all numerical endpoints.
+The finite verification reaches $n=1000$ in each family. The [two-harmonic extension](two-harmonics.md) lowers the large-size threshold to $10^{46}$. The checker uses rational upper and lower bounds on all numerical endpoints.
 
 ~~~sh
 python3 -B verify_localized.py
