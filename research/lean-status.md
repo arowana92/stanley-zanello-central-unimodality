@@ -25,12 +25,13 @@
 | `even_momentColumn`, `odd_momentColumn`, `momentColumn_rescale` | Substitution of the formal exponential generates every exact rank-weighted corank moment divided by its factorial. Coefficient columns satisfy the product and size-rescaling laws. The Catalan square root and the size derivatives of the base series have exact formal identities. [Moment series](../CentralUnimodality/MomentSeries.lean) · [Base identities](../CentralUnimodality/CatalanBase.lean) · [Size derivatives](../CentralUnimodality/EulerBase.lean) |
 | `rootPower_coeff`, `MomentBase.eval_divided` | For every integer exponent, the coefficients of the formal Catalan square root raised to that power have the stated finite-product ratio to the middle binomial coefficient. The sparse Laurent operations and divided size derivatives used for shifting the moment columns preserve their interpretation as actual power series. A candidate matching the three functional equations through a given moment order is exact to that order at every size. [Certificate uniqueness](../CentralUnimodality/MomentUniqueness.lean) · [Root coefficients](../CentralUnimodality/RootCoefficients.lean) · [Laurent arithmetic](../CentralUnimodality/Laurent.lean) · [Shifted moments](../CentralUnimodality/ShiftedMoments.lean) |
 | `Laurent.exact_even_moment`, `Laurent.exact_odd_moment` | For every size $n$ and every order $r$, the recursively computed Laurent table gives the exact sum of corank to the power $r$ over the strict partitions in each staircase. The even-part family uses the middle binomial coefficient at $n+1$. The proof isolates the highest column by inverting the formal Catalan root. [All-order theorem](../CentralUnimodality/ExactMoments.lean) · [Triangular recurrence](../CentralUnimodality/MomentPivots.lean) · [Moment extraction](../CentralUnimodality/MomentExtraction.lean) |
+| `Wallis.uniform` | For every $N\ge96$, the two explicit degree-ten rational polynomials in $1/N$ enclose $4^N/(\binom{2N}{N}\sqrt{2N})$. The proof uses a rational anchor at 8192 and compares the squared ratios at adjacent sizes on both sides of that anchor. [Ratio argument](../CentralUnimodality/WallisEnclosure.lean) · [Polynomial bounds](../CentralUnimodality/PolynomialBounds.lean) · [Checked enclosure](../CentralUnimodality/WallisTrial.lean) |
 
 The kernel-checked 63-row base theorem uses only arithmetic on natural numbers. In the formal proof every positive row with ballot length at most 127 is evaluated at base $2^{128}$. Reading its digits from low to high tests every adjacent pair through the degree of the shape. The 95-row theorem uses base $2^{192}$ to check the additional sizes and the reflected comparisons. Both verifiers compute their coefficients and detect the peak inside Lean.
 
 ## Remaining proof obligations
 
-The negativity of both witness expectations at unbounded sizes still requires combining the exact moments through order twenty with the shifts and cell integrals, then bounding the resulting expressions using the Wallis ratio. The prefix induction also needs the ordinary Dyck interval bound and its numerical cutoff. The central and right-flank estimates in the written proof cover sizes through 299,999, followed by a uniform analytic argument for every larger size. These sign estimates and the lower-half rank inequality still need Lean proofs linked to the rank counts. The Python and C++ verifiers and the bounds justifying them are documented in the [research proof](../proof.md).
+The negativity of both witness expectations at unbounded sizes still requires combining the exact moments through order twenty with the shifts and cell integrals, then proving the two final polynomial signs using the checked Wallis enclosure. The prefix induction also needs the ordinary Dyck interval bound and its numerical cutoff. The central and right-flank estimates in the written proof cover sizes through 299,999, followed by a uniform analytic argument for every larger size. These sign estimates and the lower-half rank inequality still need Lean proofs linked to the rank counts. The Python and C++ verifiers and the bounds justifying them are documented in the [research proof](../proof.md).
 
 ## Reproduction
 
@@ -40,6 +41,15 @@ Use the pinned Lean 4.36.0 toolchain and mathlib revision in the Lake manifest. 
 lake build
 lake env lean research/CheckLean.lean
 LEAN_NUM_THREADS=1 lake env leanchecker --verbose --fresh CentralUnimodality
+~~~
+
+The 321-avoiding superpatterns repository also replays each project module separately. To reproduce that check, run
+
+~~~sh
+for file in CentralUnimodality/*.lean; do
+  module=${file##*/}
+  LEAN_NUM_THREADS=1 lake env leanchecker --verbose "CentralUnimodality.${module%.lean}" || exit 1
+done
 ~~~
 
 The audit checks the types of both finite theorems, the strict-partition characterization, the signed rank identity, and the Fourier residual bound. It checks the transitive dependencies of every project declaration against the same axiom allowlist used in the 321-avoiding superpatterns repository, consisting of `propext`, `Classical.choice` and `Quot.sound`. The fresh replay checks the imported declarations and the project modules from an empty kernel environment.

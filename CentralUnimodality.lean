@@ -15,3 +15,4 @@ public import CentralUnimodality.PrefixInduction
 public import CentralUnimodality.MomentSeries
 public import CentralUnimodality.EulerBase
 public import CentralUnimodality.ExactMoments
+public import CentralUnimodality.WallisTrial

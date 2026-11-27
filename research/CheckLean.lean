@@ -101,3 +101,5 @@ example : (List.range 4).map (fun r =>
       Laurent.ratioSum 3 (Laurent.oddNumerator
         (Laurent.oddRhs (Laurent.lookup (Laurent.tables r).1) (Laurent.lookup (Laurent.tables r).2) r))) =
       [10,27,105,477] := by decide +kernel
+
+#print axioms Wallis.uniform
