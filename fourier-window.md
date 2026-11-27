@@ -81,6 +81,24 @@ The code charges $60lu(\sqrt{\text{sum of squares of }a\;\text{sum of squares of
 
 The program checks each candidate component has magnitude at most $1.01\widehat r_j$. Thus at most $2.022\sqrt{M+1}$ multiplies the absolute bridge-input error in one component, by $r_j\le1/\sqrt{j+1}$. The relative binary64 rounding of the bridge costs at most $1.011u\sum r_i r_{j-i}=1.011u$. The free input costs one more conversion. A reserve of $2^{-47}$ covers these errors, the fixed-point errors and underflow, as the rational verifier checks. A factor $1.00001$ covers the binary64 subtraction in the observed residual. The resulting bound $e$ applies to the exact residual; replacing $2/r_N$ by $2.0001/\widehat r_N$ and adding $10^{-14}$ covers conversion to the conditional transform and the linear interpolation arithmetic below.
 
+### Checking a stored convolution with integers
+
+The sample exporter prints the stored bridge, both free inputs and both proposed no-return transforms as exact hexadecimal binary64 values before normalization. At a common power-of-two denominator $s$, write their integer coefficient polynomials as $R,F,V$, respectively. For a prefix of length $L$, one integer product recovers the signed coefficients of $sF-RV$ below degree $L$. If the input coefficient magnitudes are bounded by $r,f,v$, each such coefficient has magnitude at most $H=sf+Lrv$. Choose a power of 256 greater than $2H$ as the base $B$. Adding $B/2$ to each digit before decoding handles negative coefficients.
+
+For a proposed error array $E$ of maximum magnitude $e$, Lean checks the congruence $sF(B)-R(B)V(B)-E(B)\equiv0\pmod{B^L}$ with $H+e<B$. Its proof successively removes the constant coefficient. Divisibility by $B$ and the strict magnitude bound force the coefficient to vanish at each step. The two half-length arrays use the same even bridge series since odd-length bridges are empty. If the true free and bridge coefficients differ from the stored inputs by at most $u$ and $p$, and $|V_i|/s\le m$, this gives the true convolution residual bound $u+e/s^2+Lpm$. The numerical audit of the stored arrays supplies $e$; bounding $u$ and $p$ for those arrays is a separate input. [Executable Lean checker](CentralUnimodality/CheckResidual.lean) · [Transfer to the signed amplitude](CentralUnimodality/PackedAmplitude.lean) · [Exact integer audit](verify_packed_residual.py)
+
+The following commands reproduce the integer audit of the first full length group and generate a Lean proof about one of its actual retained frequencies. For the selected mode, `--direct` also recomputes every convolution coefficient term by term.
+
+~~~sh
+clang++ -std=c++17 -O3 -fno-fast-math -ffp-contract=off verify_fourier_window.cpp -o /tmp/sz_fourier_window
+python3 -B verify_packed_residual.py /tmp/sz_fourier_window 2069 2097152 1 2608
+python3 -B verify_packed_residual.py /tmp/sz_fourier_window 2069 2097152 2 2 --direct --emit-lean /tmp/SZFourierSample.lean
+lake build
+lake env lean /tmp/SZFourierSample.lean
+~~~
+
+For the first group, $2049\le N\le2069$, the external integer audit covered all 2,608 retained positive frequencies, both parities and all 2,070 coefficients needed at each frequency. The maximum among the 10,797,120 absolute residuals was $128690229305192554555/10384593717069655257060992658440192<1.24\times10^{-14}$, at frequency 1, even walk length, half-length 1,182. The term-by-term calculation and the generated Lean proof each checked the 4,140 coefficients at frequency 2, whose maximum was below $5.86\times10^{-15}$. The Lean proof concludes these bounds for the stored dyadic inputs. For this same group, the C++ verifier gave lower bounds $.08457$, $103.70$ and $.96111$ on the three sign margins using the input and interpolation estimates in this certificate.
+
 ## Signs on entire size and corank intervals
 
 Choose $Q$ as the least power of two at least $5(\lfloor s_0\rfloor+1)$, and group consecutive half-lengths $A\le N\le B$ with common $Q$ and $B\le1.01A$. Put $S=\lfloor(2A)^{3/2}\rfloor$, $x=(k+d)/S$, and $J=\lceil2048Q/(6.28S)\rceil$. This gives $S\le s_0\le1.016S$ and $s_0\theta_J\ge2048$ for the whole group. At any retained frequency interpolate its two *computed* real conditional transforms at $A,B$ linearly in $N$. The program measures the absolute difference from this interpolation at **every** $N$ and adds the certified transform error using the smallest survival, $\widehat r_B$. Call the bound $e_j$ for a given parity. A single-size group uses its sole endpoint.

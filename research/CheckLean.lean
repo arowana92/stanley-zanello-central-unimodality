@@ -203,3 +203,9 @@ example (hD : DyckComparisons)
 #print axioms spatial_second_difference
 #print axioms spatial_group_mesh
 #print axioms rank_window_of_spatial_signs
+
+#print axioms packed_residual_coefficients
+#print axioms Residual.check_sound
+#print axioms dyadic_residual_bound
+#print axioms interleaved_residual
+#print axioms checked_half_amplitude

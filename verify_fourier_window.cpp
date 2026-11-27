@@ -151,7 +151,8 @@ std::vector<double> survivals(int last) {
 
 struct Samples { std::vector<Complex> phi; double residual; };
 
-Samples solve(int frequency, Int period, int last, const std::vector<double>& r, const Fourier& fft) {
+Samples solve(int frequency, Int period, int last, const std::vector<double>& r, const Fourier& fft,
+              std::ostream* raw_sample = nullptr) {
     std::vector<Complex> bridge(last+1), free(last+1);
     kernel(frequency, period, bridge, free);
     // Newton inversion only proposes coefficients. A separate full linear convolution certifies them.
@@ -178,6 +179,13 @@ Samples solve(int frequency, Int period, int last, const std::vector<double>& r,
     for (int j = 0; j < 2*size; ++j) candidate[j] = candidate[j]*recip[j];
     fft.apply(candidate, true);
     candidate.resize(last+1);
+    if (raw_sample) {
+        // Hexadecimal floating-point output preserves the exact binary inputs.
+        *raw_sample << std::hexfloat;
+        for (int i = 0; i <= last; ++i)
+            *raw_sample << bridge[i].re << ' ' << free[i].re << ' ' << free[i].im << ' '
+                        << candidate[i].re << ' ' << candidate[i].im << '\n';
+    }
 
     std::vector<Complex> check = candidate, b = bridge;
     check.resize(2*size); b.resize(2*size);
@@ -380,7 +388,21 @@ void test_small() {
 int main(int argc, char** argv) {
     try {
         if (argc == 2 && std::string(argv[1]) == "--self-test") { test_small(); return 0; }
-        require(argc == 3, "usage: verify_fourier_window first_N last_N | --self-test");
+        if (argc == 5 && std::string(argv[1]) == "--residual-inputs") {
+            int last = std::stoi(argv[2]);
+            Int period = std::stoll(argv[3]);
+            int frequency = std::stoi(argv[4]);
+            require(1 <= last && last <= 300000, "invalid half-length");
+            require(2 <= period && period <= (Int(1) << 32) && (period & (period-1)) == 0,
+                    "invalid period");
+            require(1 <= frequency && frequency <= period/2, "invalid frequency");
+            require(std::fegetround() == FE_TONEAREST, "rounding mode");
+            Fourier fft(std::max(32768, 2*power_of_two(last+1)));
+            solve(frequency, period, last, survivals(last), fft, &std::cout);
+            return 0;
+        }
+        require(argc == 3, "usage: verify_fourier_window first_N last_N | --self-test | "
+                           "--residual-inputs last_N period frequency");
         verify_range(std::stoi(argv[1]), std::stoi(argv[2]));
     } catch (const std::exception& error) {
         std::cerr << error.what() << '\n';
