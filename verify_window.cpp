@@ -129,14 +129,25 @@ void certify(int max_n) {
               << max_n << ". Direct counts agree through n = 12." << std::endl;
 }
 
-void certify_scaled(int max_n) {
+void certify_scaled(int max_n, bool central = false) {
     if (std::fegetround() != FE_TONEAREST) throw std::runtime_error("rounding mode");
-    if (max_n < 12 || max_n > 2048) throw std::invalid_argument("require 12 <= max_n <= 2048");
-    const int cap = std::max(25*25/4, window_end(2*max_n+1)+1);
-    const int first = 4097;  // The --tail 4096 certificate covers smaller coranks.
+    const int minimum = central ? 64 : 12;
+    if (max_n < minimum || max_n > 2048) {
+        throw std::invalid_argument("require " + std::to_string(minimum) + " <= max_n <= 2048");
+    }
+    const auto stop_at = [central](int t) {
+        const int wide = window_end(t);
+        if (!central) return wide;
+        if (t < 770) return (t*t/4)/2;
+        return 3*wide/4+2;
+    };
+    const int cap = std::max({25*25/4, stop_at(2*max_n+1)+1,
+                              stop_at(std::min(2*max_n+1, 769))+1});
     std::int64_t checked = 0;
-    visit_window<true>(max_n, cap, 1.0, window_end,
+    visit_window<true>(max_n, cap, 1.0, stop_at,
                        [&](int t, int stop, const std::vector<double>& row) {
+        if (central && t/2 < 64) return;
+        const int first = central ? window_end(t)/20 : 4097;
         if (stop < first) return;
         const double floor = std::ldexp(1.0, t%256-920);
         for (int k = first-1; k <= stop+1; ++k) {
@@ -149,7 +160,8 @@ void certify_scaled(int max_n) {
         checked += stop-first+1;
         if (t % 512 == 0) std::cout << "Verified through word length " << t << std::endl;
     });
-    std::cout << "Certified " << checked << " strict determinants above corank 4096 through n="
+    std::cout << "Certified " << checked << (central ? " strict central determinants from n=64 through n="
+                          : " strict determinants above corank 4096 through n=")
               << max_n << ". Direct counts agree through n=12." << std::endl;
 }
 
@@ -219,8 +231,9 @@ int main(int argc, char** argv) {
     try {
         if (argc == 3 && std::string(argv[1]) == "--tail") certify_tail(std::stoi(argv[2]));
         else if (argc == 3 && std::string(argv[1]) == "--scaled") certify_scaled(std::stoi(argv[2]));
+        else if (argc == 3 && std::string(argv[1]) == "--central") certify_scaled(std::stoi(argv[2]), true);
         else if (argc <= 2) certify(argc == 2 ? std::stoi(argv[1]) : 1000);
-        else throw std::invalid_argument("usage: verify_window [max_n] | --tail corank | --scaled max_n");
+        else throw std::invalid_argument("usage: verify_window [max_n] | --tail corank | --scaled max_n | --central max_n");
     } catch (const std::exception& error) {
         std::cerr << error.what() << std::endl;
         return 1;

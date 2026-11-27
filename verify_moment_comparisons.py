@@ -146,7 +146,7 @@ def check_small_rows(families):
 def check_induction_window():
     c2 = Q(8, 9)
     combined = 1/sqrt_hi(1/c2 + 1/(8*Q('.524')**2))
-    for n, cutoff in [(2049, Q('.1366')), (4096, Q('.1378'))]:
+    for n, cutoff in [(64, Q('.1')), (2049, Q('.1366')), (4096, Q('.1378'))]:
         assert (combined - (1+Q(2, n))/sqrt_lo(n)
                 > 2*cutoff*(2+Q(1, n))*sqrt_hi(2+Q(1, n)))
 

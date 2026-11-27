@@ -12,7 +12,7 @@ $$
  \lfloor .1366s\rfloor\le k\le\lceil .6s\rceil .
  \tag{2}
 $$
-For $n\ge4096$ the lower endpoint can be increased to $\lfloor .1378s\rfloor$. The proof tests the odd-part row before the even-part row of the same size. The window in (2) remains unverified across the indicated sizes. [Earlier size descent](size-descent.md) · [Results through 2048](certified-window.md)
+For $n\ge4096$ the lower endpoint can be increased to $\lfloor .1378s\rfloor$. The proof tests the odd-part row before the even-part row of the same size. The [finite Fourier certificate](fourier-window.md) verifies (2) at every indicated size. [Earlier size descent](size-descent.md) · [Results through 2048](certified-window.md)
 
 ## An interval test for a unimodal row
 
@@ -68,7 +68,7 @@ $$
 $$
 The last inequality minimizes $c(1-y)^{3/2}+.524(2y)^{3/2}$ over $0\le y\le1$. At $h=0$ the comparison threshold $-1$ is vacuous and the inequality still holds. The isolated $C_n$ has no negative difference when $2k+1\le M n^{3/2}-n-1$, since $E(n)\ge c n^{3/2}-n$ and $c>M$.
 
-For $n\ge2049$, $2(.1366)(2n+1)^{3/2}+1<M n^{3/2}-n-1$. At $n\ge4096$ use $.1378$ in its place. Divide by $n^{3/2}$ and check the smallest allowed $n$ in each case. Consequently, if the smaller odd-part rows are unimodal, the odd-part row is nondecreasing through the start of (2). After its unimodality is established, the same holds for the even-part row, which can also involve $B_n$. The [all-size right flank](marked-hits.md) and the [lower-half rank inequality](monotonicity.md#1-lower-half-for-all-sizes) give weak decrease from $\lceil .6s\rceil$ onward in both. A unimodal window joins these two ends. Induction through $n=299999$ followed by [size descent](size-descent.md) proves the equivalence in (2).
+For $n\ge64$ the same bound gives weak increase through $\lfloor .1s\rfloor$, as used in the [small-size induction](certified-window.md#a-shorter-base-case-for-induction). For $n\ge2049$, $2(.1366)(2n+1)^{3/2}+1<M n^{3/2}-n-1$. At $n\ge4096$ use $.1378$ in its place. Divide by $n^{3/2}$ and check the smallest allowed $n$ in each case. Consequently, if the smaller odd-part rows are unimodal, the odd-part row is nondecreasing through the start of (2). After its unimodality is established, the same holds for the even-part row, which can also involve $B_n$. The [all-size right flank](marked-hits.md) and the [lower-half rank inequality](monotonicity.md#1-lower-half-for-all-sizes) give weak decrease from $\lceil .6s\rceil$ onward in both. A unimodal window joins these two ends. Induction through $n=299999$ followed by [size descent](size-descent.md) proves the equivalence in (2).
 
 Run the verifier from the checkout with
 

@@ -87,4 +87,17 @@ The checker requires the left quotient to exceed the rounded product of the righ
 /tmp/sz_verify_window --scaled 2048
 ~~~
 
-The run certified **843,349,446** determinants. Its range is exactly $9\le n\le2048$ and $4097\le k\le\min(\lfloor D/2\rfloor,\lfloor2m^{3/2}\rfloor)$ for both shapes. The two commands with `--tail` and `--scaled`, together with the stated analytic estimates, reproduce the extended result. The [tilted pair-deletion argument](tilted-thinning.md) proves unimodality for every $n\ge10^{13}$, leaving $2049\le n<10^{13}$ unresolved.
+The run certified **843,349,446** determinants. Its range is exactly $9\le n\le2048$ and $4097\le k\le\min(\lfloor D/2\rfloor,\lfloor2m^{3/2}\rfloor)$ for both shapes. The two commands with `--tail` and `--scaled`, together with the stated analytic estimates, reproduce the extended result. The [tilted pair-deletion argument](tilted-thinning.md) proves unimodality for every $n\ge10^{13}$, giving an earlier sufficient large-size bound. The [full proof](proof.md) uses the finite base case below.
+
+## A shorter base case for induction
+
+There is a second way to establish unimodality through 2048 which uses the [moment comparisons](moment-comparisons.md#induction-on-the-staircase-size) in place of the fixed-corank certificate. In the order odd-part then even-part at each $n$, assume that the odd-part rows used on the right of the recurrence are unimodal. The induction bound $2k+1\le M n^{3/2}-n-1$ yields weak increase through $k=\lfloor m^{3/2}/10\rfloor$ for $n\ge64$. Divide by $n^{3/2}$ and substitute $n=64$ as in the moment verifier.
+
+Start with complete integer rank sequences through 63 rows. For $64\le n\le2048$ use the same positive ballot recurrence and binary64 rounding proof as in the scaled window above. The option below tests $L_k=b_k^2-b_{k-1}b_{k+1}>0$ starting at $k=\lfloor m^{3/2}/10\rfloor$. For $m<770$ it continues through $\lfloor D/2\rfloor$. For $m\ge770$ it continues through the smaller of $\lfloor D/2\rfloor$ and $\lfloor3\lfloor2m^{3/2}\rfloor/4\rfloor+2$, which covers the join at $3m^{3/2}/2$. Strict log-concavity gives a unimodal central sequence. The [first-passage first-difference estimate](rising-window.md) gives weak decrease in corank after the second endpoint up to the midpoint. Its analytic proof applies for $m\ge770$. Beyond the midpoint the [parabolic interval theorem](monotonicity.md#1-lower-half-for-all-sizes) gives weak decrease, including the central step for odd degree. This completes each induction step. The direct finite run certified **610,906,915 strict central determinants**. The positive addition and ratio error bounds above apply unchanged to these input lengths and to every tested coefficient.
+
+~~~sh
+python3 -B verify.py --max-n 64 --direct-n 12 --upper-curvature
+python3 -B verify_moment_comparisons.py
+clang++ -std=c++17 -O3 -fno-fast-math -ffp-contract=off verify_window.cpp -o /tmp/sz_verify_window
+/tmp/sz_verify_window --central 2048
+~~~

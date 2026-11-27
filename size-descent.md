@@ -1,6 +1,6 @@
 # Descent to fewer than 300,000 rows
 
-**Theorem.** If either central staircase fails unimodality at some $n\ge300000$, then the odd-part staircase fails at some $33000<h<300000$. In particular Conjecture 3.4 for both families is equivalent to unimodality in both families for $2049\le n<300000$. The [existing finite certificate](certified-window.md) covers the smaller sizes. The equivalence leaves the indicated finite problem open. A [moment argument](moment-comparisons.md) further restricts which coranks need checking at these sizes.
+**Theorem.** If either central staircase fails unimodality at some $n\ge300000$, then the odd-part staircase fails at some $33000<h<300000$. In particular Conjecture 3.4 for both families is equivalent to unimodality in both families for $2049\le n<300000$. The [existing finite certificate](certified-window.md) covers the smaller sizes. A [moment argument](moment-comparisons.md) restricts the coranks needed at these sizes. The [finite Fourier certificate](fourier-window.md) verifies that interval in both families.
 
 The single-step statement is stronger. A failure at $n\ge300000$ forces an odd-part failure at $.11n<h\le n$, with $h<n$ if the starting row is odd-part. The strict decrease in row count comes directly from Stump's recurrence. For comparison, it already gives a cutoff of one million by using the earlier [reflected comparisons and peak bounds](type-b-transfer.md) in the same argument. Neither descent theorem needs the conjectural type $B$ diagonal coinvariant specialization.
 
@@ -101,9 +101,9 @@ Finally assume $B_h$ unimodal and use $s_h=(2h)^{3/2}$, $z_i=(i+(3h+1)/2)/s_h$. 
 
 These strict density margins survive both lattice errors. Unimodality gives $b_j\ge\min(b_i,b_t)=b_i$, proving estimates 2 and 3.
 
-## Reproduction and remaining gap
+## Reproduction
 
-The first command checks all numerical margins above by rational bounds and compares (1) coefficient by coefficient with direct enumeration and the ballot recurrence in the 24 shapes through $n=12$. The other commands reproduce the underlying return and Airy bounds. The range $2049\le n<300000$ in the theorem is a sufficient verification target. This calculation does not verify all those rows.
+The first command checks all numerical margins above by rational bounds and compares (1) coefficient by coefficient with direct enumeration and the ballot recurrence in the 24 shapes through $n=12$. The other commands reproduce the underlying return and Airy bounds. The range $2049\le n<300000$ in the theorem is a sufficient verification target. The subsequent [proof](proof.md) combines a verification on this target with the analytic estimate above.
 
 ~~~sh
 python3 -B verify_size_descent.py
