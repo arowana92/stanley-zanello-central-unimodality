@@ -37,7 +37,7 @@ The same estimate for the limiting transform follows by taking length to infinit
 
 As in the [lattice inversion](mode-comparison.md#lattice-differences-at-the-tilted-mode), errors for density, first forward difference and centered second difference in their scaled units are less than $A_j+.011$, where
 $$A_j=10^7\epsilon R^2(R^3+T)T^{j+1},\qquad j=0,1,2.$$
-This includes the error in the lattice multipliers since $s\ge10^{123}$ and $T<10^{15}$.
+This includes the error in the lattice multipliers since $s\ge10^{117}$ and $T<10^{15}$.
 
 At $|h|\ge1$ the following bounds suffice for the adjacent coefficient ratio.
 

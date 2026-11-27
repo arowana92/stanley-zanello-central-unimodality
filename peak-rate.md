@@ -77,3 +77,19 @@ After multiplication by $s^4$, the error from replacing the right side by $f'^2-
 There is also a rate for the mode. At a maximizing $k$, the forward difference is nonpositive and the backward difference nonnegative. Applying (1) at both sites yields $|f'(k/s)|\le E_m+10^{15}/s$. Since $f(k/s)>.48$ and $(\log f)''\le-12$, the unique limiting mode $x_*$ satisfies
 $$|k/s-x_*|\le (E_m+10^{15}/s)/5 \qquad (m\ge10^{90}).$$
 In particular $.19<k/s<.75$ there. To see the numerical bounds, $(x_*-x)f'(x)$ is a probability density by unimodality and integration by parts. Its mean and second moment are $2\mu-x_*$ and $3\mathbb E Y^2-2x_*\mu$, where $\mu=\mathbb E Y$. Nonnegative variance gives $|x_*-\mu|\le\sqrt{3\operatorname{Var}Y}$. The [exact moments](finite-reduction.md#exact-area-moments) $\mu=3\sqrt{2\pi}/16$ and $\mathbb E Y^2=59/240$ put both endpoints strictly inside $(.19,.75)$ with margin exceeding $.001$.
+
+## Unimodality between large coefficients
+
+At every word length $m\ge10^{30}$ and for every threshold $u\ge1/(500s)$, the set $\{k:P_m(k)\ge u\}$ is an interval if nonempty. Between its endpoints the sequence is unimodal. In particular the global maximum occurs at one rank or at two consecutive ranks, and every separated secondary peak has less than $1/150$ of the global maximum. This leaves room for reversals among smaller coefficients.
+
+We use three absolute approximation bounds at $x=k/s$. At these lengths the errors in replacing $sP_m(k),s^2\Delta P_m(k),s^3\delta^2P_m(k)$ by $f(x),f'(x),f''(x)$ are respectively below
+$$ 2\cdot10^{-7},\qquad .0012,\qquad 8.1. $$
+Here $\delta^2$ is the centered second difference. In the proof of (2) above, the conditional area discrepancy costs $10\epsilon|t|$, the change of survival at most $256\epsilon$, and the radial endpoint comparison at most $(5+|t|/2)\epsilon$, where $\epsilon=m^{-1/2}$. Thus the characteristic functions differ by at most $(262+11|t|)\epsilon$. For $|t|\le s/8$, the first frequency range in the proof of (3) gives the sharper envelope $8e^{-.059|t|^{2/3}}$ since $3(.67)/(8\cdot4.25)>.059$. The limit obeys this bound for every real $t$ by sending $m$ to infinity.
+
+Set $T=9000$. The inversion error below $T$ at order $i$ is bounded by
+$$\frac{\epsilon}{\pi}\left(\frac{262T^{i+1}}{i+1}+\frac{11T^{i+2}}{i+2}\right)$$
+apart from the discrete multiplier. Above $T$ integrate $16t^i e^{-.059t^{2/3}}/\pi$. For $b=3(i+1)/2$ and $z=.059T^{2/3}$, the integral is at most
+$$ \frac{24}{\pi}(.059)^{-b}\,\frac{e^{-z}z^{b-1}}{1-(b-1)/z} .$$
+This follows from $(1+t/z)^{b-1}\le e^{(b-1)t/z}$. Above $s/8$ add the lattice contribution using (3), extracting $e^{-m/800}$ and integrating the remaining envelope. Together with the low-frequency multiplier errors $\xi^2/(2s)$ and $\xi^4/(12s^2)$ in their respective orders, this costs less than $10^{-12}$. The [endpoint verifier](verify_localized.py) adds the three bounds.
+
+Suppose $sP_m$ is at least $.002$ at two ranks. By log-concavity of $f$, its value stays above $.0019$ between the two scaled sites. Write $g=\log f$. Wherever $g'(x)\ge1$ the forward difference is strictly positive by the first derivative estimate, and wherever $g'(x)\le-1$ it is strictly negative. At every site with $|g'(x)|<1$, the distance to the mode $x_*$ is less than $1/12$ since $g''\le-12$. Integrating $g'$ between $x$ and $x_*$ gives $f(x)\ge e^{-1/12}f(x_*)\ge e^{-1/12}\sqrt{6/\pi}>1$. Hence $f''(x)\le(-12+1)f(x)<-11$, so the centered lattice second difference is strictly negative. As $k$ increases, $g'(k/s)$ decreases. The forward differences are positive in the first region, strictly decrease through the middle region, and are negative in the last. This proves the superlevel assertion and rules out a plateau of three maximizing ranks. Finally $s\max P_m>.3$ by the one-sided area tail above. A local maximum separated from the global one by a strict valley must therefore have height below $.002/s$, giving the claimed ratio.
