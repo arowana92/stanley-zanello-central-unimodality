@@ -28,3 +28,5 @@ public import CentralUnimodality.WindowInduction
 public import CentralUnimodality.SineArc
 public import CentralUnimodality.DyckReduction
 public import CentralUnimodality.FirstHitCount
+public import CentralUnimodality.KilledBlock
+public import CentralUnimodality.RankArcBounds

@@ -150,3 +150,12 @@ example : (List.range 4).map (Witness.rawCell 2 1) = [10,72,1654/3,4464] := by d
 
 #print axioms fair_first_hit
 #print axioms first_hit_incompatible
+
+#print axioms first_hit_expansion
+#print axioms survivor_hit_total
+#print axioms killed_block_bound
+
+#print axioms killed_arc_008
+#print axioms killed_arc_032
+#print axioms rank_fourier_blocks
+#print axioms conditional_rank_arc

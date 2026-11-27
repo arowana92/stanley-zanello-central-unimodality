@@ -26,7 +26,7 @@ private theorem reverse_sum_words {R : Type*} [AddCommMonoid R] (f : List Bool �
   apply Finset.sum_bij' (fun w _ => w.reverse) (fun w _ => w.reverse)
   all_goals simp [mem_words]
 
-private theorem sum_snoc_words {R : Type*} [AddCommMonoid R] (f : List Bool → R) (n : ℕ) :
+theorem sum_snoc_words {R : Type*} [AddCommMonoid R] (f : List Bool → R) (n : ℕ) :
     (∑ w ∈ words (n+1), f w) =
       (∑ w ∈ words n, f (w++[false])) + ∑ w ∈ words n, f (w++[true]) := by
   rw [← reverse_sum_words f (n+1),sum_cons_words]
