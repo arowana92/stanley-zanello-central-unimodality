@@ -63,6 +63,8 @@ The signed averaging theorem `Polarization.coinvariantSpace_iff` identifies each
 
 For the right flank, `MarkedExcursion.tilted_hit_gaussian` proves the individual first-hit mass bound for the centered linear tilt at every odd hitting time and every nonnegative slope. The kernel checks the marked-vertex binomial law, Jensen's inequality on excursion areas, the Gaussian integral and the centered hyperbolic-cosine normalizer. `fair_hit_upper` proves the $0.8/(t-1)^{3/2}$ fair prefactor bound for $t>1$. The signed sum over hitting times against the free suffix is still needed for the right-flank comparison. [Proof and formulas (1)–(3)](../marked-hits.md#an-excursion-with-a-marked-vertex) · [Lean bound](../CentralUnimodality/MarkedHitBound.lean)
 
+The actual tilted ballot mass at rank $j$ equals $a_j e^{-2cj}/Z_m(c)$, where $Z_m(c)=\prod_{r=1}^m(1+e^{-2cr})$. Lean uses this formula to identify the tilted first-difference test with strict growth of the original integer ranks. It also verifies change of tilt for any fixed rank event and transfers the centered hit bound to paths of length $m$ under the staircase rank tilt. [Rank law and prefix-event theorem](../CentralUnimodality/RankTilt.lean)
+
 ## Remaining proof obligations
 
 The theorem `conjecture34_of_comparisons_and_midpoints` reduces the universal strict-partition statement to two hypotheses. [Lean reduction](../CentralUnimodality/ReflectedPolynomials.lean)

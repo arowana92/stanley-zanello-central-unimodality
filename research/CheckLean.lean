@@ -238,3 +238,6 @@ example (hD : DyckComparisons)
 #print axioms MarkedExcursion.centered_cosh_lower
 #print axioms MarkedExcursion.fair_hit_upper
 #print axioms MarkedExcursion.tilted_hit_gaussian
+#print axioms MarkedExcursion.rank_step_iff
+#print axioms MarkedExcursion.change_rank_tilt
+#print axioms MarkedExcursion.rank_prefix_hit_bound

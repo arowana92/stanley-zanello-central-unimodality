@@ -43,7 +43,7 @@ theorem signMass_total (c u : ℝ) (t : ℕ) : ∑ w ∈ words t, signMass c u w
     rw [← add_div,cosh_eq]
     field_simp
 
-private theorem density (c u : ℝ) (w : List Bool) :
+theorem signMass_density (c u : ℝ) (w : List Bool) :
     signMass c u w * ((2:ℝ)^w.length * coshProduct c u w.length) =
       exp ((u-c*w.length)*displacement w+c*walkArea w) := by
   induction w generalizing u with
@@ -103,7 +103,7 @@ theorem hit_mass_identity (c : ℝ) (d : ℕ) :
   apply Finset.sum_congr rfl
   intro v hv
   obtain ⟨⟨hl,_⟩,hz⟩ := mem_dycks.mp hv
-  have h := density c (c*d) (endHit v)
+  have h := signMass_density c (c*d) (endHit v)
   rw [show (endHit v).length = 2*d+1 by simp [endHit,hl]] at h
   have hd : displacement (endHit v) = -1 := by rw [endHit,displacement_snoc,hz]; rfl
   have ha : walkArea (endHit v) = walkArea v-1 := by

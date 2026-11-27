@@ -1,7 +1,9 @@
 """Rational first-difference and curvature certificates for marked-excursion bounds."""
 
+from collections import Counter
 from fractions import Fraction as Q
-from math import ceil, comb
+from itertools import product
+from math import ceil, comb, prod
 
 from verify import ballot_ranks, direct_ranks
 from verify_hit_tilts import M, c2, drift, eps, exp_bound
@@ -301,9 +303,46 @@ def check_marked(max_d=10):
     print(f"Marked heights and exact tilted first-hit probabilities agree through semilength {max_d}.")
 
 
+def check_rank_tilt(max_length=13):
+    """Compare literal partitions and the centered-hit law with all sign words."""
+    rank_sites = hit_times = 0
+    for m in range(2, max_length+1):
+        labels = range(m, 0, -1)
+        denominator = prod(2**(2*r)+1 for r in labels)
+        ranks, hits = Counter(), Counter()
+        for signs in product((-1, 1), repeat=m):
+            height = rank = 0
+            numerator = 1
+            first_hit = None
+            for r, sign in zip(labels, signs):
+                height += sign
+                if sign == 1:
+                    numerator *= 2**(2*r)
+                else:
+                    rank += r
+                if height == -1 and first_hit is None:
+                    first_hit = m+1-r
+            if first_hit is None:
+                ranks[rank] += numerator
+            else:
+                hits[first_hit] += numerator
+        assert sum(ranks.values()) + sum(hits.values()) == denominator
+        for j, count in enumerate(direct_ranks(range(m-1, 0, -2))):
+            assert ranks[j] == count * 2**(m*(m+1)-2*j)
+            rank_sites += 1
+        for t in range(1, m+1, 2):
+            d = (t-1)//2
+            mass, centered = centered_first_hit(d)
+            prefix = prod(Q(2)**r + Q(2)**(-r) for r in range(m, m-t, -1))
+            assert Q(hits[t], denominator) == mass * Q(2)**(d-m) * centered/prefix
+            hit_times += 1
+    print(f"Rank tilt agrees at {rank_sites} ranks and {hit_times} first-hit times.")
+
+
 if __name__ == "__main__":
     check_suffix()
     check_marked()
+    check_rank_tilt()
     check_peak_bound()
     cases = [(Q(3, 5), Q(9), 0, Q(3, 40)), (Q(3, 4), Q("11.25"), 1, Q(1, 16))]
     for start, stop, order, fraction in cases:
