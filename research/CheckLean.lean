@@ -62,3 +62,17 @@ example (ω : ℝ) (V : PowerSeries ℂ) (n : ℕ) (e : ℝ)
 #print axioms dyck_convolution
 #print axioms odd_ballot_convolution
 #print axioms stump_convolution
+
+example {n : ℕ} (hn : n ≤ 95) :
+    UnimodalOn (rankCount (2*n)) 0 (n*n) ∧
+    UnimodalOn (rankCount (2*n+1)) 0 (n*(n+1)) := central_through_95 hn
+
+#print axioms reflected_through_191
+#print axioms Witness.reflected_from_two_witnesses
+#print axioms oddPart_prefix_step
+#print axioms evenPart_prefix_step
+#print axioms even_momentColumn
+#print axioms odd_momentColumn
+#print axioms momentColumn_rescale
+#print axioms catalanRoot_mul_ballotBase
+#print axioms sizeEuler_dyckBase
