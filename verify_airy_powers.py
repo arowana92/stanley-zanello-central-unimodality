@@ -28,11 +28,7 @@ def check_samples():
     assert sqrt_hi(2*fp[0]) < 2
 
 
-def check_damping():
-    d = Q(1, 10000)
-    err = Q(".24")*d**2
-    delta = 400*d**2
-    assert Q("2.60")**2/30 + 2000*d**2 < Q(".24")
+def check_power_decay(d, err, delta):
     # Difference of the right singular ground directions for A and A*.
     assert Q(2,3)*Q("2.60") + Q(4,3)*Q(".264")*d**2 + 2000*d**4/Q(".12") < Q("1.8")
     assert (2*Q("1.8")+d) < 4
@@ -49,6 +45,12 @@ def check_damping():
         assert (low-err/left**2)*(1-loss*d*d/2)-weight*delta/left**2 > rate
     assert Q(".89")**6*2 < 1
     assert 1-Q(".27")**2/6 > Q(".98")
+
+
+def check_damping():
+    d = Q(1, 10000)
+    assert Q("2.60")**2/30 + 2000*d**2 < Q(".24")
+    check_power_decay(d, Q(".24")*d**2, 400*d**2)
 
 
 def check_real_amplitude():
@@ -70,13 +72,12 @@ def check_real_amplitude():
     assert Q("1.03")**3 > Q("1.08")
 
 
-def check_high_saddle():
+def check_high_saddle(h=10000, energy_bound=Q("2.60")):
     n = 1450
     b = 201
-    h = 10000
     lower = sqrt_lo(Q(".35")*(n-b))
     upper = sqrt_hi(Q(".60")*n)
-    assert Q(8,27)*Q("2.60")/(1-Q(".08"))**3 + Q(8,27)*Q(".264")/(h*h*(1-Q(".08"))**3) + Q(12000,h**4)/Q(".04")**3 < 1
+    assert Q(8,27)*energy_bound/(1-Q(".08"))**3 + Q(8,27)*Q(".264")/(h*h*(1-Q(".08"))**3) + Q(12000,h**4)/Q(".04")**3 < 1
     assert Q(1,2)-Q(".08")/(6*Q(".35")) > Q(".46")
     assert Q("1.001")*Q("1.06")*exp_small_upper(Q(".34")*b*Q(".08")**2) < Q("1.65")
     z2 = 2*(Q("1.65")/Q(".999")-1)/Q(".08")**2

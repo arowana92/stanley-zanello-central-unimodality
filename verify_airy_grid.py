@@ -20,22 +20,21 @@ def derivative(p):
     return [i*p[i] for i in range(1, len(p))]
 
 
-def next_pair(pair):
-    # Majorize the absolute polynomial coefficients in (P f + Q f')'.
-    p, q = pair
-    yq = add([E*v for v in q], [0]+[T*v for v in q])
-    return add(derivative(p), yq), add(p, derivative(q))
+def sample_bounds(tilt, energy, real_part, mesh):
+    """Weighted Airy L2 bounds and their full-grid sample bounds."""
+    def next_pair(pair):
+        # Majorize the coefficients of (P f + Q f')'.
+        p, q = pair
+        yq = add([energy*v for v in q], [0]+[tilt*v for v in q])
+        return add(derivative(p), yq), add(p, derivative(q))
 
-
-def check_residual():
-    assert Q("2.60")**3*T**2 < E**3
     moments = [Q(1)]
     for j in range(14):
-        moments.append((1+E/Q(".88"))*moments[j]
-                       + Q(j*j,4)/Q(".88")*moments[max(j-2,0)])
+        moments.append((1+energy/real_part)*moments[j]
+                       + Q(j*j,4)/real_part*moments[max(j-2,0)])
     f_bounds = [sqrt_hi(moments[2*k]) for k in range(8)]
     fp_bounds = [
-        sqrt_hi(E*moments[2*k] + k*k*moments[max(2*k-2,0)])
+        sqrt_hi(energy*moments[2*k] + k*k*moments[max(2*k-2,0)])
         + k*f_bounds[max(k-1,0)] for k in range(8)
     ]
 
@@ -47,17 +46,21 @@ def check_residual():
         pair = fn
         for _ in range(order):
             pair = next_pair(pair)
-        pair = tuple([0]*potential+[T**potential*v for v in poly] for poly in pair)
+        pair = tuple([0]*potential+[tilt**potential*v for v in poly] for poly in pair)
         assert max(map(len,pair)) < len(f_bounds)
         value = norm(pair)
         if grid:
             differentiated = next_pair(pair)
             assert max(map(len,differentiated)) <= len(f_bounds)
-            value += D*norm(differentiated)
+            value += mesh*norm(differentiated)
         return value
 
-    f = ([1], [])
-    correction = ([0,2*T/15], [0,2*E/30,T/30])
+    return bound, ([1], []), ([0,2*tilt/15], [0,2*energy/30,tilt/30])
+
+
+def check_residual():
+    assert Q("2.60")**3*T**2 < E**3
+    bound, f, correction = sample_bounds(T, E, Q(".88"), D)
     # Taylor remainder for B f through d^4, divided by d^6.
     airy = (bound(f,6)/120 + bound(f,potential=3,grid=True)/48
             + bound(f,2,2,True)/16 + bound(f,4,1,True)/48
