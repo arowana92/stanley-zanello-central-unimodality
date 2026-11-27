@@ -80,3 +80,24 @@ example {n : ℕ} (hn : n ≤ 95) :
 #print axioms rootPower_coeff
 #print axioms MomentBase.eval_divided
 #print axioms certify_moment_series
+
+example (n r : ℕ) :
+    (rankMoment n 0 r : ℚ) = r.factorial*(n.centralBinom:ℚ)*
+      Laurent.ratioSum n (Laurent.evenNumerator (Laurent.lookup (Laurent.tables r).2 r)) :=
+  Laurent.exact_even_moment n r
+
+#print axioms Laurent.exact_even_moment
+#print axioms Laurent.exact_odd_moment
+
+-- The two-row corank lists are (1,2,1,1,1) and (1,2,2,2,1,1,1).
+-- These values check the shift and the factor of two against the closed formulas.
+example : (List.range 4).map (fun r =>
+    (r.factorial:ℚ)*Nat.centralBinom 2 *
+      Laurent.ratioSum 2 (Laurent.evenNumerator (Laurent.lookup (Laurent.tables r).2 r))) =
+      [6,11,31,101] := by decide +kernel
+
+example : (List.range 4).map (fun r =>
+    (r.factorial:ℚ)*Nat.centralBinom 3 / 2 *
+      Laurent.ratioSum 3 (Laurent.oddNumerator
+        (Laurent.oddRhs (Laurent.lookup (Laurent.tables r).1) (Laurent.lookup (Laurent.tables r).2) r))) =
+      [10,27,105,477] := by decide +kernel
