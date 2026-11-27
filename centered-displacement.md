@@ -1,6 +1,6 @@
 # Centering the duration weights in the tilted comparison
 
-**Theorem.** Stanley and Zanello's two central staircases have unimodal rank sequences at every $n\ge10^{16}$. Together with the [finite certificate](certified-window.md), this leaves $2049\le n<10^{16}$ unresolved. For $10^{13}\le n<10^{16}$ the [pair-deletion theorem](thinning.md) further confines the missing growth steps to $s/35<k<\lceil .18s\rceil$, with $s=m^{3/2}$ and $k$ the corank. Here $m=2n$ for odd parts and $m=2n+1$ for even parts.
+**Theorem.** Stanley and Zanello's two central staircases have unimodal rank sequences at every $n\ge10^{16}$. The [tilted pair-deletion proof](tilted-thinning.md) subsequently gives unimodality down to $10^{13}$ rows for both families. The [finite certificate](certified-window.md) covers $n\le2048$. Here $m=2n$ for odd parts and $m=2n+1$ for even parts.
 
 We use the positive tests and Fourier tails of the [shorter-walk comparison](prefix-clock.md). Its fine duration comparison spent separate error allowances on the accumulated area, the terminal time and the time scaling. Subtracting half the permitted height from each duration weight cancels the random terminal-time contribution of that constant. The following calculation uses the signs of both deterministic time corrections.
 

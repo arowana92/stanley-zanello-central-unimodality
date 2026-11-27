@@ -87,4 +87,4 @@ The checker requires the left quotient to exceed the rounded product of the righ
 /tmp/sz_verify_window --scaled 2048
 ~~~
 
-The run certified **843,349,446** determinants. Its range is exactly $9\le n\le2048$ and $4097\le k\le\min(\lfloor D/2\rfloor,\lfloor2m^{3/2}\rfloor)$ for both shapes. The two commands with `--tail` and `--scaled`, together with the stated analytic estimates, reproduce the extended result. The [large-size argument](tilted-height.md) begins at $10^{30}$, leaving $2049\le n<10^{30}$ unresolved.
+The run certified **843,349,446** determinants. Its range is exactly $9\le n\le2048$ and $4097\le k\le\min(\lfloor D/2\rfloor,\lfloor2m^{3/2}\rfloor)$ for both shapes. The two commands with `--tail` and `--scaled`, together with the stated analytic estimates, reproduce the extended result. The [tilted pair-deletion argument](tilted-thinning.md) proves unimodality for every $n\ge10^{13}$, leaving $2049\le n<10^{13}$ unresolved.

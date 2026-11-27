@@ -2,7 +2,7 @@
 
 Let $m=2n$ for the odd-part central staircase and $m=2n+1$ for the even-part staircase. Put $s=m^{3/2}$ and $D=\lfloor m^2/4\rfloor$. For a uniform shifted subdiagram, $P_m(k)=b_k/\binom{m}{n}$ is the probability of missing $k$ cells, where $b_k=a_{D-k}$.
 
-**Theorem.** For both families and every $n\ge10^{13}$, the sequence $(b_k)_{k=\lceil .18s\rceil}^{D}$ is unimodal and contains every global maximum. There are at most two consecutive global maximizers. Every nonempty set $\{k:sP_m(k)\ge u\}$ with $u\ge.016$ is an interval. Together with [strict growth through $s/35$](folded-saddle.md), this reduces the outstanding step at these sizes to proving weak growth for $s/35<k<\lceil .18s\rceil$. A [separate tilted comparison](centered-displacement.md) proves that step at $n\ge10^{16}$.
+**Theorem.** For both families and every $n\ge10^{13}$, the sequence $(b_k)_{k=\lceil .18s\rceil}^{D}$ is unimodal and contains every global maximum. There are at most two consecutive global maximizers. Every nonempty set $\{k:sP_m(k)\ge u\}$ with $u\ge.016$ is an interval. Together with [strict growth through $s/35$](folded-saddle.md), this reduces the outstanding step at these sizes to proving weak growth for $s/35<k<\lceil .18s\rceil$. The [tilted pair-deletion comparison](tilted-thinning.md) proves that step for every $n\ge10^{13}$.
 
 ## Exact law after deleting flat pairs
 
