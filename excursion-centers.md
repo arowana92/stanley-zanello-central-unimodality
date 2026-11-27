@@ -41,6 +41,16 @@ Lean also checks the degree cutoff for these spaces. If two exponent pairs in a 
 
 It now suffices on the ordinary Dyck side to identify $[q^k]C_l(q)$ with the sum of these dimensions over a finite set of total degrees. The published results above give that specialization in the written proof. The specialization remains a hypothesis in Lean. [Formal specialization and conditional theorem](CentralUnimodality/DiagonalCoinvariants.lean)
 
+Garsia and Zabrocki study the corresponding $\mathfrak{sl}_2$ operators on alternating diagonal harmonics. Jiang's November 2025 preprint stated a determinant basis indexed by Dyck paths. The July 2026 revision proves linear independence in the polynomial ring and presents the quotient basis as a conjecture. The Hilbert-series input used here comes from Haiman and Garsia–Haiman. These results concern the ordinary type A factor of the induction. [Garsia–Zabrocki](https://arxiv.org/abs/2204.01812) · [Jiang, version 3, Theorem 1](https://arxiv.org/html/2508.12521v3#S1) · [Jiang, version 4, §3.4](https://arxiv.org/html/2508.12521v4#S3.SS4)
+
+### Exact check of the quotient dimensions
+
+For $0\le l\le5$, an independent calculation over the rationals recovers every bidegree of the alternating quotient. To reproduce it run `python3 -B verify_diagonal_coinvariants.py`. The quotient dimensions agree with a direct enumeration of ordinary Dyck paths by area and dinv. At $l=5$ the total dimension is 42 across 35 occupied bidegrees. [Exact calculation](verify_diagonal_coinvariants.py) · [Path enumeration](verify_trapezoids.py)
+
+The elementary symmetric polynomials in each set of $l$ variables vanish in the quotient. Substituting $t=x_i$ into $\prod_j(t-x_j)$ gives $x_i^l=0$, and likewise $y_i^l=0$. In this truncated polynomial ring a basis of antisymmetrized monomials is indexed by sets of $l$ distinct exponent pairs in $\{0,\ldots,l-1\}^2$. For every nonzero pair $(a,b)$ in this box, multiplication by $\sum_i x_i^a y_i^b$ raises one exponent pair by $(a,b)$ and contributes the sign of the resulting reordering. Terms with a repeated pair or an exponent outside the box vanish.
+
+These mixed power sums generate all invariant relations over $\mathbb Q$. Indeed, write an orbit sum as a sum over distinct choices of indices, up to a nonzero integer factor for repeated exponent pairs. Multiplying a shorter such sum by a power sum gives the next sum over distinct indices plus sums in which a pair of indices coincides. Those have fewer indices, giving the assertion by induction. Signed averaging commutes with each invariant multiplier, so it suffices to multiply only the alternating basis vectors. Subtracting the exact rank of the resulting integer relation matrix from the ambient dimension gives each quotient dimension.
+
 ## Unmatched up-steps and the minimum sum of interval endpoints
 
 Match each down-step of a surviving walk with the last available up-step. If its final height is $e=2u+\delta$, its $e$ unmatched up-steps separate ordinary excursions at heights $i=0,\ldots,e$. Let their semilengths be $l_i$. Matched pairs cannot enclose an unmatched step, and inserting any excursions among these single up-steps recovers a unique walk. Here $\sum_i l_i=n-u$. The polynomial for fixed $u,(l_i)$ is

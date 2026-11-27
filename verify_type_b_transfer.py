@@ -73,11 +73,16 @@ def determinant_character(n):
     """Compute the type B sign quotient over Q with both bidegrees retained."""
     cap = 2*n
     cells = [(x,y) for x in range(cap) for y in range(cap) if (x+y)%2]
+    shifts = [(a,b) for a in range(cap) for b in range(cap) if a+b and (a+b)%2==0]
+    return alternating_character(n, cap, cells, shifts)
+
+
+def alternating_character(n, cap, cells, shifts):
+    """Quotient the alternating monomial basis by the given power sum shifts."""
     by_degree = defaultdict(list)
     for shape in combinations(cells,n):
         degree = sum(x for x,_ in shape), sum(y for _,y in shape)
         by_degree[degree].append(shape)
-    shifts = [(a,b) for a in range(cap) for b in range(cap) if a+b and (a+b)%2==0]
     result = Counter()
     for (x,y), target in by_degree.items():
         index = {shape:i for i,shape in enumerate(target)}
