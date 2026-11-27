@@ -41,10 +41,10 @@ private theorem rename_grade (σ : Perm n) (b : Bool) {p : Poly n} {l : ℤ}
 private theorem sign_twice (σ : Perm n) : (σ.sign:ℤ)*(σ.sign:ℤ) = 1 := by
   rcases Int.units_eq_one_or (σ.sign) with h|h <;> rw [h] <;> decide
 
-private noncomputable def signedSum (p : Poly n) : Poly n :=
+noncomputable def signedSum (p : Poly n) : Poly n :=
   ∑ σ : Perm n, (σ.sign:ℤ) • rename (reindex σ) p
 
-private theorem sum_alternating (p : Poly n) : signedSum p ∈ alternating n := by
+theorem sum_alternating (p : Poly n) : signedSum p ∈ alternating n := by
   intro σ
   unfold signedSum
   rw [map_sum,Finset.smul_sum]
@@ -56,7 +56,7 @@ private theorem sum_alternating (p : Poly n) : signedSum p ∈ alternating n := 
   simp_rw [ht]
   exact Equiv.sum_comp (Equiv.mulLeft σ) term
 
-private theorem sum_bidegree {p : Poly n} {d k : ℕ} (hp : p ∈ bidegreeSpace n d k) :
+theorem sum_bidegree {p : Poly n} {d k : ℕ} (hp : p ∈ bidegreeSpace n d k) :
     signedSum p ∈ bidegreeSpace n d k := by
   apply (bidegreeSpace n d k).sum_mem
   intro σ _

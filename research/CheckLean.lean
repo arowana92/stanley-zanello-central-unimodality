@@ -231,6 +231,15 @@ example (hD : DyckComparisons)
 #print axioms Polarization.alternating_degree_cutoff
 #print axioms Polarization.conjecture34_of_hilbert_and_midpoints
 #print axioms Polarization.coinvariantSpace_iff
+#print axioms Polarization.probe_kills_relations
+#print axioms Polarization.quotientProbe_alternant
+#print axioms Polarization.curve_nonsingular_iff
+#print axioms Polarization.dyckClass_bidegree
+#print axioms Polarization.dyckClass_ne_zero
+#print axioms Polarization.dyck_slice_finrank_pos
+#print axioms Polarization.slice_independent_of_minor
+#print axioms Polarization.dyck_hilbert_of_minors_and_dimension
+#print axioms Polarization.conjecture34_of_minors_dimension_and_midpoints
 #print axioms MarkedExcursion.card_tail
 #print axioms MarkedExcursion.heightTail_gaussian
 #print axioms MarkedExcursion.area_exp_gaussian

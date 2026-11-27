@@ -35,7 +35,7 @@ public import CentralUnimodality.SignedArcBounds
 public import CentralUnimodality.RankTruncation
 public import CentralUnimodality.DyckDiagonalSlices
 public import CentralUnimodality.DyckWeightOperators
-public import CentralUnimodality.AlternatingLift
+public import CentralUnimodality.DyckCurveMinors
 public import CentralUnimodality.SpatialWindow
 public import CentralUnimodality.PackedAmplitude
 public import CentralUnimodality.QuadrantCheck
