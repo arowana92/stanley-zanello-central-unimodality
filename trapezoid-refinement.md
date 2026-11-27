@@ -81,3 +81,5 @@ The [exact verifier](verify_trapezoids.py) enumerates the height vectors, checks
 ~~~sh
 python3 -B verify_trapezoids.py
 ~~~
+
+The [comparison with ordinary Catalan characters](graded-comparison.md) proves this grading-variable positivity on a growing interval of total degrees. It gives all multiplicities on every positively exposed lower face and a quotient character for the second-lowest degree when the first diagonal has room for all the cells.
