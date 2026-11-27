@@ -13,7 +13,7 @@ from verify_variation import BANDS
 @dataclass(frozen=True)
 class TiltRange:
     min_length: int
-    max_root: int
+    max_root: Q
     length_window: Q
     shifted_tilt: int
     log_floor: int
@@ -100,7 +100,7 @@ def check_growth():
                     == 2*(2*d+1)*old_areas[k]-(d+2)*new_areas[k])
 
 
-def check_lengths(bounds=ORIGINAL):
+def check_lengths(bounds=ORIGINAL, *, real_mass_bound=None):
     M, r = bounds.min_length, bounds.max_root
     EPS = 1/sqrt_lo(M)
     local = 1+bounds.length_window+Q('.000001')
@@ -109,9 +109,12 @@ def check_lengths(bounds=ORIGINAL):
     small = 1/sqrt_lo(Q('.9')*M)
     assert exp_small_upper(Q(1))**bounds.log_floor < M < 1/decay(bounds.log_floor+1)
     assert scale*local*sqrt_hi(local)*r**3 < bounds.shifted_tilt
-    log_cost = small*(bounds.shifted_tilt*(4+Q('1.26')*3*(10+5*small)+Q('.5'))+3*2500)
-    bad = 4*decay(Q(9)/Q('1.344'))
-    assert Q('1.0001')*(exp_small_upper(log_cost)+small**8)/((1-bad)*(1-5*decay(44))) < Q('1.39')
+    if real_mass_bound is None:
+        log_cost = small*(bounds.shifted_tilt*(4+Q('1.26')*3*(10+5*small)+Q('.5'))+3*2500)
+        bad = 4*decay(Q(9)/Q('1.344'))
+        real_mass_bound = (Q('1.0001')*(exp_small_upper(log_cost)+small**8)
+                           /((1-bad)*(1-5*decay(44))))
+    assert real_mass_bound < Q('1.39')
     # 1-b*(j/m)^(3/2) <= (1-b)_+ + 1.5*(1-j/m)_+.
     deficit = scale-1 + Q('1.5')*(local-1)
     assert Q('1.39')*Q('1.0001')*exp_small_upper(Q('1.17')*r2*deficit) < Q('1.5')
@@ -169,10 +172,6 @@ def check_exceptions(bounds=ORIGINAL):
     ):
         total = Q(4,3)*(c+Q('.51')/8*length+Q(1,2)*dil+rest)
         assert total + int(target == 30) <= target
-    height = sqrt_lo(M)/r
-    assert 2000*(1+2)/height**4 < Q('.00001') and 100*150 < height*PI_LO
-    assert height > 60000 and Q(M,300*10**6) >= 2500
-    assert 200*3**800*300**5*decay(Q(2500,25))**25 < Q('.0001')
 
 
 def check_tilted_height():
@@ -223,6 +222,10 @@ def check_inversion(bounds=ORIGINAL):
         peak = max(peak,loss)
         assert t < 125000 and a*t**3/(6*PI_LO*M*sqrt_lo(M)) < Q('.001')
     assert peak < Q('.91'), float(peak)
+    height = sqrt_lo(M)/rmax
+    assert 2000*(1+2)/height**4 < Q('.00001') and 100*150 < height*PI_LO
+    assert height > 60000 and Q(M,300*10**6) >= 2500
+    assert 200*3**800*300**5*decay(Q(2500,25))**25 < Q('.0001')
     # Small-tilt tail, with both frequency signs, both laws and the centered
     # lattice normalizer. The exponential margin stays 27 at every cutoff.
     rate = Q('.15')

@@ -1,6 +1,6 @@
 # Inverting the last return with explicit errors
 
-**Theorem.** For both central staircases the corank sequence is unimodal for every $n\ge5\cdot10^{11}$. At $n\ge2\cdot10^{10}$ the portion from $\lceil .18m^{3/2}\rceil$ onward is unimodal, contains every global maximum and has at most two consecutive global maximizers. Here $m=2n$ for the odd-part shape and $m=2n+1$ for the even-part shape. The [finite certificate](certified-window.md) covers $1\le n\le2048$. The interval $2049\le n<5\cdot10^{11}$ remains open for the full conjecture.
+**Theorem.** For both central staircases the corank sequence is unimodal for every $n\ge5\cdot10^{11}$. At $n\ge2\cdot10^{10}$ the portion from $\lceil .18m^{3/2}\rceil$ onward is unimodal, contains every global maximum and has at most two consecutive global maximizers. Here $m=2n$ for the odd-part shape and $m=2n+1$ for the even-part shape. The [finite certificate](certified-window.md) covers $1\le n\le2048$. A [subsequent estimate](cubic-tilt.md) lowers the whole-row threshold to $10^{10}$ and the peak threshold to $10^6$.
 
 The argument for the peak uses the real Fourier transform of a signed walk. A convolution inverse of norm at most two transfers an explicit input error to the surviving walks. Farther toward the full shape the sign requires a relative estimate. The [all-size growth theorem](moderate-saddle.md) brings the required range of positive tilts down to $h<16^3$, where a lower bound on the tilted density and the pair-deletion comparison suffice.
 
@@ -160,4 +160,4 @@ python3 -B verify_return_expansion.py
 python3 -B verify.py --max-n 64 --direct-n 12 --upper-curvature
 ~~~
 
-For $2049\le n<5\cdot10^{11}$ neither an all-rank sign proof nor a counterexample is supplied here. Within that gap (2) covers the peak from $2\cdot10^{10}$ rows onward. The adjacent-coefficient signs between $m^{3/2}/16$ and $.18m^{3/2}$ are the outstanding step in that upper part of the gap.
+Equation (2) also covers the peak below this note's whole-row threshold. For the current outstanding coranks and sizes see the [research summary](README.md#asymptotic-result-and-finite-size-gap).
