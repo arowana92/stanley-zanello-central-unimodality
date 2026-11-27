@@ -77,7 +77,7 @@ theorem raise_power_injective_on {k r : ℕ} (hd : 2*k+r ≤ d) :
   apply sub_eq_zero.mp
   exact zero_of_power r hd (x-y) ((T.space k).sub_mem hx hy) (by rw [map_sub,he,sub_self])
 
-theorem reflected_finrank [FiniteDimensional ℚ V] {i j : ℕ} (hij : i ≤ j) (hs : i+j ≤ d) :
+theorem reflected_finrank {i j : ℕ} [FiniteDimensional ℚ (T.space j)] (hij : i ≤ j) (hs : i+j ≤ d) :
     Module.finrank ℚ (T.space i) ≤ Module.finrank ℚ (T.space j) := by
   let r := j-i
   have he : i+r = j := by dsimp [r]; omega

@@ -225,3 +225,8 @@ example (hD : DyckComparisons)
 #print axioms WeightOperators.reflected_finrank
 #print axioms WeightOperators.dyck_comparisons_of_operators
 #print axioms WeightOperators.conjecture34_of_weight_sums_and_midpoints
+#print axioms Polarization.commutator
+#print axioms Polarization.move_ideal
+#print axioms Polarization.coinvariant_reflected
+#print axioms Polarization.alternating_degree_cutoff
+#print axioms Polarization.conjecture34_of_hilbert_and_midpoints
