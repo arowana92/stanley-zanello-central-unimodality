@@ -33,3 +33,4 @@ public import CentralUnimodality.RankArcBounds
 public import CentralUnimodality.ReflectedPolynomials
 public import CentralUnimodality.SignedArcBounds
 public import CentralUnimodality.RankTruncation
+public import CentralUnimodality.DyckDiagonalSlices

@@ -1,5 +1,6 @@
 """Excursion-center inequalities and the common all-size corank interval."""
 
+from collections import Counter
 from fractions import Fraction as Q
 from functools import lru_cache
 from itertools import product
@@ -28,6 +29,40 @@ def degree_sum(n, parity):
 def planar_minimum(size):
     degrees = sorted(a+b for a in range(size) for b in range(size))
     return sum(degrees[:size])
+
+
+def check_dyck_slices(max_n=10):
+    """Compare the area/dinv enumeration with the area recurrence."""
+    rows = [Counter({0: 1})]
+    words = [()]
+    for n in range(max_n + 1):
+        if n:
+            # An area word starts at zero and can rise by at most one.
+            words = [word + (a,) for word in words
+                     for a in range(word[-1] + 2 if word else 1)]
+            row = Counter()
+            for h in range(n):
+                for i, c in rows[h].items():
+                    for j, d in rows[n - 1 - h].items():
+                        row[h + i + j] += c * d
+            rows.append(row)
+        counts = Counter()
+        for word in words:
+            area = sum(word)
+            dinv = sum(a - b in (0, 1) for i, a in enumerate(word)
+                       for b in word[i + 1:])
+            counts[area + dinv, area] += 1
+        marginal = Counter()
+        for (_, area), count in counts.items():
+            marginal[area] += count
+        assert marginal == rows[n]
+        degrees = {d for d, _ in counts}
+        assert min(degrees) == planar_minimum(n)
+        for d in degrees:
+            for k in range(d + 1):
+                assert counts[d, k] == counts[d, d - k]
+                if 2 * k < d:
+                    assert counts[d, k] <= counts[d, k + 1]
 
 
 @lru_cache(maxsize=None)
@@ -145,6 +180,7 @@ def check_join():
 
 if __name__ == "__main__":
     check_centers()
+    check_dyck_slices()
     check_extended_sample()
     check_join()
-    print("Verified excursion centers, the height-220 saddle and both all-size corank intervals.")
+    print("Verified excursion centers, Dyck slices through semilength 10, the height-220 saddle and both all-size corank intervals.")

@@ -190,3 +190,9 @@ example (hD : DyckComparisons)
 #print axioms truncation_two_orders
 #print axioms full_reconstruction
 #print axioms rank_truncation_two_orders
+
+#print axioms dyck_up_heights
+#print axioms area_dinv_degree
+#print axioms dyck_diagonal_cutoff
+#print axioms dyck_comparisons_of_diagonal_unimodality
+#print axioms conjecture34_of_diagonal_unimodality_and_midpoints
