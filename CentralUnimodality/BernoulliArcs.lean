@@ -29,7 +29,7 @@ theorem bernoulli_modulus (p t : ℝ) :
   rw [bernoulli_norm_sq,sq (exp _),← exp_add]
   linarith only [add_one_le_exp (-2*p*(1-p)*sin (t/2)^2 + -2*p*(1-p)*sin (t/2)^2)]
 
-private theorem small_sine {t : ℝ} (ht : |t| ≤ 1) : 9/20*t^2 ≤ 2*sin (t/2)^2 := by
+theorem small_sine {t : ℝ} (ht : |t| ≤ 1) : 9/20*t^2 ≤ 2*sin (t/2)^2 := by
   have bound (x : ℝ) (hx : 0 ≤ x) (hx' : x ≤ 1/2) : 23/24*x ≤ sin x := by
     rcases hx.eq_or_lt with h|h
     · simp [← h]

@@ -50,18 +50,25 @@ theorem absoluteGaussianMoment_succ_two {b : ℝ} (hb : 0 < b) (r : ℕ) :
     rpow_add hb,Real.rpow_neg_one,Real.Gamma_add_one ha.ne']
   dsimp [a]; ring
 
+/-- Inner-arc integrals for the three difference multipliers alone. -/
+theorem inner_gaussian_low_moments :
+    absoluteGaussianMoment (9/20) 0 ≤ 8/3 ∧ absoluteGaussianMoment (9/20) 1 ≤ 20/9 ∧
+    absoluteGaussianMoment (9/20) 2 ≤ 80/27 := by
+  have h₀ : absoluteGaussianMoment (9/20) 0 ≤ 8/3 := by
+    rw [moment_zero]
+    exact Real.sqrt_le_iff.mpr ⟨by norm_num,by linarith only [pi_lt_d2]⟩
+  have h₁ := moment_one (b := 9/20) (by norm_num)
+  have h₂ := absoluteGaussianMoment_succ_two (b := 9/20) (by norm_num) 0
+  norm_num at h₁ h₂
+  refine ⟨h₀,?_,?_⟩ <;> linarith only [h₀,h₁,h₂]
+
 /-- Whole-line bounds used at powers r+3 and r+4 of the inner-arc error. -/
 theorem inner_gaussian_moments :
     absoluteGaussianMoment (9/20) 3 ≤ 5 ∧ absoluteGaussianMoment (9/20) 4 ≤ 10 ∧
     absoluteGaussianMoment (9/20) 5 ≤ 22 ∧ absoluteGaussianMoment (9/20) 6 ≤ 55 := by
   let b : ℝ := 9/20
   have hb : 0 < b := by norm_num [b]
-  have h₀ : absoluteGaussianMoment b 0 ≤ 8/3 := by
-    rw [moment_zero]
-    apply Real.sqrt_le_iff.mpr
-    constructor
-    · norm_num
-    · dsimp [b]; linarith only [pi_lt_d2]
+  have h₀ : absoluteGaussianMoment b 0 ≤ 8/3 := inner_gaussian_low_moments.1
   have h₁ := moment_one hb
   have R := absoluteGaussianMoment_succ_two hb
   have h₂ := R 0

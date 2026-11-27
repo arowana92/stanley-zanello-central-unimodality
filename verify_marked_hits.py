@@ -303,6 +303,43 @@ def check_marked(max_d=10):
     print(f"Marked heights and exact tilted first-hit probabilities agree through semilength {max_d}.")
 
 
+def check_hit_rank_mixtures(m, literal):
+    """Rebuild each first-hit rank polynomial from independently generated pieces."""
+    suffixes = [[1]]
+    for label in range(1, m+1):
+        previous = suffixes[-1]
+        row = [0] * (len(previous) + label)
+        for rank, mass in enumerate(previous):
+            row[rank] += 2**(2*label) * mass
+            row[rank+label] += mass
+        suffixes.append(row)
+
+    live = Counter({(0, 0): 1})
+    for time in range(1, m+1):
+        label = m-time+1
+        following, hit = Counter(), Counter()
+        for (height, rank), mass in live.items():
+            following[height+1, rank] += 2**(2*label) * mass
+            if height:
+                following[height-1, rank+label] += mass
+            else:
+                hit[rank+label] += mass
+        live = following
+        combined = Counter()
+        for prefix_rank, prefix_mass in hit.items():
+            for suffix_rank, suffix_mass in enumerate(suffixes[m-time]):
+                combined[prefix_rank+suffix_rank] += prefix_mass * suffix_mass
+        assert combined == literal[time]
+        # Check signed first and second differences across both support boundaries.
+        suffix = Counter(dict(enumerate(suffixes[m-time])))
+        for k in range(-1, m*(m+1)//2+2):
+            a = literal[time]
+            assert a[k+1]-a[k] == sum(
+                mass * (suffix[k+1-j]-suffix[k-j]) for j, mass in hit.items())
+            assert a[k-1]+a[k+1]-2*a[k] == sum(
+                mass * (suffix[k-1-j]+suffix[k+1-j]-2*suffix[k-j]) for j, mass in hit.items())
+
+
 def check_rank_tilt(max_length=13):
     """Compare literal partitions and the centered-hit law with all sign words."""
     rank_sites = hit_times = 0
@@ -310,6 +347,7 @@ def check_rank_tilt(max_length=13):
         labels = range(m, 0, -1)
         denominator = prod(2**(2*r)+1 for r in labels)
         ranks, hits = Counter(), Counter()
+        hit_ranks = [Counter() for _ in range(m+1)]
         for signs in product((-1, 1), repeat=m):
             height = rank = 0
             numerator = 1
@@ -326,6 +364,8 @@ def check_rank_tilt(max_length=13):
                 ranks[rank] += numerator
             else:
                 hits[first_hit] += numerator
+                hit_ranks[first_hit][rank] += numerator
+        check_hit_rank_mixtures(m, hit_ranks)
         assert sum(ranks.values()) + sum(hits.values()) == denominator
         for j, count in enumerate(direct_ranks(range(m-1, 0, -2))):
             assert ranks[j] == count * 2**(m*(m+1)-2*j)

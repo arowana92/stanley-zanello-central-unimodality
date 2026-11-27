@@ -1,6 +1,7 @@
 module
 
 public import CentralUnimodality.NormalRankReference
+public import CentralUnimodality.LatticeDifference
 public import CentralUnimodality.PrefixDifferenceBounds
 import Mathlib.Analysis.SpecialFunctions.Gaussian.GaussianIntegral
 import Mathlib.Analysis.SpecialFunctions.Trigonometric.Bounds
@@ -38,10 +39,17 @@ private theorem band_mul (c : ℝ) (m : ℕ) (g : ℝ → ℂ) :
     (fun θ => bandTransform c m θ*g θ) = (Ioc (-π) π).indicator (fun θ => suffixTransform c θ m*g θ) := by
   funext θ; by_cases h : θ ∈ Ioc (-π) π <;> simp [bandTransform,h]
 
-private theorem band_integrable (c : ℝ) (m : ℕ) {g : ℝ → ℂ} (hg : Continuous g) :
+theorem band_integrable (c : ℝ) (m : ℕ) {g : ℝ → ℂ} (hg : Continuous g) :
     Integrable (fun θ => bandTransform c m θ*g θ) := by
   rw [band_mul,integrable_indicator_iff measurableSet_Ioc]
   exact ((transform_continuous c m).mul hg).integrableOn_Icc.mono_set Ioc_subset_Icc_self
+
+theorem band_inverse (c : ℝ) (m : ℕ) (k : ℤ) :
+    (∫ θ, bandTransform c m θ*phase (-θ*((k:ℝ)-meanRank c m))) =
+      (((2*π)*freeRankMass c m k:ℝ):ℂ) := by
+  rw [band_mul,integral_indicator measurableSet_Ioc,
+    ← intervalIntegral.integral_of_le (by linarith only [pi_pos] : -π ≤ π),suffix_rank_inversion]
+  push_cast; rfl
 
 private theorem weighted_normal {σ : ℝ} (hσ : 0 < σ) (r : ℕ) :
     Integrable (fun θ : ℝ => exp (-(σ^2*θ^2/2))*|θ|^r) := by
@@ -93,19 +101,9 @@ private theorem site_inverse (c : ℝ) {σ : ℝ} (hσ : 0 < σ) (m : ℕ) (k : 
     · exact Filter.Eventually.of_forall (fun θ => by simp only [g,norm_mul,phase_norm,mul_one,
         Complex.norm_real,Real.norm_eq_abs,abs_of_pos (exp_pos _),pow_zero,le_refl])
   simp only [siteIntegrand,suffixSpectralError,sub_mul]
-  rw [integral_sub (band_integrable c m hg) hn,band_mul,integral_indicator measurableSet_Ioc,
-    ← intervalIntegral.integral_of_le (by linarith only [pi_pos] : -π ≤ π),suffix_rank_inversion,
-    normal_rank_inverse hσ]
+  rw [integral_sub (band_integrable c m hg) hn,band_inverse,normal_rank_inverse hσ]
   unfold siteError; push_cast; ring
 
-private theorem chord (θ : ℝ) : ‖phase θ-1‖ ≤ |θ| := by
-  simpa only [phase,mul_comm,Real.norm_eq_abs] using (Real.norm_exp_I_mul_ofReal_sub_one_le (x := θ))
-
-private theorem shifted_site (c σ : ℝ) (m : ℕ) (k : ℤ) (θ : ℝ) :
-    siteIntegrand c σ m (k+1) θ = siteIntegrand c σ m k θ*phase (-θ) ∧
-    siteIntegrand c σ m (k-1) θ = siteIntegrand c σ m k θ*phase θ := by
-  simp only [siteIntegrand,Int.cast_add,Int.cast_one,Int.cast_sub,mul_assoc,← phase_add]
-  constructor <;> congr 2 <;> ring
 
 /-- All three estimates use the same spectral residual, including the full
 Gaussian tail beyond the lattice integration interval. -/
@@ -114,37 +112,10 @@ theorem suffix_difference_inversion (c : ℝ) {σ : ℝ} (hσ : 0 < σ) (m : ℕ
     |E k| ≤ spectralMoment c σ m 0 ∧
     |E (k+1)-E k| ≤ spectralMoment c σ m 1 ∧
     |E (k-1)+E (k+1)-2*E k| ≤ spectralMoment c σ m 2 := by
-  change |siteError c σ m k| ≤ _ ∧ _ ∧ _
-  let F := siteIntegrand c σ m
-  have hi := site_integrable c hσ m
-  have inv := site_inverse c hσ m
-  have H₀ := norm_integral_le_of_norm_le (spectralMoment_integrable c hσ m 0)
-    (f := F k) (Filter.Eventually.of_forall fun θ => by simp [F,siteIntegrand])
-  have H₁ := norm_integral_le_of_norm_le (spectralMoment_integrable c hσ m 1)
-    (f := fun θ => F (k+1) θ-F k θ) (Filter.Eventually.of_forall fun θ => by
-      change ‖siteIntegrand _ _ _ _ _ - _‖ ≤ _
-      rw [(shifted_site c σ m k θ).1,← mul_sub_one,norm_mul]
-      simp only [siteIntegrand,norm_mul,phase_norm,mul_one,pow_one]
-      exact mul_le_mul_of_nonneg_left (by simpa using chord (-θ)) (norm_nonneg _))
-  have H₂ := norm_integral_le_of_norm_le (spectralMoment_integrable c hσ m 2)
-    (f := fun θ => F (k-1) θ+F (k+1) θ-2*F k θ) (Filter.Eventually.of_forall fun θ => by
-      change ‖siteIntegrand _ _ _ _ _ + siteIntegrand _ _ _ _ _ - _‖ ≤ _
-      rw [(shifted_site c σ m k θ).1,(shifted_site c σ m k θ).2]
-      have hp : phase θ*phase (-θ)=1 := by rw [← phase_add]; simp
-      have he (v : ℂ) : v*phase θ+v*phase (-θ)-2*v = -v*(phase θ-1)*(phase (-θ)-1) := by
-        linear_combination v*hp
-      rw [he,norm_mul,norm_mul,norm_neg]
-      simp only [siteIntegrand,norm_mul,phase_norm,mul_one,pow_two]
-      rw [← mul_assoc]
-      exact mul_le_mul (mul_le_mul_of_nonneg_left (chord θ) (norm_nonneg _))
-        (by simpa using chord (-θ)) (norm_nonneg _) (by positivity))
-  dsimp only [F] at H₀ H₁ H₂
-  rw [integral_sub (hi _) (hi _)] at H₁
-  have hp : Integrable (fun θ => F (k-1) θ+F (k+1) θ) := (hi _).add (hi _)
-  rw [integral_sub hp ((hi k).const_mul (2:ℂ)),integral_add (hi _) (hi _),
-    integral_const_mul] at H₂
-  simp only [inv] at H₀ H₁ H₂
-  norm_cast at H₀ H₁ H₂
+  have H (r : Fin 3) := lattice_difference_integral (suffixSpectralError c σ m) (meanRank c m)
+    (siteError c σ m) (site_integrable c hσ m) (site_inverse c hσ m) r k
+    (spectralMoment_integrable c hσ m r.val) (fun _ => le_rfl)
+  exact ⟨H 0,H 1,H 2⟩
 
 /-- Scaled integral error, before replacing Gaussian lattice differences by derivatives. -/
 noncomputable def scaledSpectralMoment (c σ : ℝ) (m r : ℕ) :=

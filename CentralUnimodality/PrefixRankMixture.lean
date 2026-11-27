@@ -56,27 +56,41 @@ theorem split_meanRank (c : ℝ) {m L : ℕ} (h : L ≤ m) :
 noncomputable def freeRankMass (c : ℝ) (M : ℕ) (k : ℤ) : ℝ :=
   ∑ w ∈ words M, if ((wordParts w).sum:ℤ)=k then signMass c (c*M) w else 0
 
+/-- Rank mass at an integer site with a specified set of allowed prefixes. -/
+noncomputable def prefixEventSiteMass (c : ℝ) (m L : ℕ) (A : Finset (List Bool)) (k : ℤ) : ℝ :=
+  ∑ w ∈ (words m).filter (fun w => w.take L ∈ A),
+    if ((wordParts w).sum:ℤ)=k then signMass c (c*m) w else 0
+
 /-- The unnormalized rank mass with survival imposed through L steps. -/
 noncomputable def prefixSiteMass (c : ℝ) (m L : ℕ) (k : ℤ) : ℝ :=
-  ∑ w ∈ (words m).filter (fun w => w.take L ∈ ballots L),
-    if ((wordParts w).sum:ℤ)=k then signMass c (c*m) w else 0
+  prefixEventSiteMass c m L (ballots L) k
+
+theorem prefixEventSiteMass_rankEvent (c : ℝ) (m L j : ℕ) (A : Finset (List Bool)) :
+    prefixEventSiteMass c m L A j = rankEvent c m j ((words m).filter (fun w => w.take L ∈ A)) := by
+  simp only [prefixEventSiteMass,rankEvent,Finset.sum_filter,Nat.cast_inj]
 
 theorem prefixSiteMass_rankEvent (c : ℝ) (m L j : ℕ) :
     prefixSiteMass c m L j = rankEvent c m j ((words m).filter (fun w => w.take L ∈ ballots L)) := by
-  simp only [prefixSiteMass,rankEvent,Finset.sum_filter,Nat.cast_inj]
+  exact prefixEventSiteMass_rankEvent c m L j (ballots L)
 
-theorem prefixSiteMass_mixture (c : ℝ) {m L : ℕ} (h : L ≤ m) (k : ℤ) :
-    prefixSiteMass c m L k = ∑ w ∈ ballots L, signMass c (c*m) w *
+theorem prefixEventSiteMass_mixture (c : ℝ) {m L : ℕ} (h : L ≤ m) (A : Finset (List Bool))
+    (hA : A ⊆ words L) (k : ℤ) :
+    prefixEventSiteMass c m L A k = ∑ w ∈ A, signMass c (c*m) w *
       freeRankMass c (m-L) (k-shiftedPrefixRank (m-L) w) := by
-  rw [prefixSiteMass,prefix_sum h (ballots L) (Finset.filter_subset ..)]
+  rw [prefixEventSiteMass,prefix_sum h A hA]
   apply Finset.sum_congr rfl
   intro v hv
   rw [freeRankMass,Finset.mul_sum]
   apply Finset.sum_congr rfl
   intro w hw
-  have he : c*(m:ℝ)-c*v.length=c*(m-L:ℕ) := by rw [(mem_ballots.mp hv).1,Nat.cast_sub h]; ring
+  have he : c*(m:ℝ)-c*v.length=c*(m-L:ℕ) := by rw [mem_words.mp (hA hv),Nat.cast_sub h]; ring
   rw [shifted_rank_append,mem_words.mp hw,Nat.cast_add,append_mass,he]
   split_ifs <;> first | rfl | omega | simp_all
+
+theorem prefixSiteMass_mixture (c : ℝ) {m L : ℕ} (h : L ≤ m) (k : ℤ) :
+    prefixSiteMass c m L k = ∑ w ∈ ballots L, signMass c (c*m) w *
+      freeRankMass c (m-L) (k-shiftedPrefixRank (m-L) w) :=
+  prefixEventSiteMass_mixture c h (ballots L) (Finset.filter_subset ..) k
 
 theorem saddle_suffix_site (c : ℝ) {m L : ℕ} (h : L ≤ m) {j : ℤ} (hj : meanRank c m=j)
     {w : List Bool} (hw : w ∈ ballots L) :

@@ -50,6 +50,19 @@ private theorem product_envelope {m : ℕ} (c θ : ℝ) (f : ℕ → ℝ)
   dsimp [labelVariance] at h
   nlinarith only [h i hi,congrArg (fun x => x*sin (((i:ℝ)+1)*θ/2)^2) he]
 
+theorem suffix_inner_modulus (c θ : ℝ) (m : ℕ) (hθ : m*|θ| ≤ 1) :
+    ‖suffixTransform c θ m‖ ≤ exp (-(9/20*suffixVariance c m*θ^2)) := by
+  unfold suffixVariance
+  rw [Finset.mul_sum,Finset.sum_mul]
+  apply product_envelope
+  intro i hi
+  have hil : (i:ℝ)+1 ≤ m := by exact_mod_cast Finset.mem_range.mp hi
+  have ht : |((i:ℝ)+1)*θ| ≤ 1 := by
+    rw [abs_mul,abs_of_nonneg (by positivity : (0:ℝ) ≤ i+1)]
+    exact (mul_le_mul_of_nonneg_right hil (abs_nonneg _)).trans hθ
+  have hw : 0 ≤ labelVariance c (i+1) := by unfold labelVariance upChance; positivity
+  nlinarith only [mul_le_mul_of_nonneg_left (small_sine ht) hw]
+
 /-- The global error in the small arc on the x=σθ scale, before integration. -/
 theorem suffix_small_error (c θ : ℝ) (m : ℕ) (D : ℝ)
     (hθ : m*|θ| ≤ 1) (hD : ∀ i ∈ Finset.range m, |1-2*upChance (-(c*(i+1)))| ≤ D) :
@@ -201,6 +214,46 @@ theorem suffix_norm_even (c θ : ℝ) (m : ℕ) : ‖suffixTransform c (-θ) m�
   apply (sq_eq_sq₀ (norm_nonneg _) (norm_nonneg _)).mp
   rw [bernoulli_norm_sq,bernoulli_norm_sq,mul_neg,neg_div,sin_neg,neg_sq]
 
+/-- Label bounds for any tilt cap C, including the separate tilts for first hits. -/
+theorem suffix_label_bounds {m M : ℕ} (hm : 4096 ≤ m) (hM : M ≤ m) {c C : ℝ} (hc : 0 ≤ c)
+    (hs : 2*c*((m:ℝ)*√m) ≤ C) (i : ℕ) (hi : i ∈ Finset.range M) :
+    |1-2*upChance (-(c*(i+1)))| ≤ C/128 ∧
+      (1-(C/128)^2)/4 ≤ labelVariance c (i+1) ∧ labelVariance c (i+1) ≤ 1/4 := by
+  have hm' : (4096:ℝ) ≤ m := by exact_mod_cast hm
+  have hr : (64:ℝ) ≤ √m := (Real.le_sqrt (by norm_num) (Nat.cast_nonneg _)).mpr (by linarith only [hm'])
+  have ht : c*m ≤ C/128 := by
+    nlinarith only [hs,mul_le_mul_of_nonneg_left hr (mul_nonneg hc (Nat.cast_nonneg (α:=ℝ) m))]
+  let x := c*((i:ℝ)+1)
+  let d := tanh x
+  have hx : 0 ≤ x := by dsimp [x]; positivity
+  have hd : 0 ≤ d := by dsimp [d]; rw [tanh_eq_sinh_div_cosh]; exact div_nonneg (sinh_nonneg_iff.mpr hx) (cosh_pos _).le
+  have hil : (i:ℝ)+1 ≤ m := by exact_mod_cast (Finset.mem_range.mp hi).trans_le hM
+  have hu : d ≤ C/128 := (tanh_le_linear hx).trans ((mul_le_mul_of_nonneg_left hil hc).trans ht)
+  have hd' : 1-2*upChance (-x)=d := by linarith only [up_total x,up_drift x]
+  have hv : labelVariance c (i+1) = (1-d^2)/4 := by
+    change upChance (-x)*upChance x = _
+    rw [show upChance (-x)=(1-d)/2 by linarith only [hd'],
+      show upChance x=(1+d)/2 by linarith only [up_total x,up_drift x]]
+    ring
+  change |1-2*upChance (-x)| ≤ _ ∧ _
+  rw [hd',abs_of_nonneg hd,hv]
+  refine ⟨hu,?_,?_⟩
+  · nlinarith only [pow_le_pow_left₀ hd hu 2]
+  · linarith only [sq_nonneg d]
+
+theorem suffix_variance_bounds (c : ℝ) (M : ℕ) {p : ℝ} (hp : 0 ≤ p)
+    (per : ∀ i ∈ Finset.range M, p ≤ labelVariance c (i+1) ∧ labelVariance c (i+1) ≤ 1/4) :
+    p/3*(M:ℝ)^3 ≤ suffixVariance c M ∧ suffixVariance c M ≤ ((M:ℝ)+1)^3/12 := by
+  have hid : (∑ i ∈ Finset.range M, ((i:ℝ)+1)^2) = labelSquares M := by
+    rw [reverse_labels M (fun x => x^2),sum_labelSquares]
+  have hl := Finset.sum_le_sum (s := Finset.range M) fun i hi => mul_le_mul_of_nonneg_right (per i hi).1 (sq_nonneg ((i:ℝ)+1))
+  have hh := Finset.sum_le_sum (s := Finset.range M) fun i hi => mul_le_mul_of_nonneg_right (per i hi).2 (sq_nonneg ((i:ℝ)+1))
+  rw [← Finset.mul_sum,hid] at hl hh
+  change _ ≤ suffixVariance c M at hl
+  change suffixVariance c M ≤ _ at hh
+  unfold labelSquares at hl hh
+  constructor <;> nlinarith only [hl,hh,mul_nonneg hp (sq_nonneg (M:ℝ)),mul_nonneg hp (Nat.cast_nonneg (α:=ℝ) M),sq_nonneg (M:ℝ),Nat.cast_nonneg (α:=ℝ) M]
+
 /-- The numerical single-label assumptions on every unrestricted suffix of
 a saddle in the range of the right-flank theorem. -/
 theorem suffix_saddle_parameters {m M : ℕ} (hm : 4096 ≤ m) (hM : M ≤ m) {c : ℝ} (hc : 0 ≤ c)
@@ -208,38 +261,9 @@ theorem suffix_saddle_parameters {m M : ℕ} (hm : 4096 ≤ m) (hM : M ≤ m) {c
     (∀ i ∈ Finset.range M, |1-2*upChance (-(c*(i+1)))| ≤ 25/128 ∧
       6/25 ≤ labelVariance c (i+1)) ∧
     (2/25:ℝ)*M^3 ≤ suffixVariance c M ∧ suffixVariance c M ≤ ((M:ℝ)+1)^3/12 := by
-  have hm' : (4096:ℝ) ≤ m := by exact_mod_cast hm
-  have hr : (64:ℝ) ≤ √m := (Real.le_sqrt (by norm_num) (Nat.cast_nonneg _)).mpr (by linarith only [hm'])
-  have ht : c*m ≤ 25/128 := by
-    nlinarith only [hs,mul_le_mul_of_nonneg_left hr (mul_nonneg hc (Nat.cast_nonneg (α:=ℝ) m))]
-  have per (i : ℕ) (hi : i ∈ Finset.range M) : |1-2*upChance (-(c*(i+1)))| ≤ 25/128 ∧
-      6/25 ≤ labelVariance c (i+1) ∧ labelVariance c (i+1) ≤ 1/4 := by
-    let x := c*((i:ℝ)+1)
-    let d := tanh x
-    have hx : 0 ≤ x := by dsimp [x]; positivity
-    have hd : 0 ≤ d := by dsimp [d]; rw [tanh_eq_sinh_div_cosh]; exact div_nonneg (sinh_nonneg_iff.mpr hx) (cosh_pos _).le
-    have hil : (i:ℝ)+1 ≤ m := by exact_mod_cast (Finset.mem_range.mp hi).trans_le hM
-    have hu : d ≤ 25/128 := (tanh_le_linear hx).trans ((mul_le_mul_of_nonneg_left hil hc).trans ht)
-    have hd' : 1-2*upChance (-x)=d := by linarith only [up_total x,up_drift x]
-    have hv : labelVariance c (i+1) = (1-d^2)/4 := by
-      change upChance (-x)*upChance x = _
-      rw [show upChance (-x)=(1-d)/2 by linarith only [hd'],
-        show upChance x=(1+d)/2 by linarith only [up_total x,up_drift x]]
-      ring
-    change |1-2*upChance (-x)| ≤ _ ∧ _
-    rw [hd',abs_of_nonneg hd,hv]
-    refine ⟨hu,?_,?_⟩
-    · nlinarith only [pow_le_pow_left₀ hd hu 2]
-    · linarith only [sq_nonneg d]
-  refine ⟨fun i hi => ⟨(per i hi).1,(per i hi).2.1⟩,?_⟩
-  have hid : (∑ i ∈ Finset.range M, ((i:ℝ)+1)^2) = labelSquares M := by
-    rw [reverse_labels M (fun x => x^2),sum_labelSquares]
-  have hl := Finset.sum_le_sum (s := Finset.range M) fun i hi => mul_le_mul_of_nonneg_right (per i hi).2.1 (sq_nonneg ((i:ℝ)+1))
-  have hh := Finset.sum_le_sum (s := Finset.range M) fun i hi => mul_le_mul_of_nonneg_right (per i hi).2.2 (sq_nonneg ((i:ℝ)+1))
-  rw [← Finset.mul_sum,hid] at hl hh
-  change _ ≤ suffixVariance c M at hl
-  change suffixVariance c M ≤ _ at hh
-  unfold labelSquares at hl hh
-  constructor <;> nlinarith only [hl,hh,sq_nonneg (M:ℝ),Nat.cast_nonneg (α:=ℝ) M]
-
+  have H := suffix_label_bounds hm hM hc hs
+  have per (i : ℕ) (hi : i ∈ Finset.range M) : 6/25 ≤ labelVariance c (i+1) ∧ labelVariance c (i+1) ≤ 1/4 :=
+    ⟨(by norm_num : (6/25:ℝ) ≤ (1-(25/128)^2)/4).trans (H i hi).2.1,(H i hi).2.2⟩
+  refine ⟨fun i hi => ⟨(H i hi).1,(per i hi).1⟩,?_⟩
+  convert suffix_variance_bounds c M (by norm_num : (0:ℝ) ≤ 6/25) per using 2; norm_num
 end CentralUnimodality.MarkedExcursion

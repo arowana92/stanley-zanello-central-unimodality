@@ -45,3 +45,4 @@ public import CentralUnimodality.HitTiltBins
 public import CentralUnimodality.TiltedDifferences
 public import CentralUnimodality.PrefixDifferenceBounds
 public import CentralUnimodality.RightSuffixApproximation
+public import CentralUnimodality.ShortSuffixRanks

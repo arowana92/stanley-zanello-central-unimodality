@@ -293,3 +293,11 @@ example (hD : DyckComparisons)
 #print axioms MarkedExcursion.right_free_suffix
 #print axioms MarkedExcursion.right_prefix_differences
 #print axioms MarkedExcursion.right_prefix_cut_lengths
+#print axioms MarkedExcursion.lattice_difference_integral
+#print axioms MarkedExcursion.prefix_difference_mixture
+#print axioms MarkedExcursion.first_hit_rank_bin
+#print axioms MarkedExcursion.short_outer_budgets
+#print axioms MarkedExcursion.short_suffix_envelope
+#print axioms MarkedExcursion.short_free_differences
+#print axioms MarkedExcursion.first_hit_rank_bound
+#print axioms MarkedExcursion.first_hit_rank_marked
