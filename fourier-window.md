@@ -151,6 +151,13 @@ For $2049\le N\le2069$, the resulting lower margins were **0.084630** for the in
 python3 -B verify_spatial_mesh.py /tmp/sz_fourier_window 2049 2069 --jobs 4
 ~~~
 
+For a single retained frequency, the same verifier can generate a Lean proof for all lengths of the group. Write $a_i$ for the rounded numerator at offset $i$ and $L=\max(1,N_{\rm last}-N_{\rm first})$. If $|La_i-(L-i)a_0-ia_{\rm last}|\le E$ for every $i$, the conditional amplitude is within $e+(L+E)/(L2^{80})$ of the chord between the two normalized endpoints. Here $e$ is the proven amplitude error before rounding. Euclidean division by the positive central binomial denominator rounds down even for negative numerators. [Rounding and length check](CentralUnimodality/MeshLength.lean)
+
+~~~sh
+python3 -B verify_spatial_mesh.py /tmp/sz_fourier_window 2049 2069 --lean-sample 2 /tmp/SZLengthTwo.lean
+lake env lean /tmp/SZLengthTwo.lean
+~~~
+
 ## Reproduction
 
 From this checkout run

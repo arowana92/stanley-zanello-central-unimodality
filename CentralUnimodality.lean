@@ -38,3 +38,4 @@ public import CentralUnimodality.SpatialWindow
 public import CentralUnimodality.PackedAmplitude
 public import CentralUnimodality.QuadrantCheck
 public import CentralUnimodality.MeshRadius
+public import CentralUnimodality.MeshLength

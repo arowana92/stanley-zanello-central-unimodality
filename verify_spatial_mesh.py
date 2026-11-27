@@ -5,6 +5,7 @@ from concurrent.futures import ProcessPoolExecutor
 from fractions import Fraction as Q
 from functools import partial
 from math import ceil, comb, isqrt
+from pathlib import Path
 
 from verify_packed_residual import check_frequency, cosine_offset
 from verify_rising import PI_HI, PI_LO
@@ -31,8 +32,9 @@ def phase_table():
     return table + table[-2:0:-1], Q(radius, PHASE_DEN)
 
 
-def endpoint_values(t, program, first, last, period, inv_survival):
-    _, bounds, (s, candidates) = check_frequency(program, last, period, t, prove_inputs=True)
+def endpoint_values(t, program, first, last, period, inv_survival, lean_path=None):
+    _, bounds, (s, candidates) = check_frequency(program, last, period, t, lean_path=lean_path,
+                                                  prove_inputs=True)
     span = max(1, last-first)
     values = []
     for row in candidates:
@@ -40,9 +42,41 @@ def endpoint_values(t, program, first, last, period, inv_survival):
         a = [(row[n]*AMPLITUDE_DEN*inv.numerator)//(s*inv.denominator)
              for n, inv in zip(range(first, last+1), inv_survival)]
         deviation = max(abs(span*v - (span-i)*a[0] - i*a[-1]) for i, v in enumerate(a))
-        error = bounds[2] + Q(span+deviation, span*AMPLITUDE_DEN)
-        values.append((a[0], a[-1], error))
-    return values
+        values.append((a[0], a[-1], deviation))
+    if lean_path is not None:
+        write_chord_proof(lean_path, first, last, period, t, s, bounds[2], values)
+    return [(left, right, bounds[2]+Q(span+deviation, span*AMPLITUDE_DEN))
+            for left, right, deviation in values]
+
+
+def write_chord_proof(path, first, last, period, mode, scale, amplitude_error, endpoints):
+    """Extend the generated amplitude proof by the length check for both parities."""
+    left, right, deviations = zip(*endpoints)
+    span = max(1, last-first)
+    deviation = max(deviations)
+    amp_units = ceil(amplitude_error*10**15)
+    lines = ["namespace FourierSample", "open CentralUnimodality CentralUnimodality.Residual",
+             f"def leftEnd (σ : ℕ) : ℤ := if σ=0 then {left[0]} else {left[1]}",
+             f"def rightEnd (σ : ℕ) : ℤ := if σ=0 then {right[0]} else {right[1]}",
+             "theorem lengthChecked (σ : ℕ) (hσ : σ ≤ 1) :",
+             f"    MeshLength.check {first} {last} (2^80) {scale} (candidates σ)",
+             f"      (leftEnd σ) (rightEnd σ) {deviation} = true := by",
+             "  rcases Nat.le_one_iff_eq_zero_or_eq_one.mp hσ with rfl|rfl <;> decide +kernel",
+             f"theorem interpolatedAmplitude (n δ : ℕ) (hδ : δ ≤ 1) (hl : {first} ≤ n+δ) (hr : n+δ ≤ {last}) :",
+             "    let d : ℕ := 2^80",
+             f"    |signedAmplitude n δ (gridFrequency {period} {mode}) -",
+             f"      chord (((n+δ-{first}:ℕ):ℝ)/{span}) ((leftEnd (1-δ):ℝ)/d)",
+             f"        ((rightEnd (1-δ):ℝ)/d)| ≤ ({amp_units}:ℝ)/10^15 +",
+             f"          (({span}:ℝ)+{deviation})/({span}*d) := by",
+             f"  exact MeshLength.checked_chord (n := n) (δ := δ) (θ := gridFrequency {period} {mode})",
+             f"    (first := {first}) (last := {last}) (d := 2^80) (E := {deviation})",
+             f"    (by decide) hl hr (s := {scale}) (by decide) (candidates (1-δ)) (leftEnd (1-δ)) (rightEnd (1-δ))",
+             "    (lengthChecked (1-δ) (by omega)) (sampledAmplitude n δ hδ (by omega) hr)",
+             "#print axioms interpolatedAmplitude", "end FourierSample"]
+    path.write_text("import CentralUnimodality.MeshLength\n" + path.read_text() + "\n".join(lines) + "\n")
+    error = Q(amp_units, 10**15) + Q(span+deviation, span*AMPLITUDE_DEN)
+    print(f"Wrote {path} for mode {mode}, {first}..{last}. "
+          f"Both parities have chord error at most {ceil(error*10**15)}/10^15.")
 
 
 def collect(program, first, last, period, stop, jobs):
@@ -87,7 +121,7 @@ def window_margin(amplitudes, cost, table, phase_error, period, scale, window):
     return mesh_bound - h*h*curvature/8 - factor*unit_hi**r*cost - reserve
 
 
-def verify(program, first, last, jobs):
+def verify(program, first, last, jobs, sample=None):
     if not 2049 <= first <= last <= min(300000, first+first//100):
         raise ValueError("expected one length group within 2049..300000")
     scale = isqrt((2*first)**3)
@@ -97,6 +131,14 @@ def verify(program, first, last, jobs):
     stop = ceil(Q(204800*period, 628*scale))
     if stop >= MESH//2:
         raise ValueError("mesh Nyquist cutoff exceeded")
+    if sample is not None:
+        mode, path = sample
+        mode = int(mode)
+        if not 1 <= mode <= stop:
+            raise ValueError(f"sample mode must be in 1..{stop}")
+        inv_survival = [Q(4**n, comb(2*n, n)) for n in range(first, last+1)]
+        endpoint_values(mode, program, first, last, period, inv_survival, Path(path))
+        return
     rows, costs = collect(program, first, last, period, stop, jobs)
     table, phase_error = phase_table()
     for window in WINDOWS:
@@ -116,7 +158,9 @@ if __name__ == "__main__":
     parser.add_argument("first", type=int)
     parser.add_argument("last", type=int)
     parser.add_argument("--jobs", type=int, default=1, help="number of concurrent frequency checks")
+    parser.add_argument("--lean-sample", nargs=2, metavar=("MODE", "FILE"),
+                        help="export one frequency with a Lean proof of the length interpolation bound")
     opts = parser.parse_args()
     if opts.jobs < 1:
         parser.error("--jobs must be positive")
-    verify(opts.program, opts.first, opts.last, opts.jobs)
+    verify(opts.program, opts.first, opts.last, opts.jobs, opts.lean_sample)

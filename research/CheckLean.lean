@@ -220,3 +220,4 @@ example (hD : DyckComparisons)
 #print axioms MeshPhase.uniform_sample_error
 #print axioms MeshPhase.production_radius
 #print axioms MeshPhase.derivative_dot_error
+#print axioms MeshLength.checked_chord
