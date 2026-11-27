@@ -50,9 +50,9 @@ def check_real_moment():
     assert Q("1.001")/Q(".999") < Q("1.003")
 
 
-def power_residual(T, E, d):
+def power_residual(T, E, d, *, basis_norms=None):
     """Upper bound in units of d^6 for the normalized two-step residual."""
-    norm, f, corr = sample_bounds(T, E, Q(1), d)
+    norm, f, corr = sample_bounds(T, E, Q(1), d, basis_norms=basis_norms)
     hyper = T*T/32*upper_exp(T*d**3/4)
     airy = (norm(f,6)/120 + norm(f,potential=3,grid=True)/48
             + norm(f,2,2,True)/16 + norm(f,4,1,True)/48

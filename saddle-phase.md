@@ -9,6 +9,8 @@ Let $m=2n$ for $(2n-1,2n-3,\ldots,1)$ and $m=2n+1$ for $(2n,2n-2,\ldots,2)$. Wri
 
 The [previous saddle proof](folded-saddle.md) gave growth through $s/35$ and the quantitative curvature bound for $178n\le k\le s/85$. The new estimates retain the complex phase of the principal power through scaled frequency $.4$, and use the contraction of *both* successive half-steps to bound the remaining powers out to frequency 3.
 
+The [moderate-height saddle proof](moderate-saddle.md) now gives strict growth through $s/16$ for **every** $n\ge2$ and extends the quantitative curvature inequality to $35n\le k\le s/26$.
+
 ## A wider interval for the phase
 
 Use the symmetric two-step ballot transfer $K_z$, its leading real eigenvalue $\lambda=\exp p(\beta)$, the height scale $H=\beta^{-1/3}$ and $N=n/H^2$. The different staircase parities change only the terminal vector. We prove strict growth at the integer saddle $k=-np'(\beta)$ whenever $H\ge114$, $N\ge96$, and a quantitative curvature estimate there when $N\ge190$. The earlier proof handles growth at $N\ge360$ and curvature at $N\ge2100$. We use the [real spectral gap and grid energy estimate](airy-grid.md) and the [Airy sample and boundary estimates](folded-saddle.md#fourier-bounds-outside-the-center). All finite constant bounds below are reproduced by the [rational verifier](verify_saddle_phase.py).

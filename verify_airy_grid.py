@@ -20,7 +20,7 @@ def derivative(p):
     return [i*p[i] for i in range(1, len(p))]
 
 
-def sample_bounds(tilt, energy, real_part, mesh):
+def sample_bounds(tilt, energy, real_part, mesh, *, basis_norms=None):
     """Weighted Airy L2 bounds and their full-grid sample bounds."""
     def next_pair(pair):
         # Majorize the coefficients of (P f + Q f')'.
@@ -28,15 +28,18 @@ def sample_bounds(tilt, energy, real_part, mesh):
         yq = add([energy*v for v in q], [0]+[tilt*v for v in q])
         return add(derivative(p), yq), add(p, derivative(q))
 
-    moments = [Q(1)]
-    for j in range(14):
-        moments.append((1+energy/real_part)*moments[j]
-                       + Q(j*j,4)/real_part*moments[max(j-2,0)])
-    f_bounds = [sqrt_hi(moments[2*k]) for k in range(8)]
-    fp_bounds = [
-        sqrt_hi(energy*moments[2*k] + k*k*moments[max(2*k-2,0)])
-        + k*f_bounds[max(k-1,0)] for k in range(8)
-    ]
+    if basis_norms is None:
+        moments = [Q(1)]
+        for j in range(14):
+            moments.append((1+energy/real_part)*moments[j]
+                           + Q(j*j,4)/real_part*moments[max(j-2,0)])
+        f_bounds = [sqrt_hi(moments[2*k]) for k in range(8)]
+        fp_bounds = [
+            sqrt_hi(energy*moments[2*k] + k*k*moments[max(2*k-2,0)])
+            + k*f_bounds[max(k-1,0)] for k in range(8)
+        ]
+    else:
+        f_bounds, fp_bounds = basis_norms
 
     def norm(pair):
         return sum(a*b for a,b in zip(pair[0],f_bounds)) + sum(
