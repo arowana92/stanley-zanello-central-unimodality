@@ -73,12 +73,15 @@ private theorem normalized_factor (N r : ℕ) (hN : 0 < N) :
     have hs : Real.sqrt (2*(N:ℝ)) ≠ 0 := (Real.sqrt_pos.mpr (by positivity)).ne'
     field_simp
 
-theorem normalizedCell_exact {n δ r : ℕ} (hn : 0 < n+δ) {P : ℕ → Laurent}
-    (h : ∀ j ≤ r, (rankMoment n δ j:ℚ) = massFactor n δ * ratioSum (n+δ) (P j))
-    {q : List ℚ} (hq : momentPolynomial P δ r = some q) :
+def polynomialFromCell (T : Laurent) (r : ℕ) : Option (List ℚ) := do
+  let v ← extractPolynomial (1+r%2) (3*r/2) T
+  return v.map ((1/(2:ℚ)^(3*r/2))*·)
+
+theorem normalizedCell_from_numerator {n δ r : ℕ} (hn : 0 < n+δ) (T : Laurent)
+    (hh : rawCell n δ r = massFactor n δ*ratioSum (n+δ) T)
+    {q : List ℚ} (hq : polynomialFromCell T r = some q) :
     normalizedCell n δ r = (if r%2 = 0 then 1 else wallisFactor (n+δ)) *
       horner ((n+δ:ℕ):ℝ)⁻¹ q := by
-  let T := cellNumerator (-(δ:ℚ)/2) P r
   change (do let v ← extractPolynomial (1+r%2) (3*r/2) T; pure (v.map ((1/(2:ℚ)^(3*r/2))*·))) = some q at hq
   cases ht : extractPolynomial (1+r%2) (3*r/2) T with
   | none => rw [ht] at hq; cases hq
@@ -87,8 +90,6 @@ theorem normalizedCell_exact {n δ r : ℕ} (hn : 0 < n+δ) {P : ℕ → Laurent
       rw [ht] at hq
       exact Option.some.inj hq
     have he := extractPolynomial_exact (by omega : 0 < 1+r%2) hn T ht
-    have hh : rawCell n δ r = massFactor n δ*ratioSum (n+δ) T :=
-      (cellNumerator_exact h (-(δ:ℚ)/2)).symm
     rw [he] at hh
     have hr := congrArg (fun a : ℚ => (a:ℝ)) hh
     simp only [Rat.cast_mul,Rat.cast_pow,Rat.cast_natCast,horner_rat_real,Rat.cast_inv] at hr
@@ -99,5 +100,12 @@ theorem normalizedCell_exact {n δ r : ℕ} (hn : 0 < n+δ) {P : ℕ → Laurent
     generalize horner ((n+δ:ℕ):ℝ)⁻¹ v = y
     field_simp at hf ⊢
     linear_combination y * hf
+
+theorem normalizedCell_exact {n δ r : ℕ} (hn : 0 < n+δ) {P : ℕ → Laurent}
+    (h : ∀ j ≤ r, (rankMoment n δ j:ℚ) = massFactor n δ * ratioSum (n+δ) (P j))
+    {q : List ℚ} (hq : momentPolynomial P δ r = some q) :
+    normalizedCell n δ r = (if r%2 = 0 then 1 else wallisFactor (n+δ)) *
+      horner ((n+δ:ℕ):ℝ)⁻¹ q :=
+  normalizedCell_from_numerator hn _ (cellNumerator_exact h _).symm hq
 
 end CentralUnimodality.Witness

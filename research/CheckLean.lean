@@ -122,3 +122,17 @@ example : (List.range 4).map (Witness.rawCell 2 1) = [10,72,1654/3,4464] := by d
 #print axioms rank_error_of_residual
 #print axioms inverse_periodicCount
 #print axioms periodicCount_bounds
+
+#print axioms normalized_corankTail
+#print axioms grid_alias_reserve
+#print axioms fair_bridge_sine_step
+#print axioms fair_bridge_sinc_step
+#print axioms Laurent.certify_cell_samples
+#print axioms Laurent.rows_certify
+#print axioms Witness.supplied_first_signs
+#print axioms central_from_windows
+
+#print axioms fair_inputs_after_pairs
+#print axioms blockSines_identity
+#print axioms blockSines_middle
+#print axioms pairFactor_arc

@@ -14,7 +14,7 @@ noncomputable def polyExpectation (f : ℕ → ℝ) : ℕ → List ℚ → ℝ
   | _, [] => 0
   | r, c::cs => (c:ℝ)*f r + polyExpectation f (r+1) cs
 
-private theorem buildPair_sound (F : ℕ → ℝ) (M : ℕ → Option (List ℚ)) (x s : ℝ)
+theorem buildPair_sound (F : ℕ → ℝ) (M : ℕ → Option (List ℚ)) (x s : ℝ)
     (cs : List ℚ) (r : ℕ) {pair : Pair} (hp : buildPair M r cs = some pair)
     (hF : ∀ j, r ≤ j → j < r+cs.length → ∀ q, M j = some q →
       F j = (if j%2 = 0 then 1 else s)*horner x q) :
@@ -59,6 +59,24 @@ theorem familyPair_sound (v : Data) (n δ : ℕ) (hδ : δ ≤ 1) (hn : 0 < n+δ
   rw [he]
   exact rawNumerator_exact (cs.length-1) n δ i hδ (by omega)
 
+theorem upperTests_sound {N : ℕ} (hn : 96 ≤ N) {pair : Pair} {ε : ℚ}
+    (hlo : upperTest pair Wallis.lower Wallis.lowerConstant ε = true)
+    (hhi : upperTest pair Wallis.upper Wallis.upperConstant ε = true) :
+    horner (N:ℝ)⁻¹ pair.1 + wallisFactor N*horner (N:ℝ)⁻¹ pair.2 ≤ -(ε:ℝ) := by
+  let x := (N:ℝ)⁻¹
+  have hi : (96:ℝ) ≤ N := by exact_mod_cast hn
+  have bound (u : List ℚ) (c : ℚ) (hu : upperTest pair u c ε = true) :
+      horner x pair.1 + ((c:ℝ)*horner x u)*horner x pair.2 ≤ -(ε:ℝ) := by
+    have hx : x ≤ ((1/96:ℚ):ℝ) := by simpa [x] using inv_anti₀ (by norm_num : 0 < (96:ℝ)) hi
+    have hh := nonpositive_sound (by dsimp [x]; positivity : 0 ≤ x) hx _ hu
+    rw [horner_add,horner_add,horner_scale,horner_times] at hh
+    simp only [horner,mul_zero,add_zero] at hh
+    linarith only [hh]
+  obtain ⟨hl,hr⟩ := Wallis.uniform hn
+  by_cases hs : 0 ≤ horner x pair.2
+  · exact (add_le_add le_rfl (mul_le_mul_of_nonneg_right hr hs)).trans (bound _ _ hhi)
+  · exact (add_le_add le_rfl (mul_le_mul_of_nonpos_right hl (le_of_not_ge hs))).trans (bound _ _ hlo)
+
 theorem checkPair_sound (v : Data) {n δ : ℕ} (hδ : δ ≤ 1) (hn : 96 ≤ n+δ)
     {ε : ℚ} (h : checkPair v δ ε = true) :
     polyExpectation (normalizedCell n δ) 0 (coefficients v.B v.t v.roots) ≤ -(ε:ℝ) := by
@@ -67,18 +85,6 @@ theorem checkPair_sound (v : Data) {n δ : ℕ} (hδ : δ ≤ 1) (hn : 96 ≤ n+
   | some pair =>
     rw [familyPair_sound v n δ hδ (by omega) hp]
     simp only [checkPair,hp,Bool.and_eq_true] at h
-    let x := ((n+δ:ℕ):ℝ)⁻¹
-    have hi : (96:ℝ) ≤ (n+δ:ℕ) := by exact_mod_cast hn
-    have bound (u : List ℚ) (c : ℚ) (hu : upperTest pair u c ε = true) :
-        horner x pair.1 + ((c:ℝ)*horner x u)*horner x pair.2 ≤ -(ε:ℝ) := by
-      have hx : x ≤ ((1/96:ℚ):ℝ) := by simpa [x] using inv_anti₀ (by norm_num : 0 < (96:ℝ)) hi
-      have hh := nonpositive_sound (by dsimp [x]; positivity : 0 ≤ x) hx _ hu
-      rw [horner_add,horner_add,horner_scale,horner_times] at hh
-      simp only [horner,mul_zero,add_zero] at hh
-      linarith only [hh]
-    obtain ⟨hl,hr⟩ := Wallis.uniform hn
-    by_cases hs : 0 ≤ horner x pair.2
-    · exact (add_le_add le_rfl (mul_le_mul_of_nonneg_right hr hs)).trans (bound _ _ h.2)
-    · exact (add_le_add le_rfl (mul_le_mul_of_nonpos_right hl (le_of_not_ge hs))).trans (bound _ _ h.1)
+    exact upperTests_sound hn h.1 h.2
 
 end CentralUnimodality.Witness

@@ -12,13 +12,12 @@ namespace CentralUnimodality.Witness
 
 open Laurent
 
-private theorem weightedSum_neg_of_check (v : Data) {n δ : ℕ} (hδ : δ ≤ 1) (hn : 96 ≤ n+δ)
-    {ε : ℚ} (he : 0 < ε) (h : checkPair v δ ε = true) :
+private theorem weightedSum_neg (v : Data) {n δ : ℕ} (hn : 0 < n+δ)
+    (h : polyExpectation (normalizedCell n δ) 0 (coefficients v.B v.t v.roots) < 0) :
     v.weightedSum (boundary n δ) (fun k => rankCount (2*n+δ) (n*(n+δ)-k)) (n*(n+δ)) < 0 := by
-  rw [weightedSum_expectation v n δ (by omega)]
+  rw [weightedSum_expectation v n δ hn]
   have hp : 0 < (massFactor n δ:ℝ) := by exact_mod_cast massFactor_pos n δ
-  exact mul_neg_of_pos_of_neg (div_pos hp (cellScale_pos (by omega))) ((checkPair_sound v hδ hn h).trans_lt
-    (neg_neg_of_pos (by exact_mod_cast he)))
+  exact mul_neg_of_pos_of_neg (div_pos hp (cellScale_pos hn)) h
 
 private theorem boundary_mono (n δ : ℕ) (hn : 0 < n+δ) : Monotone (boundary n δ) := by
   intro i j hij
@@ -49,9 +48,9 @@ theorem reflected_cut_le_degree {n δ j : ℕ} (hδ : δ ≤ 1)
   dsimp only [N] at h'
   exact_mod_cast h'
 
-theorem reflected_large_of_checks {n δ : ℕ} (hδ : δ ≤ 1) (hn : 96 ≤ n+δ)
-    (h₁ : checkPair first δ (1/10000000000) = true)
-    (h₂ : checkPair second δ (7/1000000) = true)
+theorem reflected_large_of_expectations {n δ : ℕ} (hδ : δ ≤ 1) (hn : 96 ≤ n+δ)
+    (h₁ : polyExpectation (normalizedCell n δ) 0 (coefficients first.B first.t first.roots) < 0)
+    (h₂ : polyExpectation (normalizedCell n δ) 0 (coefficients second.B second.t second.roots) < 0)
     (hu : UnimodalOn (rankCount (2*n+δ)) 0 (n*(n+δ))) {i j : ℕ} (hij : i < j)
     (hcut : (250*(i+j+3*(n+δ)+(1-δ)))^2 ≤ 131^2*(2*(n+δ))^3) :
     rankCount (2*n+δ) (n*(n+δ)-i) ≤ rankCount (2*n+δ) (n*(n+δ)-j) := by
@@ -76,8 +75,8 @@ theorem reflected_large_of_checks {n δ : ℕ} (hδ : δ ≤ 1) (hn : 96 ≤ n+�
   have hf (k : ℕ) (hk : k ≤ D) : f k ≤ M :=
     Finset.single_le_sum (fun i _ => Nat.zero_le (f i)) (Finset.mem_range.mpr (by omega) : k ∈ Finset.range (D+1))
   apply reflected_from_two_witnesses hu.reverse hij hdeg hf (boundary n δ) (boundary_mono n δ (by omega)) _ _
-    (weightedSum_neg_of_check first hδ hn (by norm_num) h₁)
-    (weightedSum_neg_of_check second hδ hn (by norm_num) h₂)
+    (weightedSum_neg first (by omega) h₁)
+    (weightedSum_neg second (by omega) h₂)
   · unfold boundary leftEndpoint
     simp only [Rat.cast_add,Rat.cast_div,Rat.cast_mul,Rat.cast_ofNat,Rat.cast_neg,Rat.cast_natCast]
     apply div_nonneg _ hscale_pos.le
@@ -88,5 +87,14 @@ theorem reflected_large_of_checks {n δ : ℕ} (hδ : δ ≤ 1) (hn : 96 ≤ n+�
     apply (div_le_iff₀ hscale_pos).mpr
     change (i:ℝ)+(3*(N:ℝ)-δ)/2+((j:ℝ)+(3*(N:ℝ)-δ)/2) ≤ 0.524*cellScale N
     linarith only [hc]
+
+theorem reflected_large_of_checks {n δ : ℕ} (hδ : δ ≤ 1) (hn : 96 ≤ n+δ)
+    (h₁ : checkPair first δ (1/10000000000) = true)
+    (h₂ : checkPair second δ (7/1000000) = true)
+    (hu : UnimodalOn (rankCount (2*n+δ)) 0 (n*(n+δ))) {i j : ℕ} (hij : i < j)
+    (hcut : (250*(i+j+3*(n+δ)+(1-δ)))^2 ≤ 131^2*(2*(n+δ))^3) :
+    rankCount (2*n+δ) (n*(n+δ)-i) ≤ rankCount (2*n+δ) (n*(n+δ)-j) :=
+  reflected_large_of_expectations hδ hn ((checkPair_sound first hδ hn h₁).trans_lt (by norm_num))
+    ((checkPair_sound second hδ hn h₂).trans_lt (by norm_num)) hu hij hcut
 
 end CentralUnimodality.Witness

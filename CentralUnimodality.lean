@@ -21,3 +21,8 @@ public import CentralUnimodality.ReflectedMoments
 public import CentralUnimodality.StaircasePrefix
 public import CentralUnimodality.AlternatingDegrees
 public import CentralUnimodality.AliasBounds
+public import CentralUnimodality.GridAliasReserve
+public import CentralUnimodality.BridgeProduct
+public import CentralUnimodality.TabulatedWitness
+public import CentralUnimodality.WindowInduction
+public import CentralUnimodality.SineArc
