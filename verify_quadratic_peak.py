@@ -118,6 +118,46 @@ def check_exported_cells(stream):
     print("Both parity caps and their maximum agree on all 57 intervals.")
 
 
+
+def physical_taylor_bound(numerators, denominator, center, radius_den):
+    """Bound P((center+t)/radius_den) for |t| <= 1 by its exact coefficient mass."""
+    row = [numerators[-1]]
+    scale = 1
+    for coefficient in reversed(numerators[:-1]):
+        scale *= radius_den
+        shifted = [center*row[0] + scale*coefficient]
+        shifted.extend(center*current + previous for current,previous in zip(row[1:],row))
+        shifted.append(row[-1])
+        row = shifted
+    return Q(sum(map(abs,row)), denominator*scale)
+
+
+def check_physical_cells(stream):
+    caps = []
+    for g in range(CELLS//4):
+        fields = tuple(map(int,stream.readline().split()))
+        if len(fields)!=4 or fields[0]!=g or fields[3]!=max(fields[1:3]):
+            raise ValueError(f"invalid exported cap at two-unit interval {g}")
+        caps.append(Q(fields[3],GRID) + Q(3,10**9))
+    if stream.read().strip():
+        raise ValueError("extra rows after the 57 residual intervals")
+    for parity,poly in enumerate(residuals()):
+        physical = [Q(c,WIDTH**j) for j,c in enumerate(poly)]
+        while len(physical)>1 and not physical[-1]:
+            physical.pop()
+        denominator = lcm(*(c.denominator for c in physical))
+        numerators = [int(c*denominator) for c in physical]
+        split = []
+        for g,cap in enumerate(caps):
+            bound = physical_taylor_bound(numerators,denominator,2*g+1,1)
+            if bound > cap:
+                split.append(g)
+                # Four adjacent closed half-unit intervals cover [2g,2g+2].
+                bound = max(physical_taylor_bound(numerators,denominator,8*g+j,4) for j in (1,3,5,7))
+            if bound > cap:
+                raise ValueError(f"physical residual exceeds interval allowance at parity {parity}, cell {g}")
+        print(f"parity {parity}, all {len(caps)} physical bounds verified. Subdivided cells {split}",flush=True)
+
 def scale(poly, c):
     return [c*p for p in poly]
 
@@ -272,7 +312,12 @@ def main():
                         help='use the Lean allowances and price 256 symmetric dyadic modes on two-unit intervals')
     parser.add_argument('--check-lean-cells', action='store_true',
                         help='compare the Lean export on stdin against independently calculated caps')
+    parser.add_argument('--check-physical-cells', action='store_true',
+                        help='prove the exported caps on stdin by translating the exact physical polynomials')
     options = parser.parse_args()
+    if options.check_physical_cells:
+        check_physical_cells(sys.stdin)
+        return
     if options.check_lean_cells:
         check_exported_cells(sys.stdin)
         return

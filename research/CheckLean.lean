@@ -460,3 +460,5 @@ example {m j : ℕ} (hm : 4096≤m) (hmid : staircaseDegree m≤2*(j+1))
 #print axioms PolynomialTrial.quadratic_uniform_cell
 #print axioms PolynomialTrial.quadratic_charge_totals
 #print axioms PolynomialTrial.quadratic_retained_bounds
+#print axioms PolynomialTrial.QuadraticInputs.even_row
+#print axioms PolynomialTrial.QuadraticInputs.odd_row

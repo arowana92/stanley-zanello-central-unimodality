@@ -88,3 +88,4 @@ public import CentralUnimodality.CombinedCorrectionJets
 public import CentralUnimodality.CubicGaussianTable
 public import CentralUnimodality.QuadraticInversePricing
 public import CentralUnimodality.QuadraticRetainedBounds
+public import CentralUnimodality.QuadraticCachedResidual
