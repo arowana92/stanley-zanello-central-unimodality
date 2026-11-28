@@ -84,7 +84,7 @@ theorem meanRank_displacement {c : ℝ} (hc : 0 ≤ c) (m : ℕ) :
   rw [hsum]
   simpa only [div_eq_mul_inv,← Finset.sum_mul,← Finset.mul_sum,sum_labelSquares] using And.intro hlo hhi
 
-private theorem degree_offset (m : ℕ) : 0 ≤ meanRank 0 m-staircaseDegree m ∧
+theorem degree_offset (m : ℕ) : 0 ≤ meanRank 0 m-staircaseDegree m ∧
     meanRank 0 m-staircaseDegree m ≤ ((m:ℝ)+1)/4 := by
   rw [meanRank_zero,staircaseDegree]
   let n := m/2

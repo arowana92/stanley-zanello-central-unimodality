@@ -322,3 +322,22 @@ example (hD : DyckComparisons)
 #print axioms MarkedExcursion.bin_prefix_variance
 #print axioms MarkedExcursion.BinArithmetic.growth_bin_checks
 #print axioms MarkedExcursion.BinArithmetic.curvature_bin_checks
+
+open MarkedExcursion.BinArithmetic in
+example {m j : ℕ} (hm : 4096 ≤ m) (hj : j+1 ≤ staircaseDegree m)
+    (hl : (3/4)*sizeScale m ≤ (staircaseDegree m:ℝ)-(j+1))
+    (hu : (staircaseDegree m:ℝ)-(j+1) ≤ 2*sizeScale m) :
+    rankCount m (j+1)<rankCount m (j+2) := right_flank_growth hm hj hl hu
+
+open MarkedExcursion.BinArithmetic in
+example {m j : ℕ} (hm : 4096 ≤ m) (hj : j+1 ≤ staircaseDegree m)
+    (hl : (15/16)*sizeScale m ≤ (staircaseDegree m:ℝ)-(j+1))
+    (hu : (staircaseDegree m:ℝ)-(j+1) ≤ 2*sizeScale m) :
+    rankCount m j*rankCount m (j+2)<rankCount m (j+1)^2 := right_flank_log_concave hm hj hl hu
+
+#print axioms MarkedExcursion.BinArithmetic.right_flank_growth
+#print axioms MarkedExcursion.BinArithmetic.right_flank_log_concave
+#print axioms conjecture34_of_remaining_windows
+#print axioms MarkedExcursion.upper_half_saddle
+#print axioms MarkedExcursion.suffix_variance_ratio
+#print axioms MarkedExcursion.upper_half_suffix_labels

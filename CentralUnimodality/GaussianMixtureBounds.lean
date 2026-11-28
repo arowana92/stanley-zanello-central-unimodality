@@ -13,7 +13,7 @@ open Real
 noncomputable def normalHeight : ℝ := 1/√(2*π)
 noncomputable def bell (y : ℝ) := exp (-(y^2)/2)
 
-private theorem normal_height_bounds : 3989/10000 ≤ normalHeight ∧ normalHeight ≤ 399/1000 := by
+theorem normal_height_bounds : 3989/10000 ≤ normalHeight ∧ normalHeight ≤ 399/1000 := by
   have hpos : 0 < √(2*π) := by positivity
   have hu : √(2*π) ≤ 10000/3989 := Real.sqrt_le_iff.mpr ⟨by norm_num,by linarith only [pi_lt_d4]⟩
   have hl : 1000/399 ≤ √(2*π) := Real.le_sqrt_of_sq_le (by linarith only [pi_gt_d4])
