@@ -31,7 +31,7 @@ theorem fair_live_lower {t : ℕ} (ht : 255≤t) : 79/100≤live 0 0 t 1*√t :=
   norm_num only [Nat.cast_ofNat] at H
   nlinarith only [anchor,H,mul_le_mul_of_nonneg_right hcast (sq_nonneg (survival j))]
 
-private theorem negative_exp_quadratic {x : ℝ} (hx : 0≤x) : exp (-x)≤1-x+x^2/2 := by
+theorem negative_exp_quadratic {x : ℝ} (hx : 0≤x) : exp (-x)≤1-x+x^2/2 := by
   have h := Real.sum_le_exp_of_nonneg hx 3
   norm_num [Finset.sum_range_succ,Nat.factorial] at h
   rw [exp_neg,inv_eq_one_div]

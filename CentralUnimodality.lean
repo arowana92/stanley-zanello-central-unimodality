@@ -67,3 +67,4 @@ public import CentralUnimodality.InterpolatedAmplitude
 public import CentralUnimodality.SmoothSplitQuadrature
 public import CentralUnimodality.LocalizedInverse
 public import CentralUnimodality.ModerateFrequencyTail
+public import CentralUnimodality.DirectCorrectedResidual
