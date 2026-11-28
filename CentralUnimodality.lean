@@ -53,3 +53,5 @@ public import CentralUnimodality.ScaledEventLoss
 public import CentralUnimodality.FinitePeakReduction
 public import CentralUnimodality.UpperHalfSaddle
 public import CentralUnimodality.UpperHalfVariance
+public import CentralUnimodality.MarkedLateRankBounds
+public import CentralUnimodality.ScaledPrefixSurvival

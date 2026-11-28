@@ -30,24 +30,25 @@ private theorem atom_change (c u a b θ : ℝ) {T : ℕ} {v : List Bool} (hv : v
 /-- An endpoint row for paths which first cross strictly after T, at any
 rank frequency. Its bound keeps the full endpoint norm of the shifted ballot
 prefix and the explicit suffix ruin cost. -/
-theorem late_endpoint_bound {c b : ℝ} (hc : 0 ≤ c) (hb : 0 ≤ b) (θ : ℝ) (T n : ℕ) :
+theorem late_endpoint_of_ruin {c b Q : ℝ} (θ : ℝ) (T n : ℕ)
+    (hruin : ∀ H : ℕ, ruin c n H ≤ exp (-b*H)*Q) :
     let m := T+n
     let Z := coshProduct c (c*m-b) T/coshProduct c (c*m) T
     endpointNorm (endpointRow c (c*m) m θ (lateHitEvent m T)) ≤
-      endpointNorm (wallRow c (c*m-b) m θ 0 T)*(Z*exp (n*b^2/2)) := by
+      endpointNorm (wallRow c (c*m-b) m θ 0 T)*(Z*Q) := by
   let m := T+n
   let Z := coshProduct c (c*m-b) T/coshProduct c (c*m) T
   let E (k : ℕ) := T-2*k
   let K (k : ℕ) := monomial 0 ((Z*exp (b*(E k:ℝ)):ℝ):ℂ) * ruinRow c n θ n (E k)
   have hZ : 0 ≤ Z := (div_pos (coshProduct_pos ..) (coshProduct_pos ..)).le
-  have hk (k : ℕ) : endpointNorm (K k) ≤ Z*exp (n*b^2/2) := by
+  have hk (k : ℕ) : endpointNorm (K k) ≤ Z*Q := by
     apply (endpointNorm_mul ..).trans
     rw [endpointNorm_monomial,Complex.norm_real,Real.norm_eq_abs,abs_of_nonneg (mul_nonneg hZ (exp_pos _).le)]
-    apply (mul_le_mul_of_nonneg_left ((ruinRow_norm ..).trans (suffix_ruin hc hb n (E k)))
+    apply (mul_le_mul_of_nonneg_left ((ruinRow_norm ..).trans (hruin (E k)))
       (mul_nonneg hZ (exp_pos _).le)).trans
-    rw [mul_assoc,← exp_add]
-    apply mul_le_mul_of_nonneg_left (exp_le_exp.mpr _) hZ
-    linarith
+    have hcancel : exp (b*(E k:ℝ))*exp (-b*(E k:ℝ))=1 := by rw [← exp_add]; ring_nf; exact exp_zero
+    apply le_of_eq
+    linear_combination Z*Q*hcancel
   have he : endpointRow c (c*m) m θ (lateHitEvent m T) =
       ∑ v ∈ ballots T, endpointAtom c (c*m-b) m θ v * K (wordParts v).length := by
     unfold endpointRow lateHitEvent
@@ -74,6 +75,16 @@ theorem late_endpoint_bound {c b : ℝ} (hc : 0 ≤ c) (hb : 0 ≤ b) (θ : ℝ)
   change endpointNorm (endpointRow c (c*m) m θ (lateHitEvent m T)) ≤ _
   rw [he]
   exact endpoint_continuation c (c*m-b) m θ (ballots T) K hk
+
+theorem late_endpoint_bound {c b : ℝ} (hc : 0 ≤ c) (hb : 0 ≤ b) (θ : ℝ) (T n : ℕ) :
+    let m := T+n
+    let Z := coshProduct c (c*m-b) T/coshProduct c (c*m) T
+    endpointNorm (endpointRow c (c*m) m θ (lateHitEvent m T)) ≤
+      endpointNorm (wallRow c (c*m-b) m θ 0 T)*(Z*exp (n*b^2/2)) := by
+  apply late_endpoint_of_ruin θ T n
+  intro H
+  apply (suffix_ruin hc hb n H).trans
+  rw [← exp_add]; apply exp_le_exp.mpr; linarith only [hb]
 
 /-- The scalar characteristic function uses exactly the strict-partition
 rank, summed over the actual late crossing event. -/

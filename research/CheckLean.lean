@@ -357,3 +357,6 @@ example {n : ℕ} (hn : n ≤ 191) :
 
 #print axioms central_through_191
 #print axioms conjecture34_from_192
+#print axioms MarkedExcursion.marked_late_rank_bound
+#print axioms MarkedExcursion.scaled_prefix_survival
+#print axioms MarkedExcursion.fair_ruin_identity
