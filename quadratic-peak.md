@@ -61,6 +61,8 @@ $$
 $$
 First replace $p,\rho$ by their dyadic polynomials. The verifier evaluates $R_2$ exactly, retaining all signs. On $[0,144]$, the two polynomial norms are below $0.008$ and $0.093$ and their derivative norms below $0.012$ and $0.126$. To bound the replacement error, split the Gaussian input interval at 20. Below 20 use the polynomial ODE defect and its derivatives. For example, with $a=3v^2/b$, the error $e$ for the divisor $b$ satisfies $e'+ae=-D/256$ in the physical variable. Apply the product rule up to order four. Above 20 bound the Gaussian derivatives and the exact Chebyshev norms of the polynomial derivatives separately on $[20,144]$. With the polynomial log multipliers and the factors $|q|\le1/4$, $|1-2x|\le1$, the resulting error in $R_2$ is below $1.8\times10^{-13}$ in both parities. The code also checks the quadratic split formula on monomial pairs by interpolating the actual discrete arcsine moments. [Exact residual and input errors](verify_second_split.py)
 
+A separate whole-interval Lean proof bounds the Gaussian replacement error by $3\times10^{-7}$. It differentiates the bridge ODE defect three times and proves $|e^{(r)}(v)|\le2\times10^{-22}1000^r$ for $0\le r\le4$ and $0\le v\le144$. Using this larger allowance in the rational spatial certificate gives retained errors below $0.130728$ and $34.088752$. The three full-period margins still exceed $0.064448$, $1.864448$ and $119.303869$ in the order of the rows above. [Gaussian derivative bounds](CentralUnimodality/GaussianReplacementJets.lean) · [Transfer to the second residual](CentralUnimodality/SecondResidualTransfer.lean)
+
 For the cellwise bounds, round the exact Chebyshev coefficients of $R_2$ to the nearest multiple of $2^{-120}$. If the polynomial has $d+1$ coefficients, this costs at most $(d+1)2^{-121}$ on the entire interval. Shift that polynomial to each half-unit cell and bound it by the sum of the absolute shifted coefficients. For $G_\sigma$ combine the signed coefficients of the trial and its drift *before* bounding derivatives on a cell. This preserves their cancellation.
 
 After subtracting $R_2$, the cubic error has five terms, in addition to the free cubic symbol error. Let $E_\rho$ denote the cubic bridge error per unit $\tau^3$. In each product evaluate the left and right factors in their respective split cells. Use $D_r(A,B)$ for the local sum of absolute derivative products. The five bounds, per unit $\tau^3$, are
@@ -81,4 +83,5 @@ On $114\le u\le144$ use $100e^{-.186u}$ for the true signed amplitude and check 
 ~~~sh
 python3 -B verify_second_split.py
 python3 -B verify_quadratic_peak.py
+python3 -B verify_quadratic_peak.py --lean-gaussian-bound
 ~~~

@@ -11,7 +11,7 @@ applied at the same spatial split before taking their maximum. -/
 namespace CentralUnimodality.ReturnSplit
 open Set
 
-private theorem jet_continuous {A B : ℝ → ℝ} {r : ℕ} (ha : ContDiff ℝ r A) (hb : ContDiff ℝ r B) (v : ℝ) :
+theorem splitJet_continuous {A B : ℝ → ℝ} {r : ℕ} (ha : ContDiff ℝ r A) (hb : ContDiff ℝ r B) (v : ℝ) :
     Continuous (splitJet r A B v) := by
   unfold splitJet
   apply continuous_finsetSum
@@ -39,7 +39,7 @@ private theorem split_second_separated {A B : ℝ → ℝ} (ha : ContDiff ℝ 6 
       τ*((v/2)*arc (fun x => x*(1-x)*splitJet 2 A B v x))+τ^2*areaSplitSecond A B v)|≤
       τ^3*(v*D₄/96+v^2*D₅/192+v^3*D₆/1440) := by
   have cf := (splitPair_smooth ha hb v).continuous
-  have cj (r : ℕ) (hr : r≤6) := jet_continuous (ha.of_le (by exact_mod_cast hr)) (hb.of_le (by exact_mod_cast hr)) v
+  have cj (r : ℕ) (hr : r≤6) := splitJet_continuous (ha.of_le (by exact_mod_cast hr)) (hb.of_le (by exact_mod_cast hr)) v
   have two := cj 2 (by decide)
   have three := cj 3 (by decide)
   have four := cj 4 (by decide)

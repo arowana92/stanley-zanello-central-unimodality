@@ -4,6 +4,7 @@ The central frequency cells retain the signed quadratic residual. All cell
 arithmetic uses rational bounds or upward-rounded nonnegative integers.
 """
 
+from argparse import ArgumentParser
 from fractions import Fraction as Q
 from math import ceil, comb, floor, lcm
 
@@ -160,7 +161,7 @@ def return_cost(i, costs):
     return inverse
 
 
-def retained_errors():
+def retained_errors(use_lean_gaussian_bound=False):
     check_symbol_bounds()
     assert MAX_STEP <= Q(".02") and MIN_SIZE//20+1 >= 501
     assert CUTOFF*sqrt_hi(CUTOFF) <= Q(".001")*2*MIN_SIZE*sqrt_lo(2*MIN_SIZE)
@@ -169,6 +170,8 @@ def retained_errors():
     first_error = check_first_correction(CUTOFF)
     replacement = second_input_error()
     assert replacement <= Q(18,10**14)
+    if use_lean_gaussian_bound:
+        replacement = Q(3,10**7)  # second_residual_transfer on [0,144].
     second = residual_cells(replacement)
     trial,signed = trial_cells()
     cubic = cubic_costs(trial,signed)
@@ -202,7 +205,10 @@ def tail_error(r):
 
 
 def main():
-    total = retained_errors()
+    parser = ArgumentParser(description=__doc__)
+    parser.add_argument('--lean-gaussian-bound', action='store_true',
+                        help='use the uniform Gaussian replacement error proved in Lean')
+    total = retained_errors(parser.parse_args().lean_gaussian_bound)
     for r,lo,hi,margin,trial_error in compact_signs(WINDOWS,1728):
         remaining = margin-total[r]-tail_error(r)-trial_error
         assert remaining > 0

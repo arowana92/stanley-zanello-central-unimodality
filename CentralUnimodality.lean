@@ -81,4 +81,4 @@ public import CentralUnimodality.GroundColumnRanks
 public import CentralUnimodality.LargePeakReduction
 public import CentralUnimodality.FirstReturnInnerArc
 public import CentralUnimodality.PolynomialSecondSplit
-public import CentralUnimodality.QuadraticSplitResidual
+public import CentralUnimodality.SecondResidualTransfer
