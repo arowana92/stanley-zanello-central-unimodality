@@ -7,7 +7,7 @@ multiply T_j(1-2v/256), in units of 2^-120. Run with the standard library.
 import json
 import re
 from fractions import Fraction
-from math import comb, factorial, lcm
+from math import comb, factorial, gcd, lcm
 from pathlib import Path
 
 
@@ -98,9 +98,23 @@ def derivative_coefficients(row):
     return derivative[:-2] or [0]
 
 
+def check_residual_table(row, denominator):
+    """Compare the Lean witness with a new exact change of polynomial basis."""
+    source = TABLE.with_name("PolynomialResidualData.lean").read_text()
+    den = re.search(r"^def residualDen : Nat := ([0-9]+)$", source, re.M)
+    coeffs = re.search(r"^def residualRow : Array Int := #(\[[^\]]*\])$", source, re.M)
+    common = gcd(denominator, *row)
+    if (den is None or coeffs is None or int(den[1]) != denominator // common
+            or json.loads(coeffs[1]) != [c // common for c in row]):
+        raise ArithmeticError("the stored beta residual differs from the exact expansion")
+
+
 def uniform_bounds(poly, width):
     """Triangle bounds for the value and v derivative using |T_j| <= 1."""
-    row, denominator = chebyshev_coefficients(poly)
+    return row_bounds(*chebyshev_coefficients(poly), width)
+
+
+def row_bounds(row, denominator, width):
     return (Fraction(sum(map(abs, row)), denominator),
             Fraction(2 * sum(map(abs, derivative_coefficients(row))), width * denominator))
 
@@ -204,7 +218,9 @@ def main():
         errors[label] = error
 
     residual = subtract(free, split_product(bridge, trial))
-    value, slope = uniform_bounds(residual, width)
+    row, denominator = chebyshev_coefficients(residual)
+    check_residual_table(row, denominator)
+    value, slope = row_bounds(row, denominator, width)
     check("base residual", value, Fraction(2, 10**15))
     check("base residual v derivative", slope, Fraction(4, 10**13))
     check_amplitude_bound(width, rows["trial"], errors["free"], errors["bridge"], value, slope)
