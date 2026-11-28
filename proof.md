@@ -42,7 +42,7 @@ The nondecreasing prefix and nonincreasing suffix meet the unimodal central inte
 
 A second computer-assisted proof gives the central peak for every $n\ge150000$ in both families. It bounds the signed first-return transform after pinning its terminal height. The resulting late-return weights and a separate bound on the upper retained frequencies give positive margins for all three spatial sign tests. [Direct peak derivation](localized-returns.md#a-direct-polynomial-peak-certificate-from-150000) · [Independent rational verifier](verify_direct_peak.py)
 
-Retaining the signed quadratic correction gives the central peak for every $n\ge10000$ in both families. The retained first- and second-order errors are below $0.123658$ and $27.449$. Lean checks the quadratic split identity and its cubic remainder. The end-to-end Lean peak theorem starts at 150,000 rows. [Quadratic peak proof and reproduction](quadratic-peak.md)
+Retaining the signed quadratic correction gives the central peak for every $n\ge10000$ in both families. The retained first- and second-order errors are below $0.123827$ and $27.478759$. Lean checks the quadratic split identity and its cubic remainder. The end-to-end Lean peak theorem starts at 150,000 rows. [Quadratic peak proof and reproduction](quadratic-peak.md)
 
 ## Reproducing the checks
 

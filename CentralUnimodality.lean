@@ -83,4 +83,4 @@ public import CentralUnimodality.FirstReturnInnerArc
 public import CentralUnimodality.PolynomialSecondSplit
 public import CentralUnimodality.SecondResidualTransfer
 public import CentralUnimodality.SecondResidualRows
-public import CentralUnimodality.LocalQuadraticResidual
+public import CentralUnimodality.CertifiedQuadraticCells

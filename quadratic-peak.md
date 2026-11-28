@@ -4,11 +4,11 @@
 
 | Derivative | Scaled position | Sign | Full-period margin exceeds |
 | --- | --- | --- | ---: |
-| First | $[.1359,.339]$ | Positive | $0.071519$ |
-| Second | $[.333,.404]$ | Negative | $125.944373$ |
-| First | $[.398,.631]$ | Negative | $1.871519$ |
+| First | $[.1359,.339]$ | Positive | $0.071350$ |
+| Second | $[.333,.404]$ | Negative | $125.913863$ |
+| First | $[.398,.631]$ | Negative | $1.871350$ |
 
-The two retained errors, integrated against the first and second powers of frequency on $[0,1728]$, are below $0.123658$ and $27.449$. The calculation uses rational upper bounds. The finite checks cover time cells, coefficients of polynomials, and signs on spatial intervals. Size enters those bounds only through factors that decrease for $N\ge10000$.
+The two retained errors, integrated against the first and second powers of frequency on $[0,1728]$, are below $0.123827$ and $27.478759$. The calculation uses rational upper bounds. The finite checks cover time cells, coefficients of polynomials, and signs on spatial intervals. Size enters those bounds only through factors that decrease for $N\ge10000$.
 
 ## The local expansion
 
@@ -61,22 +61,22 @@ $$
 $$
 First replace $p,\rho$ by their dyadic polynomials. The verifier evaluates $R_2$ exactly, retaining all signs. On $[0,144]$, the two polynomial norms are below $0.008$ and $0.093$ and their derivative norms below $0.012$ and $0.126$. To bound the replacement error, split the Gaussian input interval at 20. Below 20 use the polynomial ODE defect and its derivatives. For example, with $a=3v^2/b$, the error $e$ for the divisor $b$ satisfies $e'+ae=-D/256$ in the physical variable. Apply the product rule up to order four. Above 20 bound the Gaussian derivatives and the exact Chebyshev norms of the polynomial derivatives separately on $[20,144]$. With the polynomial log multipliers and the factors $|q|\le1/4$, $|1-2x|\le1$, the resulting error in $R_2$ is below $1.8\times10^{-13}$ in both parities. The code also checks the quadratic split formula on monomial pairs by interpolating the actual discrete arcsine moments. [Exact residual and input errors](verify_second_split.py)
 
-A separate whole-interval Lean proof bounds the Gaussian replacement error by $3\times10^{-7}$. It differentiates the bridge ODE defect three times and proves $|e^{(r)}(v)|\le2\times10^{-22}1000^r$ for $0\le r\le4$ and $0\le v\le144$. Using this larger allowance in the rational spatial certificate gives retained errors below $0.130728$ and $34.088752$. The three full-period margins still exceed $0.064448$, $1.864448$ and $119.303869$ in the order of the rows above. [Gaussian derivative bounds](CentralUnimodality/GaussianReplacementJets.lean) · [Transfer to the second residual](CentralUnimodality/SecondResidualTransfer.lean)
+A separate whole-interval Lean proof bounds the Gaussian replacement error by $3\times10^{-7}$. It differentiates the bridge ODE defect three times and proves $|e^{(r)}(v)|\le2\times10^{-22}1000^r$ for $0\le r\le4$ and $0\le v\le144$. Using this larger allowance in the rational spatial certificate gives retained errors below $0.130897$ and $34.119263$. The three full-period margins still exceed $0.064280$, $1.864280$ and $119.273359$ in the order of the rows above. [Gaussian derivative bounds](CentralUnimodality/GaussianReplacementJets.lean) · [Transfer to the second residual](CentralUnimodality/SecondResidualTransfer.lean)
 
 Lean also computes the two signed polynomials directly from the checked trial rows. Its factorial-weighted integer multiplication evaluates the beta integrals after the input exponents are shifted by the quadrature weights. Python uses ordinary coefficient sums. All 1,015 coefficients from degree zero through degree 1,014 agree as rational numbers for each parity, and the additional high slots of both representations vanish. [Exact Lean evaluator](CentralUnimodality/SecondResidualRows.lean) · [Independent calculation](verify_second_split.py)
 
 For the cellwise bounds, round the exact Chebyshev coefficients of $R_2$ to the nearest multiple of $2^{-120}$. If the polynomial has $d+1$ coefficients, this costs at most $(d+1)2^{-121}$ on the entire interval. Shift that polynomial to each half-unit cell and bound it by the sum of the absolute shifted coefficients. For $G_\sigma$ combine the signed coefficients of the trial and its drift *before* bounding derivatives on a cell. This preserves their cancellation.
 
-Lean also permits truncating the symmetric dyadic row. The proof converts physical monomials with $v=128(1-x)$, rounds at scale $2^{-120}$, and charges each discarded Chebyshev mode its absolute coefficient. Both dyadic rows have 611 modes after trimming trailing zeros. Keeping modes 0 through 255 costs less than $2\times10^{-9}$ in either parity. The independent integer calculation with these prefixes and the Lean Gaussian allowance gives retained errors below $0.130777$ and $34.134210$. The three full-period margins exceed $0.064400$, $1.864400$, and $119.258411$. The Lean cell theorem takes the coefficient and cell evaluations as hypotheses. [Change of basis](CentralUnimodality/PhysicalChebyshevRows.lean) · [Rounding and truncation](CentralUnimodality/RoundedQuadraticRows.lean) · [Cell theorem](CentralUnimodality/LocalQuadraticResidual.lean)
+Lean also permits truncating the symmetric dyadic row. The proof converts physical monomials with $v=128(1-x)$, rounds at scale $2^{-120}$, and charges each discarded Chebyshev mode its absolute coefficient. Both dyadic rows have 611 modes after trimming trailing zeros. Keeping modes 0 through 255 costs less than $2\times10^{-9}$ in either parity. Lean checks the prefixes on 57 intervals of width two. Python independently recomputes all 114 parity bounds. Using the uniform first residual bound $3\times10^{-12}$ and a combined Gaussian, rounding, and truncation allowance of $303\times10^{-9}$ gives retained errors below $0.136932$ and $35.611802$. The three full-period margins exceed $0.058245$, $1.858245$, and $117.780819$. The remaining hypothesis in the Lean cell estimate identifies each saved dyadic row with the output of the factorial evaluator. [Change of basis](CentralUnimodality/PhysicalChebyshevRows.lean) · [Rounding and truncation](CentralUnimodality/RoundedQuadraticRows.lean) · [Checked cells](CentralUnimodality/CertifiedQuadraticCells.lean)
 
-After subtracting $R_2$, the cubic error has five terms, in addition to the free cubic symbol error. Let $E_\rho$ denote the cubic bridge error per unit $\tau^3$. In each product evaluate the left and right factors in their respective split cells. Use $D_r(A,B)$ for the local sum of absolute derivative products. The five bounds, per unit $\tau^3$, are
+After subtracting $R_2$, the cubic error has seven terms, in addition to the free cubic symbol error. Let $E_\rho$ denote the cubic bridge error per unit $\tau^3$. In each product evaluate the left and right factors in their respective split cells. Use $D_r(A,B)$ for the local sum of absolute derivative products. The seven bounds, per unit $\tau^3$, are
 
 - $E_\rho(|F|+s|G_\sigma|)+|\rho_2G_\sigma|$ for the bridge product.
 - $v[D_2(\rho_2,F)+D_2(\rho_1,G_\sigma)]/8$ for the order-two products sampled to zeroth order.
 - $v[D_3(\rho_1,F)+D_3(\rho,G_\sigma)]/24$ and $v^2[D_4(\rho_1,F)+D_4(\rho,G_\sigma)]/128$ for the order-one products sampled through first order.
-- $vD_4(\rho,F)/96+v^2D_5(\rho,F)/192+v^3D_6(\rho,F)/1440$ for the leading product sampled through second order.
+- $vD_4(\rho,F)/96$, $v^2D_5(\rho,F)/192$, and $v^3D_6(\rho,F)/1440$ for the leading product sampled through second order.
 
-Each bound takes its own maximum over all admissible pairs of cells. Gaussian monomials are bounded at their extrema. At $j=0$ the split evaluates the factors at zero and its quadrature error vanishes. The theorem `quadratic_split_residual` applies this error budget to the actual last-return convolution throughout $N\ge10000$, $N\tau\le114$. [Lean proof](CentralUnimodality/QuadraticSplitResidual.lean)
+The verifier maximizes each of the seven terms separately over admissible cell pairs. In particular the fourth, fifth, and sixth derivatives of the leading product can reach their upper bounds on different pairs. Gaussian monomials are bounded at their extrema. At $j=0$ the split evaluates the factors at zero and its quadrature error vanishes. The theorem `quadratic_split_residual` applies this error budget to the actual last-return convolution throughout $N\ge10000$, $N\tau\le114$. [Lean proof](CentralUnimodality/QuadraticSplitResidual.lean)
 
 ## Return inversion and reproduction
 
@@ -90,4 +90,5 @@ python3 -B verify_quadratic_peak.py
 python3 -B verify_quadratic_peak.py --lean-gaussian-bound
 python3 -B verify_quadratic_peak.py --lean-cheb-prefix
 lake env lean --run research/ExportSecondResidual.lean | python3 -B verify_second_split.py --check-lean-rows
+lake env lean --run research/ExportQuadraticCells.lean | python3 -B verify_quadratic_peak.py --check-lean-cells
 ~~~

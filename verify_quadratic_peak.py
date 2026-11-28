@@ -7,6 +7,7 @@ arithmetic uses rational bounds or upward-rounded nonnegative integers.
 from argparse import ArgumentParser
 from fractions import Fraction as Q
 from math import ceil, comb, floor, lcm
+import sys
 
 from verify_direct_peak import CUTOFF, RETURN_CUTOFF, STEP, WINDOWS, bin_derivatives
 from verify_gamma_polynomials import chebyshev_coefficients, monomial_coefficients, read_rows
@@ -57,6 +58,24 @@ def symmetric_dyadic_row(coeffs, den):
     return result
 
 
+def two_unit_caps(power):
+    # At group g, z=(8g+4+4t)/1024 with |t| <= 1.
+    d = len(power)-1
+    caps = []
+    for g in range(CELLS//4):
+        l = 8*g+4
+        row = [power[-1]]
+        for j in range(d-1,-1,-1):
+            shifted = [l*c for c in row]+[0]
+            for k,c in enumerate(row):
+                shifted[k+1] += 4*c
+            shifted[0] += power[j] << (10*(d-j))
+            row = shifted
+        cap = upper(Q(sum(map(abs,row)), 2**(120+10*d)))
+        caps.append(cap)
+    return caps
+
+
 def residual_cells(gaussian_error, truncated=False):
     result = [Q(0)]*CELLS
     for poly in residuals():
@@ -73,10 +92,30 @@ def residual_cells(gaussian_error, truncated=False):
             omitted = Q(len(row),2*scale)
         while row and row[-1]==0:
             row.pop()
-        jets = cell_jets(monomial_coefficients(row,scale),1)
-        result = [max(old,upper(Q(cell[0],GRID)+omitted+gaussian_error))
-                  for old,cell in zip(result,jets)]
+        if truncated:
+            assert omitted+gaussian_error <= Q(303,10**9)
+            power = [int(c) for c in monomial_coefficients(row,1)]
+            bounds = [cost+Q(303,10**9) for cost in two_unit_caps(power) for _ in range(4)]
+        else:
+            jets = cell_jets(monomial_coefficients(row,scale),1)
+            bounds = [upper(Q(cell[0],GRID)+omitted+gaussian_error) for cell in jets]
+        result = list(map(max,result,bounds))
     return result
+
+
+def check_exported_cells(stream):
+    parities = []
+    for poly in residuals():
+        row = symmetric_dyadic_row(*chebyshev_coefficients(poly))
+        power = [int(c) for c in monomial_coefficients(row[:256],1)]
+        parities.append([int(GRID*cap) for cap in two_unit_caps(power)])
+    for g,(even,odd) in enumerate(zip(*parities)):
+        fields = stream.readline().split()
+        if tuple(map(int,fields)) != (g,even,odd,max(even,odd)):
+            raise ValueError(f"residual cap mismatch at two-unit interval {g}")
+    if stream.read().strip():
+        raise ValueError("extra rows after the 57 residual intervals")
+    print("Both parity caps and their maximum agree on all 57 intervals.")
 
 
 def scale(poly, c):
@@ -149,7 +188,7 @@ def cubic_costs(trial, signed):
     costs = []
     for i in range(CELLS):
         v = (i+1)*STEP
-        maxima = [Q(0)]*5
+        maxima = [Q(0)]*7
         for a in range(i+1):
             for b in (i-a,i-a-1):
                 if b<0:
@@ -160,8 +199,9 @@ def cubic_costs(trial, signed):
                          v/8*(product_jet(C,F,2)+product_jet(B,G,2)),
                          v/24*(product_jet(B,F,3)+product_jet(A,G,3)),
                          v**2/128*(product_jet(B,F,4)+product_jet(A,G,4)),
-                         v/96*product_jet(A,F,4)+v**2/192*product_jet(A,F,5)
-                         +v**3/1440*product_jet(A,F,6))
+                         v/96*product_jet(A,F,4),
+                         v**2/192*product_jet(A,F,5),
+                         v**3/1440*product_jet(A,F,6))
                 maxima = list(map(max,maxima,terms))
         costs.append(upper(Q(free_noise[i],GRID)+sum(maxima)/GRID**2))
     return costs
@@ -189,6 +229,9 @@ def retained_errors(use_lean_gaussian_bound=False, truncated=False):
     assert replacement <= Q(18,10**14)
     if use_lean_gaussian_bound or truncated:
         replacement = Q(3,10**7)  # second_residual_transfer on [0,144].
+    if truncated:
+        assert first_error <= Q(3,10**12)
+        first_error = Q(3,10**12)
     second = residual_cells(replacement, truncated)
     trial,signed = trial_cells()
     cubic = cubic_costs(trial,signed)
@@ -226,14 +269,20 @@ def main():
     parser.add_argument('--lean-gaussian-bound', action='store_true',
                         help='use the uniform Gaussian replacement error proved in Lean')
     parser.add_argument('--lean-cheb-prefix', action='store_true',
-                        help='use the Lean Gaussian allowance and the first 256 symmetric dyadic modes')
+                        help='use the Lean allowances and price 256 symmetric dyadic modes on two-unit intervals')
+    parser.add_argument('--check-lean-cells', action='store_true',
+                        help='compare the Lean export on stdin against independently calculated caps')
     options = parser.parse_args()
+    if options.check_lean_cells:
+        check_exported_cells(sys.stdin)
+        return
     total = retained_errors(options.lean_gaussian_bound, options.lean_cheb_prefix)
     for r,lo,hi,margin,trial_error in compact_signs(WINDOWS,1728):
         remaining = margin-total[r]-tail_error(r)-trial_error
         assert remaining > 0
         lower = floor(10**6*remaining)/10**6
-        print(f"order {r}, {lo}/10000..{hi}/10000: retained error <= {float(total[r]):.9g}, "
+        retained = ceil(10**9*total[r])/10**9
+        print(f"order {r}, {lo}/10000..{hi}/10000: retained error <= {retained:.9f}, "
               f"full-period margin > {lower:.6f}",flush=True)
 
 
