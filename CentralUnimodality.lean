@@ -60,4 +60,6 @@ public import CentralUnimodality.FiniteBase196
 public import CentralUnimodality.RoundedBase
 public import CentralUnimodality.GaussianResidual
 public import CentralUnimodality.ContinuumResidual
+public import CentralUnimodality.PolynomialGaussianInputs
+public import CentralUnimodality.IntegralPeakWindow
 public import CentralUnimodality.InterpolatedAmplitude

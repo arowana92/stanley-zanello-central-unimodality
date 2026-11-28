@@ -5,12 +5,22 @@ multiply T_j(1-2v/256), in units of 2^-120. Run with the standard library.
 """
 
 import json
+import re
 from fractions import Fraction
 from math import comb, factorial, lcm
 from pathlib import Path
 
 
-TABLE = Path(__file__).resolve().parent / "research" / "gamma-polynomials.json"
+TABLE = Path(__file__).resolve().parent / "CentralUnimodality" / "PolynomialTrialData.lean"
+
+
+def read_rows():
+    """Read the integer arrays shared with Lean without executing source code."""
+    arrays = re.findall(r"^def (\w+)Row : Array Int := #(\[[^\]]*\])$", TABLE.read_text(), re.M)
+    rows = {key: json.loads(literal) for key, literal in arrays}
+    if len(rows) != 5 or any(type(c) is not int for row in rows.values() for c in row):
+        raise ValueError("expected five arrays of integer coefficients")
+    return rows
 
 
 def monomial_coefficients(row, scale):
@@ -180,14 +190,12 @@ def check_amplitude_bound(width, trial, free_error, bridge_error, base, base_slo
 
 def main():
     check_identities()
-    record = json.loads(TABLE.read_text())
-    width = record["width"]
-    assert width == 256 and record["denominatorBits"] == 120
-    rows = record["polynomials"]
+    width = 256
+    rows = read_rows()
     keys = ("free", "bridge", "trial", "evenCorrection", "oddCorrection")
     assert [len(rows[k]) for k in keys] == [601, 601, 421, 421, 421]
     free, bridge, trial, even, odd = [
-        monomial_coefficients(rows[k], 2**record["denominatorBits"]) for k in keys]
+        monomial_coefficients(rows[k], 2**120) for k in keys]
     errors = {}
     for label, poly, divisor in (("free", free, 24), ("bridge", bridge, 96)):
         defect = gaussian_defect(poly, width, divisor)

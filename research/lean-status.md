@@ -106,6 +106,8 @@ Lean proves the exact last-return convolution for arbitrary polynomials evaluate
 
 Lean now proves an explicit finite-size estimate for the actual signed amplitude in terms of a trial for the continuum last-return equation. The estimate holds at both parities, including the intermediate times down to zero. With the rational polynomial table it gives amplitude error below $10^{-10}$ on $|\xi|\le4096$ at every $N\ge10^{54}$. A separate rational integral check then proves the three peak signs at all those sizes. Lean checks the general estimate. The table inequalities and spatial quadrature are externally checked. [Proof, numerical margins and reproduction](../localized-returns.md#an-unbounded-lattice-peak-check-using-polynomial-trials)
 
+The kernel now checks the full-interval Gaussian value and derivative bounds directly from the shared dyadic coefficient table. It also proves continuous Fourier inversion at every original rank and the reduction from three fixed spatial sign intervals to the peak obligation for every row count at least 300,000. The polynomial convolution residual and the spatial integral margins remain external at this checkpoint. [Verified constants and sign reduction](../localized-returns.md#an-unbounded-lattice-peak-check-using-polynomial-trials)
+
 ## Remaining proof obligations
 
 The theorem `conjecture34_from_196` reduces the universal strict-partition statement to the Dyck comparisons and two size ranges for the peak interval. [Lean reduction](../CentralUnimodality/ThreeFifthsReduction.lean)

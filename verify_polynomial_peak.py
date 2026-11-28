@@ -7,10 +7,9 @@ quadrature handles 0 <= w <= 8, with a uniform allowance for 8 <= w <= 16.
 
 from fractions import Fraction as Q
 from math import ceil, comb, factorial, floor
-import json
 
 from verify_gamma_polynomials import (
-    TABLE, chebyshev_coefficients, derivative_coefficients, monomial_coefficients,
+    chebyshev_coefficients, derivative_coefficients, monomial_coefficients, read_rows,
 )
 
 
@@ -155,9 +154,7 @@ def omitted_lattice_tail():
 
 
 def main():
-    table = json.loads(TABLE.read_text())
-    assert table["width"] == 256 and 2**table["denominatorBits"] == SCALE
-    row = table["polynomials"]["trial"]
+    row = read_rows()["trial"]
     power = [int(c) for c in monomial_coefficients(row, 1)]
     assert sum(map(abs, row)) < 2*SCALE
     costs = quadrature_cost(power)

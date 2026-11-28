@@ -48,6 +48,10 @@ example (n δ : ℕ) (hδ : δ ≤ 1) (F : ℤ → ℤ) :
 #print axioms ReturnSplit.free_curve_bound
 #print axioms ReturnSplit.bridge_curve_bound
 #print axioms ReturnSplit.signed_curve_bound
+#print axioms PolynomialTrial.candidate_bounds
+#print axioms PolynomialTrial.gaussian_inputs
+#print axioms Witness.rankIntegral_site
+#print axioms Witness.threeFifths_of_integral_signs
 
 #print axioms lastReturn_convolution
 #print axioms reflected_of_negative_sum
