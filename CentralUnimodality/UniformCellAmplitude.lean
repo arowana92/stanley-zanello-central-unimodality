@@ -14,16 +14,16 @@ open ReturnSplit Real Set Witness
 
 set_option maxRecDepth 12000
 
-private theorem top_time (i : ℕ) : (topTime i:ℝ)=((i:ℝ)+1)/2 := by simp [topTime]
+theorem top_time (i : ℕ) : (topTime i:ℝ)=((i:ℝ)+1)/2 := by simp [topTime]
 
-private theorem top_frequency (i : ℕ) : frequencyEdge (i+1)≤(topFrequency i:ℝ) := by
+theorem top_frequency (i : ℕ) : frequencyEdge (i+1)≤(topFrequency i:ℝ) := by
   have h := (root_brackets (x:=topTime i) (by unfold topTime; positivity)).2
   rw [topFrequency,Rat.cast_mul,top_time]
   unfold frequencyEdge; push_cast
   rw [top_time] at h
   exact mul_le_mul_of_nonneg_left h (by positivity)
 
-private theorem retained_endpoint : frequencyEdge 288=1728 := by
+theorem retained_endpoint : frequencyEdge 288=1728 := by
   norm_num [frequencyEdge,show sqrt (144:ℝ)=12 by rw [show (144:ℝ)=12^2 by norm_num,Real.sqrt_sq (by norm_num)]]
 
 theorem uniform_cell_amplitude {n δ i : ℕ} (hs : δ≤1) (hn : 150000≤n+δ) (hi : i<288)
@@ -79,10 +79,12 @@ theorem uniform_cell_amplitude {n δ i : ℕ} (hs : δ≤1) (hn : 150000≤n+δ)
   change τ*|correctedValue (1-δ) u|≤t*g at product
   linarith only [xh,uh,first,ecost,product]
 
-theorem retained_charge_bound {n δ : ℕ} (hs : δ≤1) (hn : 150000≤n+δ) (tests : ∀ k<288, cellMaxTest k=true)
-    (r : ℕ) : retainedError n δ r≤((∑ i ∈ Finset.range 288, frequencyCharge i r:ℚ):ℝ) := by
-  apply (retained_error_from_bins hs (fun i => (frequencyAllowance i:ℝ)) (fun i _ => by exact_mod_cast frequencyAllowance_nonneg i)
-    (fun _ hi _ hx => uniform_cell_amplitude hs hn hi tests hx)).trans
+theorem rational_charge_bound {n δ : ℕ} (hs : δ≤1) (E : ℕ → ℚ) (nn : ∀ i, 0≤E i)
+    (errors : ∀ i<288, ∀ ξ∈Icc (frequencyEdge i) (frequencyEdge (i+1)),
+      |signedAmplitude n δ (ξ/cellScale (n+δ))-spectralTrial ξ|≤(E i:ℝ)) (r : ℕ) :
+    retainedError n δ r≤((∑ i ∈ Finset.range 288, roundUpper (3/4*rootHigh (topTime i)*(topFrequency i)^r*E i):ℚ):ℝ) := by
+  apply (retained_error_from_bins hs (fun i => (E i:ℝ)) (fun i _ => by exact_mod_cast nn i)
+    errors).trans
   rw [Rat.cast_sum]
   apply Finset.sum_le_sum
   intro i _
@@ -90,12 +92,17 @@ theorem retained_charge_bound {n δ : ℕ} (hs : δ≤1) (hn : 150000≤n+δ) (t
   rw [top_time] at time
   have freq := top_frequency i
   have f0 : 0≤frequencyEdge (i+1) := by unfold frequencyEdge; positivity
-  have a0 : 0≤(frequencyAllowance i:ℝ) := by exact_mod_cast frequencyAllowance_nonneg i
+  have a0 : 0≤(E i:ℝ) := by exact_mod_cast nn i
   have p := pow_le_pow_left₀ f0 freq r
-  have round := (Rat.cast_le (K:=ℝ)).mpr (round_upper (3/4*rootHigh (topTime i)*(topFrequency i)^r*frequencyAllowance i))
-  unfold frequencyCharge; apply le_trans _ round
+  have round := (Rat.cast_le (K:=ℝ)).mpr (round_upper (3/4*rootHigh (topTime i)*(topFrequency i)^r*E i))
+  apply le_trans _ round
   push_cast
   have rt := (sqrt_nonneg _).trans time
   gcongr
+
+theorem retained_charge_bound {n δ : ℕ} (hs : δ≤1) (hn : 150000≤n+δ) (tests : ∀ k<288, cellMaxTest k=true)
+    (r : ℕ) : retainedError n δ r≤((∑ i ∈ Finset.range 288, frequencyCharge i r:ℚ):ℝ) :=
+  rational_charge_bound hs frequencyAllowance frequencyAllowance_nonneg
+    (fun _ hi _ hx => uniform_cell_amplitude hs hn hi tests hx) r
 
 end CentralUnimodality.PolynomialTrial
