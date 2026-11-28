@@ -45,6 +45,23 @@ $$
 $$
 These bounds decrease from $N=2049$ since $2c(63/64)N>3(r+1)/2$. Together with the inner arc they give errors below $.00025$ and $.949$ for the first and centered second differences. Including aliases we use $.00026$ and $.95$. Lean checks these two allowances against the normalized strict-partition rank counts for every grid and site satisfying the stated hypotheses. [Formal truncation theorem](CentralUnimodality/RankTruncation.lean)
 
+## A uniform low-frequency polynomial
+
+For $N=n+\delta\ge196$ put $s=(2N)^{3/2}$ and $X=(K+(3N+1-\delta)/2)/s$, where $K$ is the corank of a uniformly selected contained strict partition. The signed amplitude at $\theta=\xi/s$ is exactly $\mathbb E\cos(\xi X)$. Lean gives all eleven even moments through order 20 as rational polynomials $p_{\delta,j}(1/N)=\mathbb E X^{2j}$, valid for $N>0$. In particular, $p_{\delta,1}(0)=59/240$ in both families. Define
+$$
+ L_\delta(x,\xi)=\sum_{j=0}^{9}\frac{(-1)^j\xi^{2j}}{(2j)!}\,p_{\delta,j}(x).
+$$
+For every real $\xi$ the absolute error at $x=1/N$ is at most $(21/200)|\xi|^{20}/20!$. It is below $1/20\,000\,000$ for $|\xi|\le4$. This bound includes the first finite-size correction and all higher size terms present in each moment polynomial. [Lean polynomial and bound](CentralUnimodality/PointFrequencyWindow.lean)
+
+The proof recovers point moments from the previously checked width-one cell moments. Expanding $\int_{-1/2}^{1/2}(z+t)^r\,dt$ gives $z^r$ with coefficient one and lower powers with rational coefficients. Triangular inversion recovers the lattice-site moments. Exact rational arithmetic bounds the twentieth moment by $21/200$ on $0\le1/N\le1/196$. Taylor's theorem for the real cosine then applies pointwise, including at sites where $|\xi X|>1$. The remaining frequencies and the inverse Fourier inequalities are still needed for the peak. [Cell inversion](CentralUnimodality/PointFromCells.lean) · [Averaged remainder](CentralUnimodality/PointTaylor.lean)
+
+To reproduce the independent check, run the following in the checkout. The Python program reads the rational polynomials from Lean and compares them to exact weighted sums from the rank recurrence for both families. It also enumerates every contained partition in the small shapes.
+
+~~~sh
+lake build CentralUnimodality.PointFrequencyWindow
+python3 -B verify_point_window.py --max-n 196 --direct-n 12
+~~~
+
 ## A posteriori verification of the signed transforms
 
 At fixed $\theta$, let $P_j^\delta,R_j,U_j^\delta$ be the transforms of the free walk of length $2j+\delta$, the paths returning at $2j$, and the paths with no return by $2j+\delta$. These transforms include the event probabilities. In the half-length convolution,

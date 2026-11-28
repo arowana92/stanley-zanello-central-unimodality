@@ -98,6 +98,8 @@ For both staircase families, `uniform_smooth_amplitude` controls the error of a 
 
 Lean bounds the error in the Gaussian approximations to the two walk inputs by $O(1/N)$ at fixed $|\omega|N^{3/2}$ and bounded trial amplitude. It compares the split quadrature at every $N\ge A\ge2$ with quadrature at $A$, and evaluates products of binomial coefficients on both pieces exactly. The residual of a trial function throughout the peak interval and its time variation still need certified bounds. [Statements and constants](../localized-returns.md#finite-quadrature-for-the-return-split)
 
+The signed Fourier amplitude now has an explicit degree-eighteen polynomial in scaled frequency whose coefficients are rational polynomials in $1/N$. For both families and every $N=n+\delta\ge196$, the kernel proves an absolute error of at most $1/20\,000\,000$ at $|\xi|\le4$. The proof uses the actual partition moments through order 20. [Formula and reproduction](../fourier-window.md#a-uniform-low-frequency-polynomial)
+
 ## Remaining proof obligations
 
 The theorem `conjecture34_from_196` reduces the universal strict-partition statement to the Dyck comparisons and two size ranges for the peak interval. [Lean reduction](../CentralUnimodality/ThreeFifthsReduction.lean)

@@ -77,10 +77,11 @@ def polynomialFromCell (T : Laurent) (r : ℕ) : Option (List ℚ) := do
   let v ← extractPolynomial (1+r%2) (3*r/2) T
   return v.map ((1/(2:ℚ)^(3*r/2))*·)
 
-theorem normalizedCell_from_numerator {n δ r : ℕ} (hn : 0 < n+δ) (T : Laurent)
-    (hh : rawCell n δ r = massFactor n δ*ratioSum (n+δ) T)
+theorem normalized_from_numerator {n δ r : ℕ} (hn : 0 < n+δ) (T : Laurent) {raw : ℚ}
+    (hh : raw = massFactor n δ*ratioSum (n+δ) T)
     {q : List ℚ} (hq : polynomialFromCell T r = some q) :
-    normalizedCell n δ r = (if r%2 = 0 then 1 else wallisFactor (n+δ)) *
+    (raw:ℝ)/((massFactor n δ:ℝ)*(cellScale (n+δ))^r) =
+      (if r%2 = 0 then 1 else wallisFactor (n+δ)) *
       horner ((n+δ:ℕ):ℝ)⁻¹ q := by
   change (do let v ← extractPolynomial (1+r%2) (3*r/2) T; pure (v.map ((1/(2:ℚ)^(3*r/2))*·))) = some q at hq
   cases ht : extractPolynomial (1+r%2) (3*r/2) T with
@@ -93,13 +94,19 @@ theorem normalizedCell_from_numerator {n δ r : ℕ} (hn : 0 < n+δ) (T : Lauren
     rw [he] at hh
     have hr := congrArg (fun a : ℚ => (a:ℝ)) hh
     simp only [Rat.cast_mul,Rat.cast_pow,Rat.cast_natCast,horner_rat_real,Rat.cast_inv] at hr
-    rw [normalizedCell,hr,horner_scale]
+    rw [hr,horner_scale]
     simp only [Rat.cast_div,Rat.cast_pow,Rat.cast_ofNat,Rat.cast_one]
     have hm : (massFactor n δ:ℝ) ≠ 0 := by exact_mod_cast (massFactor_pos n δ).ne'
     have hf := normalized_factor (n+δ) r hn
     generalize horner ((n+δ:ℕ):ℝ)⁻¹ v = y
     field_simp at hf ⊢
     linear_combination y * hf
+
+theorem normalizedCell_from_numerator {n δ r : ℕ} (hn : 0 < n+δ) (T : Laurent)
+    (hh : rawCell n δ r = massFactor n δ*ratioSum (n+δ) T)
+    {q : List ℚ} (hq : polynomialFromCell T r = some q) :
+    normalizedCell n δ r = (if r%2 = 0 then 1 else wallisFactor (n+δ)) *
+      horner ((n+δ:ℕ):ℝ)⁻¹ q := normalized_from_numerator hn T hh hq
 
 theorem normalizedCell_exact {n δ r : ℕ} (hn : 0 < n+δ) {P : ℕ → Laurent}
     (h : ∀ j ≤ r, (rankMoment n δ j:ℚ) = massFactor n δ * ratioSum (n+δ) (P j))
