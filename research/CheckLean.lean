@@ -431,3 +431,8 @@ example {m j : ℕ} (hm : 4096≤m) (hmid : staircaseDegree m≤2*(j+1))
 #print axioms conjecture34_from_finite_peaks
 #print axioms central_through_223
 #print axioms conjecture34_from_224
+#print axioms HeightBlock.dyck_reflected64
+#print axioms HeightBlock.ballot_reflected64
+#print axioms HeightBlock.dyck_comparisons_through_256
+#print axioms HeightBlock.assemble_ground_congr
+#print axioms conjecture34_from_remaining

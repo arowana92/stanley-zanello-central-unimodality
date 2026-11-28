@@ -76,4 +76,6 @@ public import CentralUnimodality.BinnedInverseAllowance
 public import CentralUnimodality.RetainedBinIntegration
 public import CentralUnimodality.DirectPeakCertificate
 public import CentralUnimodality.FiniteBase224
+public import CentralUnimodality.RemainingDyckComparisons
+public import CentralUnimodality.GroundColumnRanks
 public import CentralUnimodality.LargePeakReduction
