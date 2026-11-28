@@ -63,6 +63,8 @@ First replace $p,\rho$ by their dyadic polynomials. The verifier evaluates $R_2$
 
 A separate whole-interval Lean proof bounds the Gaussian replacement error by $3\times10^{-7}$. It differentiates the bridge ODE defect three times and proves $|e^{(r)}(v)|\le2\times10^{-22}1000^r$ for $0\le r\le4$ and $0\le v\le144$. Using this larger allowance in the rational spatial certificate gives retained errors below $0.130728$ and $34.088752$. The three full-period margins still exceed $0.064448$, $1.864448$ and $119.303869$ in the order of the rows above. [Gaussian derivative bounds](CentralUnimodality/GaussianReplacementJets.lean) · [Transfer to the second residual](CentralUnimodality/SecondResidualTransfer.lean)
 
+Lean also computes the two signed polynomials directly from the checked trial rows. Its factorial-weighted integer multiplication evaluates the beta integrals after the input exponents are shifted by the quadrature weights. Python uses ordinary coefficient sums. All 1,015 coefficients from degree zero through degree 1,014 agree as rational numbers for each parity, and the additional high slots of both representations vanish. [Exact Lean evaluator](CentralUnimodality/SecondResidualRows.lean) · [Independent calculation](verify_second_split.py)
+
 For the cellwise bounds, round the exact Chebyshev coefficients of $R_2$ to the nearest multiple of $2^{-120}$. If the polynomial has $d+1$ coefficients, this costs at most $(d+1)2^{-121}$ on the entire interval. Shift that polynomial to each half-unit cell and bound it by the sum of the absolute shifted coefficients. For $G_\sigma$ combine the signed coefficients of the trial and its drift *before* bounding derivatives on a cell. This preserves their cancellation.
 
 After subtracting $R_2$, the cubic error has five terms, in addition to the free cubic symbol error. Let $E_\rho$ denote the cubic bridge error per unit $\tau^3$. In each product evaluate the left and right factors in their respective split cells. Use $D_r(A,B)$ for the local sum of absolute derivative products. The five bounds, per unit $\tau^3$, are
@@ -84,4 +86,5 @@ On $114\le u\le144$ use $100e^{-.186u}$ for the true signed amplitude and check 
 python3 -B verify_second_split.py
 python3 -B verify_quadratic_peak.py
 python3 -B verify_quadratic_peak.py --lean-gaussian-bound
+lake env lean --run research/ExportSecondResidual.lean | python3 -B verify_second_split.py --check-lean-rows
 ~~~

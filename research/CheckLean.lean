@@ -455,3 +455,4 @@ example {m j : ℕ} (hm : 4096≤m) (hmid : staircaseDegree m≤2*(j+1))
 #print axioms ReturnSplit.retained_quadratic_symbols
 #print axioms ReturnSplit.quadratic_split_residual
 #print axioms PolynomialTrial.second_residual_transfer
+#print axioms PolynomialTrial.quadratic_residual_row_model

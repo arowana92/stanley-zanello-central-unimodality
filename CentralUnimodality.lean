@@ -82,3 +82,4 @@ public import CentralUnimodality.LargePeakReduction
 public import CentralUnimodality.FirstReturnInnerArc
 public import CentralUnimodality.PolynomialSecondSplit
 public import CentralUnimodality.SecondResidualTransfer
+public import CentralUnimodality.SecondResidualRows

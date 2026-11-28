@@ -1,6 +1,10 @@
 """Compute the signed quadratic residual of the last-return polynomial trial."""
 
+from argparse import ArgumentParser
+from decimal import Decimal
 from fractions import Fraction as Q
+from itertools import zip_longest
+import sys
 from math import comb, lcm
 
 from verify_gamma_polynomials import (
@@ -220,7 +224,33 @@ def check_monomials():
                        for k,c in enumerate(computed))
 
 
+def check_lean_rows(source):
+    """Compare every physical-time coefficient with its independently computed rational value."""
+    for parity, poly in enumerate(residuals()):
+        header = source.readline().split()
+        assert len(header) == 2 and int(header[0]) == parity
+        count = int(header[1])
+        assert count > 0
+        # Decimal also accepts certificate integers beyond Python's decimal-string digit limit.
+        denominator = int(Decimal(source.readline().strip()))
+        assert denominator > 0
+        numerators = (int(Decimal(source.readline().strip())) for _ in range(count))
+        scale = 1
+        for degree, (coefficient, numerator) in enumerate(zip_longest(poly, numerators, fillvalue=0)):
+            assert coefficient*denominator == numerator*scale, (parity, degree)
+            scale *= WIDTH
+        print(f"parity {parity}: every coefficient agrees, degree {max(i for i,c in enumerate(poly) if c)}",
+              flush=True)
+    assert not source.read().strip()
+
+
 def main():
+    parser = ArgumentParser(description=__doc__)
+    parser.add_argument('--check-lean-rows', action='store_true',
+                        help='compare exact rows from research/ExportSecondResidual.lean on standard input')
+    if parser.parse_args().check_lean_rows:
+        check_lean_rows(sys.stdin)
+        return
     check_monomials()
     check_log_terms()
     replacement = second_input_error()
