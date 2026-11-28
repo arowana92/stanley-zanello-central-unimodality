@@ -49,7 +49,7 @@ private theorem pair_gaussian {x : ℝ} (hx : 0 ≤ x) (hπ : x ≤ Real.pi/2) :
        _ ≤ Real.exp (-((x/2)^2/2))^2 := pow_le_pow_left₀ hc hh 2
        _ = _ := by rw [sq,← Real.exp_add]; congr 1; ring
 
-private theorem pair_prefix_gaussian {ω : ℝ} (hω : 0 ≤ ω) (l : ℕ)
+theorem pair_prefix_gaussian {ω : ℝ} (hω : 0 ≤ ω) (l : ℕ)
     (hπ : ω*(2*l+1) ≤ Real.pi/2) :
     pairFactor ω l ≤ Real.exp (-(ω^2*(4*(l:ℝ)^3-l)/12)) := by
   induction l with

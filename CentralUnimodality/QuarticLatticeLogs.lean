@@ -53,7 +53,7 @@ theorem free_quartic_log (ω : ℝ) {t : ℕ} (ha : |ω| *t≤9/8) :
     apply (add_le_add prev.2 up).trans_eq
     dsimp only [x]; ring
 
-private theorem double_log {x : ℝ} (h : |x|≤9/8) :
+theorem log_cos_sinc_double {x : ℝ} (h : |x|≤9/8) :
     log (cos x)=log (sinc (2*x))-log (sinc x) := by
   have eq : sinc (2*x)=sinc x*cos x := by
     by_cases hz : x=0
@@ -93,7 +93,7 @@ theorem bridge_quartic_log (ω : ℝ) {j : ℕ} (ha : |ω| *(2*j)≤9/8) :
         (-bridgeLog ω j-bridgeExponent ω j-bridgeQuartic ω j)+(sincLoss (2*b)+sincLoss c-2*sincLoss b) := by
       rw [bridgeLog,Finset.sum_range_succ,← bridgeLog]
       change -(bridgeLog ω j+(log (cos b)+log (sinc c)-log (sinc b)))-_-_=_
-      rw [double_log hb.2]
+      rw [log_cos_sinc_double hb.2]
       simp only [bridgeExponent,bridgeQuartic,fourthSum,show 2*(j+1)=2*j+1+1 by omega,
         Finset.sum_range_succ,Nat.cast_succ,Nat.cast_mul,sincLoss,b,c]
       ring

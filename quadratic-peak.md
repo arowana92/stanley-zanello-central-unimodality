@@ -38,9 +38,9 @@ $$
  |W-g-\tau g_1-\tau^2g_2|
  \le \tau^3 g\big(C+A^3/6+AB+sB^2/2\big).
 $$
-To see this, separate $e^{-d}$ at cost $d$, expand $e^{-\tau A}$ to degree two, and expand $e^{-\tau^2 B}$ to degree one. The cross term is bounded using $1-e^{-\tau A}\le\tau A$.
+To see this, separate $e^{-d}$ at cost $d$, expand $e^{-\tau A}$ to degree two, and expand $e^{-\tau^2 B}$ to degree one. The cross term is bounded using $1-e^{-\tau A}\le\tau A$. Lean proves this cubic error bound directly for the actual free and normalized bridge Fourier symbols. [Scaled lattice bounds](CentralUnimodality/ScaledSexticInputs.lean)
 
-If an argument exceeds $9/8$, then $(2v+\tau)\sqrt{\tau/32}>9/8$. In the current range this implies $v>28$, $\tau>1/2000$, and $N<228000$. Set $l=\lfloor25/\tau\rfloor$. Then $24\le l\tau\le25$, $l\le j$, and $|\omega|(2l+1)<\pi/2$. Pairing the first $2l$ steps bounds the absolute free and unnormalized bridge symbols by $\exp[-\omega^2(4l^3-l)/12]\le e^{-140}$. This uses only those prefix steps and applies regardless of later angles. The costs of dividing by $r_j$ and replacing the symbols by the quadratic Gaussian trials are together less than $10^{-18}\tau^3$, since $1/r_j\le2\sqrt N<1000$. The verifier includes that allowance in every bin. [Prefix bound](CentralUnimodality/QuadrantTail.lean) · [Numeric inequalities](verify_quadratic_peak.py)
+If an argument exceeds $9/8$, then $(2v+\tau)\sqrt{\tau/32}>9/8$. In the current range this implies $v>28$, $\tau>1/2000$, and $N<228000$. Set $l=\lfloor25/\tau\rfloor$. Then $24\le l\tau\le25$, $l\le j$, and $|\omega|(2l+1)<\pi/2$. Pairing the first $2l$ steps bounds the absolute free and unnormalized bridge symbols by $\exp[-\omega^2(4l^3-l)/12]\le e^{-140}$. This uses only those prefix steps and applies regardless of later angles. The costs of dividing by $r_j$ and replacing the symbols by the quadratic Gaussian trials are together less than $10^{-18}\tau^3$, since $1/r_j\le2\sqrt N<1000$. The verifier includes that allowance in every bin. [Uniform Lean bound on both sides of the angle cutoff](CentralUnimodality/QuadraticOuterSymbols.lean) · [Numeric inequalities](verify_quadratic_peak.py)
 
 ## The signed quadratic residual
 
@@ -70,7 +70,7 @@ After subtracting $R_2$, the cubic error has five terms, in addition to the free
 - $v[D_3(\rho_1,F)+D_3(\rho,G_\sigma)]/24$ and $v^2[D_4(\rho_1,F)+D_4(\rho,G_\sigma)]/128$ for the order-one products sampled through first order.
 - $vD_4(\rho,F)/96+v^2D_5(\rho,F)/192+v^3D_6(\rho,F)/1440$ for the leading product sampled through second order.
 
-Each bound takes its own maximum over all admissible pairs of cells. Gaussian monomials are bounded at their extrema. At $j=0$ the split evaluates the factors at zero and its quadrature error vanishes.
+Each bound takes its own maximum over all admissible pairs of cells. Gaussian monomials are bounded at their extrema. At $j=0$ the split evaluates the factors at zero and its quadrature error vanishes. The theorem `quadratic_split_residual` applies this error budget to the actual last-return convolution throughout $N\ge10000$, $N\tau\le114$. [Lean proof](CentralUnimodality/QuadraticSplitResidual.lean)
 
 ## Return inversion and reproduction
 

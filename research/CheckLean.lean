@@ -450,3 +450,7 @@ example {m j : ℕ} (hm : 4096≤m) (hmid : staircaseDegree m≤2*(j+1))
 #print axioms ReturnSplit.cosSexticLoss_control
 #print axioms ReturnSplit.sincSexticLoss_control
 #print axioms PolynomialTrial.outer_rank_tail_from_5000
+#print axioms ReturnSplit.free_quadratic_symbol
+#print axioms ReturnSplit.bridge_quadratic_symbol
+#print axioms ReturnSplit.retained_quadratic_symbols
+#print axioms ReturnSplit.quadratic_split_residual
