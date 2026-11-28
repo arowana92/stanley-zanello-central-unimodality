@@ -49,9 +49,9 @@ def latePart (i k : ℕ) : ℚ := max (1/20) (1-((k:ℚ)+1)/i)
 
 def lateWeight (i k : ℕ) : ℚ :=
   let p := latePart i k
-  (1/(i:ℚ)+1/300000)*(501/1000)/(p*rootLow p)
+  (1/(i:ℚ)+1/150000)*(501/1000)/(p*rootLow p)
 
-theorem late_weight_bound {N i : ℕ} (hn : 300000≤N) (ip : 0< i) (k : ℕ) :
+theorem late_weight_bound {N i : ℕ} (hn : 150000≤N) (ip : 0< i) (k : ℕ) :
     (1/(i:ℝ)+1/(N:ℝ))*((501/1000:ℝ)/(lateFraction i k*sqrt (lateFraction i k)))≤(lateWeight i k:ℝ) := by
   let p := latePart i k
   have hp : (1/20:ℚ)≤p := le_max_left ..
@@ -60,11 +60,11 @@ theorem late_weight_bound {N i : ℕ} (hn : 300000≤N) (ip : 0< i) (k : ℕ) :
   have pr0 : 0<(p:ℝ) := by exact_mod_cast (lt_of_lt_of_le (by norm_num : (0:ℚ)<1/20) hp)
   have rpr : 0<(rootLow p:ℝ) := by exact_mod_cast rp
   have root := (root_brackets (x:=p) (by exact_mod_cast pr0.le)).1
-  have nr : (300000:ℝ)≤N := by exact_mod_cast hn
-  have inv := one_div_le_one_div_of_le (by norm_num : (0:ℝ)<300000) nr
+  have nr : (150000:ℝ)≤N := by exact_mod_cast hn
+  have inv := one_div_le_one_div_of_le (by norm_num : (0:ℝ)<150000) nr
   rw [pr,← mul_div_assoc]
   unfold lateWeight; push_cast
-  change _≤(1/(i:ℝ)+1/300000)*(501/1000)/((p:ℝ)*(rootLow p:ℝ))
+  change _≤(1/(i:ℝ)+1/150000)*(501/1000)/((p:ℝ)*(rootLow p:ℝ))
   apply div_le_div₀ (by positivity) (by gcongr) (mul_pos pr0 rpr) (mul_le_mul_of_nonneg_left root pr0.le)
 
 end CentralUnimodality.PolynomialTrial

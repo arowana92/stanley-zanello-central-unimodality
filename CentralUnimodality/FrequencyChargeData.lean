@@ -21,8 +21,8 @@ def tableCharge (i r : ℕ) :=
   roundUpper (3/4*rootHigh (topTime i)*(topFrequency i)^r*(allowanceTable[i]?.getD 0))
 
 theorem charge_totals :
-    (∑ i ∈ Finset.range 288, tableCharge i 1)≤0.176 ∧
-    (∑ i ∈ Finset.range 288, tableCharge i 2)≤148.4 := by decide +kernel
+    (∑ i ∈ Finset.range 288, tableCharge i 1)≤0.174 ∧
+    (∑ i ∈ Finset.range 288, tableCharge i 2)≤22 := by decide +kernel
 
 theorem charge_agrees {i : ℕ} (hi : allowanceCheck i=true) (r : ℕ) : frequencyCharge i r=tableCharge i r := by
   simp only [allowanceCheck,decide_eq_true_eq] at hi

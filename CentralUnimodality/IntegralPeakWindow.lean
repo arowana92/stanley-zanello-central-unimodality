@@ -10,7 +10,7 @@ cover exactly the peak obligation used by the all-size induction. -/
 namespace CentralUnimodality.Witness
 open Real Set MarkedExcursion.BinArithmetic
 
-theorem threeFifths_of_integral_signs {n δ : ℕ} (hn : 300000≤n) (hs : δ≤1)
+theorem threeFifths_of_integral_signs {n δ : ℕ} (hn : 5000≤n) (hs : δ≤1)
     (left : ∀ x ∈ Icc (0.1359:ℝ) 0.339, 0≤rankIntegralOrder n δ 1 x)
     (middle : ∀ x ∈ Icc (0.333:ℝ) 0.404, rankIntegralOrder n δ 2 x≤0)
     (right : ∀ x ∈ Icc (0.398:ℝ) 0.631, rankIntegralOrder n δ 1 x≤0) :
@@ -21,9 +21,9 @@ theorem threeFifths_of_integral_signs {n δ : ℕ} (hn : 300000≤n) (hs : δ≤
   let H := 3*n+2*δ+1
   let lo := centralStart n m
   let hi := min (D/2) ⌊(3/5)*sizeScale m⌋₊
-  have nR : (300000:ℝ)≤n := by exact_mod_cast hn
+  have nR : (5000:ℝ)≤n := by exact_mod_cast hn
   have mR : (m:ℝ)≤3*n := by exact_mod_cast (show m≤3*n by dsimp [m]; omega)
-  have T : (600000:ℝ)≤2*(N:ℝ) := by exact_mod_cast (show 600000≤2*N by dsimp [N]; omega)
+  have T : (10000:ℝ)≤2*(N:ℝ) := by exact_mod_cast (show 10000≤2*N by dsimp [N]; omega)
   have dl : (2*(N:ℝ))-1≤m := by
     dsimp [N,m]; push_cast
     have h : (δ:ℝ)≤1 := by exact_mod_cast hs
@@ -48,11 +48,20 @@ theorem threeFifths_of_integral_signs {n δ : ℕ} (hn : 300000≤n) (hs : δ≤
     apply (Real.sqrt_le_left (by positivity)).mpr
     nlinarith only [mR,mul_nonneg (sub_nonneg.mpr nR) (Nat.cast_nonneg (α:=ℝ) n)]
   have growth := mul_le_mul mR cap (sqrt_nonneg _) (by positivity)
-  have start : lo=⌈0.1375*sizeScale m⌉₊ := by
-    simp [lo,centralStart,show ¬n≤2048 by omega,show ¬n<300000 by omega,sizeScale,mul_assoc]
-  have loUpper : (lo:ℝ)≤0.1375*sizeScale m+1 := by
-    rw [start]; exact (Nat.ceil_lt_add_one (by unfold sizeScale; positivity)).le
-  have loLower : 0.1375*sizeScale m≤(lo:ℝ) := start ▸ Nat.le_ceil _
+  have scale0 : 0≤sizeScale m := by unfold sizeScale; positivity
+  have ⟨loLower,loUpper⟩ : 0.1366*sizeScale m-1≤(lo:ℝ) ∧ (lo:ℝ)≤0.1375*sizeScale m+1 := by
+    by_cases earlier : n<300000
+    · have start : lo=⌊0.1366*sizeScale m⌋₊ := by
+        simp [lo,centralStart,show ¬n≤2048 by omega,earlier,sizeScale,mul_assoc]
+      rw [start]
+      have hi := Nat.floor_le (show 0≤0.1366*sizeScale m by positivity)
+      have low := Nat.lt_floor_add_one (0.1366*sizeScale m)
+      constructor <;> linarith only [hi,low,scale0]
+    · have start : lo=⌈0.1375*sizeScale m⌉₊ := by
+        simp [lo,centralStart,show ¬n≤2048 by omega,earlier,sizeScale,mul_assoc]
+      rw [start]
+      exact ⟨by linarith only [Nat.le_ceil (0.1375*sizeScale m),scale0],
+        (Nat.ceil_lt_add_one (by positivity)).le⟩
   have sPos : 100≤sizeScale m := by
     have one : 1≤sqrt m := (Real.le_sqrt (by norm_num) m₀).mpr (by linarith only [m₁])
     simpa [sizeScale] using mul_le_mul m₁ one (by norm_num : (0:ℝ)≤1) m₀
@@ -72,7 +81,8 @@ theorem threeFifths_of_integral_signs {n δ : ℕ} (hn : 300000≤n) (hs : δ≤
   have leftSite : 0.1359≤corankSite n δ lo := by
     change 0.1359≤((lo:ℝ)+(H:ℝ)/2)/cellScale N
     apply (le_div_iff₀ (cellScale_pos hN)).mpr
-    linarith only [lowerScale,loLower,(cellScale_pos hN).le,Nat.cast_nonneg (α:=ℝ) H]
+    have sh : (2:ℝ)≤H := by exact_mod_cast (show 2≤H by dsimp only [H]; omega)
+    linarith only [lowerScale,loLower,(cellScale_pos hN).le,sh]
   have rightSite : corankSite n δ hi≤0.631 := by
     change ((hi:ℝ)+(H:ℝ)/2)/cellScale N≤0.631
     apply (div_le_iff₀ (cellScale_pos hN)).mpr

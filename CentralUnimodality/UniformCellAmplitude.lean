@@ -1,11 +1,12 @@
 module
 
 public import CentralUnimodality.CellConditioning
+public import CentralUnimodality.TruncatedCellEnvelope
 public import CentralUnimodality.RetainedBinIntegration
 
 /-! Remove the size variable from the retained amplitude and its
 two weighted integrals. The worst-case square-root factors occur at
-half-length 300,000 after multiplication by the appropriate mesh size. -/
+half-length 150,000 after multiplication by the appropriate mesh size. -/
 @[expose] public section
 
 namespace CentralUnimodality.PolynomialTrial
@@ -25,15 +26,15 @@ private theorem top_frequency (i : ℕ) : frequencyEdge (i+1)≤(topFrequency i:
 private theorem retained_endpoint : frequencyEdge 288=1728 := by
   norm_num [frequencyEdge,show sqrt (144:ℝ)=12 by rw [show (144:ℝ)=12^2 by norm_num,Real.sqrt_sq (by norm_num)]]
 
-theorem uniform_cell_amplitude {n δ i : ℕ} (hs : δ≤1) (hn : 300000≤n+δ) (hi : i<288)
+theorem uniform_cell_amplitude {n δ i : ℕ} (hs : δ≤1) (hn : 150000≤n+δ) (hi : i<288)
     (tests : ∀ k<288, cellMaxTest k=true) {ξ : ℝ} (cell : ξ∈Icc (frequencyEdge i) (frequencyEdge (i+1))) :
     |signedAmplitude n δ (ξ/cellScale (n+δ))-spectralTrial ξ|≤(frequencyAllowance i:ℝ) := by
   let N := n+δ
   let u := |ξ|^(2/3:ℝ)
   let τ := u/(N:ℝ)
   let H : ℝ := (topTime i:ℝ)
-  let t := H/300000
-  let s : ℝ := (rootHigh 300000:ℝ)
+  let t := H/150000
+  let s : ℝ := (rootHigh 150000:ℝ)
   let C : ℝ := (qCost i:ℝ)
   let E : ℝ := (qEarly i:ℝ)
   let L : ℝ := (qLate i:ℝ)
@@ -45,13 +46,16 @@ theorem uniform_cell_amplitude {n δ i : ℕ} (hs : δ≤1) (hn : 300000≤n+δ)
   have u0 : 0≤u := rpow_nonneg (abs_nonneg _) _
   have uh : u≤H := by dsimp only [H]; rw [top_time]; exact_mod_cast hu.2
   have xh : |ξ|≤(topFrequency i:ℝ) := by rw [abs_of_nonneg nn]; exact cell.2.trans (top_frequency i)
-  have h := cell_amplitude_cost hs hn hi tests band hu
+  by_cases outside : 228≤ i
+  · simpa only [frequencyAllowance,ite_eq_right (Nat.not_lt.mpr outside)] using outer_cell_amplitude hs hn outside nn band hu
+  have inside : i<228 := by omega
+  have h := cell_amplitude_cost hs hn inside tests band hu
   have inv := cell_conditioned_cost hn hu
   have ⟨step,first,second⟩ := scaled_steps hn u0 uh
   have t0 : 0≤τ := div_nonneg u0 (Nat.cast_nonneg _)
   have ce : 0≤2*(C+E) := by dsimp [C,E,qCost,qEarly]; push_cast; positivity
   have l0 : 0≤L := by dsimp only [L]; exact_mod_cast qLate_nonneg i
-  have ecost : τ^2*conditionedCost N (timeCosts i N u)≤t^2*(2*s*(C+E)+L) := by
+  have ecost : τ^2*conditionedCost N (pricedTimeCost i N u)≤t^2*(2*s*(C+E)+L) := by
     calc
       _≤τ^2*(2*sqrt N*(C+E)+L) := mul_le_mul_of_nonneg_left inv (sq_nonneg _)
       _=2*(C+E)*(sqrt N*τ^2)+L*τ^2 := by ring
@@ -62,20 +66,20 @@ theorem uniform_cell_amplitude {n δ i : ℕ} (hs : δ≤1) (hn : 300000≤n+δ)
   have g0 : 0≤g := by dsimp [g]; positivity
   have gj : |correctedValue (1-δ) u|≤g := by
     simpa only [iteratedDeriv_zero] using (certified_correction_jet (by omega : 1-δ≤1) hi (by decide : 0<3) hu)
-  have product := mul_le_mul step gj (abs_nonneg _) (u0.trans uh |> fun y => div_nonneg y (by norm_num : (0:ℝ)≤300000))
+  have product := mul_le_mul step gj (abs_nonneg _) (u0.trans uh |> fun y => div_nonneg y (by norm_num : (0:ℝ)≤150000))
   apply h.trans
   have price : (frequencyAllowance i:ℝ)=
       (1+(topFrequency i:ℝ)/2)*(15/10^16)+(36/10^14)*H+4*s*t*(3/10^12)+t^2*(2*s*(C+E)+L)+t*g := by
-    simp only [frequencyAllowance,Rat.cast_add,Rat.cast_mul,Rat.cast_div,Rat.cast_pow,Rat.cast_ofNat,Rat.cast_natCast]
+    simp only [frequencyAllowance,ite_eq_left inside,splitFrequencyAllowance,Rat.cast_add,Rat.cast_mul,Rat.cast_div,Rat.cast_pow,Rat.cast_ofNat,Rat.cast_natCast]
     dsimp only [H,t,s,C,E,L,g]; ring
   rw [price]
-  change (1+|ξ|/2)*(15/10^16)+(36/10^14)*u+4*sqrt N*τ*(3/10^12)+τ^2*conditionedCost N (timeCosts i N u)+
+  change (1+|ξ|/2)*(15/10^16)+(36/10^14)*u+4*sqrt N*τ*(3/10^12)+τ^2*conditionedCost N (pricedTimeCost i N u)+
     τ*|correctedValue (1-δ) u|≤_
   change sqrt N*τ≤s*t at first
   change τ*|correctedValue (1-δ) u|≤t*g at product
   linarith only [xh,uh,first,ecost,product]
 
-theorem retained_charge_bound {n δ : ℕ} (hs : δ≤1) (hn : 300000≤n+δ) (tests : ∀ k<288, cellMaxTest k=true)
+theorem retained_charge_bound {n δ : ℕ} (hs : δ≤1) (hn : 150000≤n+δ) (tests : ∀ k<288, cellMaxTest k=true)
     (r : ℕ) : retainedError n δ r≤((∑ i ∈ Finset.range 288, frequencyCharge i r:ℚ):ℝ) := by
   apply (retained_error_from_bins hs (fun i => (frequencyAllowance i:ℝ)) (fun i _ => by exact_mod_cast frequencyAllowance_nonneg i)
     (fun _ hi _ hx => uniform_cell_amplitude hs hn hi tests hx)).trans

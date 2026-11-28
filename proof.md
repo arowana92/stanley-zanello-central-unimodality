@@ -40,7 +40,7 @@ There is also an elementary proof of the last step beyond the midpoint within th
 
 The nondecreasing prefix and nonincreasing suffix meet the unimodal central interval in the indicated order, so the whole corank row is unimodal. This proves the induction step for both families and every $n$. No type $B$ diagonal coinvariant identification is assumed.
 
-A second computer-assisted proof of the central peak for all $n\ge300000$ uses the direct binomial split and polynomial first corrections. It proves the three spatial signs in both families using unsigned first-return probabilities. The verifier covers the entire remaining frequency period and regenerates the polynomial bounds from integer coefficients. [Direct proof](localized-returns.md#a-direct-polynomial-peak-certificate-from-300000) · [Rational verifier](verify_direct_peak.py)
+A second computer-assisted proof gives the central peak for every $n\ge150000$ in both families. It bounds the signed first-return transform after pinning its terminal height. The resulting late-return weights and a separate bound on the upper retained frequencies give positive margins for all three spatial sign tests. [Direct peak derivation](localized-returns.md#a-direct-polynomial-peak-certificate-from-150000) · [Independent rational verifier](verify_direct_peak.py)
 
 ## Reproducing the checks
 

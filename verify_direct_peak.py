@@ -1,7 +1,7 @@
-"""Certify the peak signs for both parities at every half-length N >= 300000.
+"""Certify the peak signs for both parities at every half-length N >= 150000.
 
 Use the direct corrected binomial split, local derivative bounds for the
-polynomial trial, and the unsigned first-return masses. No tables other
+polynomial trial, and the Fourier decay of pinned first returns. No tables other
 than the Lean Chebyshev coefficient rows are needed.
 """
 
@@ -15,7 +15,9 @@ from verify_return_bounds import diff, times
 from verify_rising import PI_LO, sqrt_hi, sqrt_lo
 from verify_split_correction import check_first_correction
 
-MIN_SIZE = 300000
+MIN_SIZE = 150000
+RETURN_CUTOFF = 114
+MAX_STEP = Q(1, 1250)
 CUTOFF = 144
 STEP = Q(1, 2)
 WINDOWS = ((1, 1359, 3390, 1, Q(1, 5)),
@@ -57,8 +59,9 @@ def trial_bounds():
 
 
 def input_bounds(tau):
-    angle = (2+Q(1, MIN_SIZE))*CUTOFF*sqrt_hi(CUTOFF)/sqrt_lo(32*MIN_SIZE)
-    assert angle < Q("1.15")
+    angle = (2+Q(1, MIN_SIZE))*RETURN_CUTOFF*sqrt_hi(RETURN_CUTOFF)/sqrt_lo(32*MIN_SIZE)
+    assert angle <= Q(9, 8)
+    assert Q(RETURN_CUTOFF, MIN_SIZE) <= tau
     # Euler-product majorants for all terms past the quartic in both logs.
     assert Q(2, 3*12)/((PI_LO/2)**2-angle**2) < Q(".05")
     assert Q(2, 3*180)/(PI_LO**2-angle**2) < Q(".001")
@@ -72,7 +75,7 @@ def input_bounds(tau):
 
     rho, rho1 = derivatives([Q(1)], 5), derivatives(bridge_log, 3)
     bridge, first, free_noise, bridge_noise = [], [], [], []
-    for i in range(2*CUTOFF):
+    for i in range(2*RETURN_CUTOFF):
         lo, hi = i*STEP, (i+1)*STEP
         bridge.append([gauss(p, 96, lo, hi) for p in rho])
         first.append([gauss(p, 96, lo, hi) for p in rho1])
@@ -90,7 +93,7 @@ def split_costs(tau, trial, signed):
         return sum(comb(r, t)*left[t]*right[r-t] for t in range(r+1))
 
     costs = []
-    for i in range(2*CUTOFF):
+    for i in range(2*RETURN_CUTOFF):
         v = (i+1)*STEP
         maxima = [Q(0)]*4
         for a in range(i+1):
@@ -110,22 +113,32 @@ def split_costs(tau, trial, signed):
 def frequency_costs(correction):
     n = MIN_SIZE
     trial, signed = trial_bounds()
-    costs = split_costs(Q(CUTOFF, n), trial, signed)
+    costs = split_costs(MAX_STEP, trial, signed)
+    assert CUTOFF*sqrt_hi(CUTOFF) <= Q('.001')*2*n*sqrt_lo(2*n)
     total = [Q(0)]*3
     for i in range(2*CUTOFF):
         lo, hi = i*STEP, (i+1)*STEP
-        early = max(costs[floor(Q(".95")*i):i+1])
-        inverse = 2*sqrt_hi(n)*(costs[i]+early)
-        if i:
-            for k in range(floor(Q(".95")*(i+1))+1):
-                p = max(Q(".05"), 1-Q(k+1, i))
-                # sqrt(j)*r_j increases, and r_j/((2j-1) r_N)
-                # is the normalized first-return mass. Each bin contains
-                # at most N*STEP/lo+1 possible return times.
-                inverse += upper((STEP/lo+Q(1,n))*Q(".501")/(p*sqrt_lo(p))*costs[k])
-        smooth = (1+hi*sqrt_hi(hi)/2)*Q(15,10**16)+hi*Q(36,10**14)
-        error = (smooth+4*sqrt_hi(n)*hi/n*correction
-                 +(hi/n)**2*inverse+hi/n*signed[i][0])
+        if lo >= RETURN_CUTOFF:
+            # The conditioned meander bound applies to the true signed amplitude.
+            # The independent polynomial enclosure supplies the trial term.
+            error = 100*exp_neg(Q(".186")*lo) + trial[i][0]
+        else:
+            early = max(costs[floor(Q(".95")*i):i+1])
+            inverse = 2*sqrt_hi(n)*(costs[i]+early)
+            if i:
+                for k in range(floor(Q(".95")*(i+1))+1):
+                    p = max(Q(".05"), 1-Q(k+1, i))
+                    # sqrt(j)*r_j increases, and r_j/((2j-1) r_N)
+                    # is the normalized first-return mass. Each bin contains
+                    # at most N*STEP/lo+1 possible return times.
+                    # The elapsed rescaled time is at least (i-k-1)/2.
+                    # Every ten full bin widths contribute a factor exp(-.75) < 1/2.
+                    blocks = max(0, i-k-1)//10
+                    discount = min(Q(1), Q(125, 2**blocks))
+                    inverse += upper((STEP/lo+Q(1,n))*Q(".501")/(p*sqrt_lo(p))*costs[k]*discount)
+            smooth = (1+hi*sqrt_hi(hi)/2)*Q(15,10**16)+hi*Q(36,10**14)
+            error = (smooth+4*sqrt_hi(n)*hi/n*correction
+                     +(hi/n)**2*inverse+hi/n*signed[i][0])
         for r in (1, 2):
             total[r] += Q(3,2)*STEP*sqrt_hi(hi)*(hi*sqrt_hi(hi))**r*error
     return total
@@ -134,9 +147,9 @@ def frequency_costs(correction):
 def lattice_tail(r):
     n, u = MIN_SIZE, Q(CUTOFF)
     # The outer arc starts after the retained interval and contributes at
-    # most 144*(16*N^2)^3 / exp(N/200), decreasing by the 20th power bound.
+    # most 144*(16*N^2)^3 / exp(N/200), decreasing by the 22nd power bound.
     assert u*sqrt_hi(u) <= Q(".008")*2*n*sqrt_lo(2*n)
-    assert 144*16**3*n**6*factorial(20)*Q(200,n)**20 <= Q(1,1000)
+    assert 144*16**3*n**6*factorial(22)*Q(200,n)**22 <= Q(1,1000)
     # Differentiate -1200*t^(3r+1)*exp(-.157*t^2) for t=xi^(1/3)>=12.
     assert 300 <= 1200*(Q(".314")-Q(3*r+1, 144))
     return 1200*12**(3*r+1)*exp_neg(Q(".157")*u) + Q(1,1000)

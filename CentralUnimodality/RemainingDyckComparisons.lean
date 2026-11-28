@@ -27,7 +27,7 @@ theorem dyck_comparisons_iff_remaining : DyckComparisons ↔ RemainingDyckCompar
 
 theorem conjecture34_from_remaining (hD : RemainingDyckComparisons)
     (small : ∀ n≥224, ∀ δ≤1, 2*n+δ<4096 → CentralToMidpoint n δ)
-    (medium : ∀ n≥224, ∀ δ≤1, 4096≤2*n+δ → n<300000 → ThreeFifthsPeak n δ) : Conjecture34 :=
+    (medium : ∀ n≥224, ∀ δ≤1, 4096≤2*n+δ → n<150000 → ThreeFifthsPeak n δ) : Conjecture34 :=
   conjecture34_from_224 (dyck_comparisons_iff_remaining.mpr hD) small medium
 
 end CentralUnimodality

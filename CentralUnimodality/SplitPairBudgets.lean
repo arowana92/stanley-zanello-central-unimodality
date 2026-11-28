@@ -23,7 +23,7 @@ structure PairBudget where
   deriving Inhabited, DecidableEq, Lean.ToExpr
 
 def pairBudget (a b : CellInputs) : PairBudget := ⟨
-  a.bridgeNoise*(25000*jetNum b.trial 0+3*jetNum b.correction 0)+6250*jetNum a.firstBridge 0*jetNum b.correction 0,
+  a.bridgeNoise*(25000*jetNum b.trial 0+5*jetNum b.correction 0)+6250*jetNum a.firstBridge 0*jetNum b.correction 0,
   4*jetProduct 2 a.firstBridge b.trial+jetProduct 2 a.bridge b.correction,
   jetProduct 3 a.bridge b.trial,jetProduct 4 a.bridge b.trial⟩
 

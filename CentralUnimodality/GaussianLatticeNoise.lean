@@ -15,7 +15,7 @@ private theorem square_eval (b c : ℕ) (v : ℝ) :
     gaussianPolynomial b (logSquareRow c) v=exp (-(v^3/b))*((c:ℝ)*v^2+v^5)^2 := by
   simp [gaussianPolynomial,logSquareRow,realDense,densePoly]; ring
 
-def maxStep : ℚ := 144/300000
+def maxStep : ℚ := 1/1250
 def freeRemainderQ (v t : ℚ) := 13*v/192+t/64+(v+t)^4/384+(1/20)*(v+t)^7/1792
 def bridgeRemainderQ (v t : ℚ) := (7*v^4+2*t*v^3)/(180*32^2)+(1/1000)*(v+t)^7/1792
 

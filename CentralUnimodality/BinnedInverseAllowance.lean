@@ -3,7 +3,7 @@ module
 public import CentralUnimodality.CorrectedTimeBins
 
 /-! Compute a single inverse allowance from the certified half-unit
-costs. The estimate is uniform in every half-length above 300000. -/
+costs. The estimate is uniform in every half-length above 150000. -/
 @[expose] public section
 
 namespace CentralUnimodality.ReturnSplit
@@ -25,7 +25,7 @@ theorem conditioned_zero_bin {N : ℕ} (hn : 0<N) (K : ℕ → ℝ) {C : ℝ}
   have := mul_le_mul_of_nonneg_left (cap N le_rfl) (sqrt_nonneg (N:ℝ))
   linarith only [this]
 
-theorem conditioned_half_bin {N i : ℕ} (hn : 300000≤N) (ip : 0< i) {u : ℝ} (hu : u∈halfInterval i)
+theorem conditioned_half_bin {N i : ℕ} (hn : 150000≤N) (ip : 0< i) {u : ℝ} (hu : u∈halfInterval i)
     (K C : ℕ → ℝ) (c0 : ∀ k, 0≤C k) (kn : 0≤K N) (capN : K N≤C i)
     (caps : ∀ j≤N, K (N-j)≤C (cappedBin i (((N-j:ℕ):ℝ)*(u/N))))
     {E : ℝ} (e0 : 0≤E) (early : ∀ k, 19*i/20≤k → k≤ i → C k≤E) :

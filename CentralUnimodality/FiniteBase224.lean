@@ -10,7 +10,7 @@ namespace CentralUnimodality
 
 theorem conjecture34_from_224 (hD : DyckComparisons)
     (small : ∀ n≥224, ∀ δ≤1, 2*n+δ<4096 → CentralToMidpoint n δ)
-    (medium : ∀ n≥224, ∀ δ≤1, 4096≤2*n+δ → n<300000 → ThreeFifthsPeak n δ) : Conjecture34 := by
+    (medium : ∀ n≥224, ∀ δ≤1, 4096≤2*n+δ → n<150000 → ThreeFifthsPeak n δ) : Conjecture34 := by
   apply conjecture34_from_finite_peaks hD
   · intro n hn δ hs hm
     by_cases h : n≤223
