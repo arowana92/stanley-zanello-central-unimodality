@@ -84,3 +84,6 @@ public import CentralUnimodality.PolynomialSecondSplit
 public import CentralUnimodality.SecondResidualTransfer
 public import CentralUnimodality.SecondResidualRows
 public import CentralUnimodality.CertifiedQuadraticCells
+public import CentralUnimodality.CombinedCorrectionJets
+public import CentralUnimodality.CubicGaussianTable
+public import CentralUnimodality.QuadraticInversePricing

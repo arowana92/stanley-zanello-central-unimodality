@@ -14,7 +14,7 @@ law is cheaper than approximating its return convolution. -/
 namespace CentralUnimodality.PolynomialTrial
 open Real Set Witness ReturnSplit
 
-theorem outer_cell_amplitude {n δ i : ℕ} (hs : δ≤1) (hn : 150000≤n+δ) (high : 228≤ i)
+theorem outer_cell_amplitude {n δ i : ℕ} (hs : δ≤1) (hn : 7200≤n+δ) (high : 228≤ i)
     {ξ : ℝ} (nn : 0≤ξ) (band : |ξ|≤1728) (cell : |ξ|^(2/3:ℝ)∈halfInterval i) :
     |signedAmplitude n δ (ξ/cellScale (n+δ))-spectralTrial ξ|≤(outerCellAllowance i:ℝ) := by
   let N := n+δ
@@ -23,7 +23,7 @@ theorem outer_cell_amplitude {n δ i : ℕ} (hs : δ≤1) (hn : 150000≤n+δ) (
   let z := sqrt (u/(2*(N:ℝ)))
   have n0 : 0<N := by dsimp only [N]; omega
   have np : (0:ℝ)<N := by exact_mod_cast n0
-  have nr : (150000:ℝ)≤N := by exact_mod_cast hn
+  have nr : (7200:ℝ)≤N := by exact_mod_cast hn
   have sp : 0<S := cellScale_pos n0
   obtain ⟨range,phase⟩ := peak_frequency_scale n0 band
   have low : (i:ℝ)/2≤u := cell.1

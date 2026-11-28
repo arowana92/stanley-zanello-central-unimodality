@@ -47,7 +47,7 @@ theorem uniform_cell_amplitude {n δ i : ℕ} (hs : δ≤1) (hn : 150000≤n+δ)
   have uh : u≤H := by dsimp only [H]; rw [top_time]; exact_mod_cast hu.2
   have xh : |ξ|≤(topFrequency i:ℝ) := by rw [abs_of_nonneg nn]; exact cell.2.trans (top_frequency i)
   by_cases outside : 228≤ i
-  · simpa only [frequencyAllowance,ite_eq_right (Nat.not_lt.mpr outside)] using outer_cell_amplitude hs hn outside nn band hu
+  · simpa only [frequencyAllowance,ite_eq_right (Nat.not_lt.mpr outside)] using outer_cell_amplitude hs (by omega) outside nn band hu
   have inside : i<228 := by omega
   have h := cell_amplitude_cost hs hn inside tests band hu
   have inv := cell_conditioned_cost hn hu
