@@ -64,3 +64,6 @@ public import CentralUnimodality.PolynomialGaussianInputs
 public import CentralUnimodality.SpatialTrialTransfer
 public import CentralUnimodality.IntegralPeakWindow
 public import CentralUnimodality.InterpolatedAmplitude
+public import CentralUnimodality.SmoothSplitQuadrature
+public import CentralUnimodality.LocalizedInverse
+public import CentralUnimodality.ModerateFrequencyTail

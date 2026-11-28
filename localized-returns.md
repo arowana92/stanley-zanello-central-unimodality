@@ -130,6 +130,56 @@ The coefficient of $x^j$ in the integrated Taylor polynomial is this moment time
 
 On $[l/q,h/q]$ the rational verifier substitutes $x=(l+ht)/(q(1+t))$, clears the denominator, and checks each coefficient of the resulting polynomial. Positive coefficients certify a positive value for all $t\ge0$. The leading coefficient gives the right endpoint. Subtracting a rational margin before substitution gives signed lower bounds $1/8$, $128$, and $2$ on the three intervals in their spatial order. The same test on nine intervals covering $64\le v\le256$ gives $|F(v)|\le10^{-14}$ and covers the rest of the trial integral through $\xi=4096$. Including the lattice approximation and the full-period tail gives margins greater than $0.1241$, $125.709$, and $1.9991$, respectively. Run `python3 -B verify_polynomial_integral.py` from the checkout. [Independent sign calculation](verify_polynomial_integral.py) · [Interval sign test](CentralUnimodality/IntervalPolynomialSigns.lean) · [Kernel bound for the full-period error](CentralUnimodality/SpatialTrialTransfer.lean)
 
+## A direct polynomial peak certificate from 300,000
+
+For every half-length $N=n+\delta\ge300000$, the first spatial derivative for both staircase laws is positive on $[.1359,.339]$ and negative on $[.398,.631]$. The second derivative is negative on $[.333,.404]$. These signs give the induction's peak comparison for every $n\ge300000$. The following computer-assisted proof uses a polynomial trial on $0\le u=|\xi|^{2/3}\le144$. Run `python3 -B verify_direct_peak.py` to regenerate its rational bounds from the shared dyadic coefficients. [Verifier](verify_direct_peak.py) · [Rank comparison](CentralUnimodality/IntegralPeakWindow.lean)
+
+### The corrected split
+
+Let $I$ denote arcsine expectation in $x$ and $S_j$ the discrete split at half-length $j$. Under $I$, draw $K$ conditionally with the binomial law of parameters $j,x$. Then $K/j$ has law $S_j$ for $j>0$. Put $q=x(1-x)$. The second, third and fourth central moments of $K$ are $jq$, $jq(1-2x)$ and $3j^2q^2+jq(1-6q)$. In particular $\mathbb E[(K/j-x)^4]\le3/(16j^2)$, using $3q^2\le3/16$ and $q-3q^2\le3/16$. Taylor expansion through the cubic gives
+$$
+ \left|S_j g-Ig-\frac1{2j}I[q g'']\right|
+ \le \frac{\|g'''\|_\infty/24+\|g^{(4)}\|_\infty/128}{j^2}.
+$$
+The norms are on $[0,1]$. The quadratic Taylor inequality gives $|S_jg-Ig|\le\|g''\|_\infty/(8j)$. [Binomial moments](CentralUnimodality/BinomialFourthMoment.lean) · [Corrected quadrature](CentralUnimodality/CorrectedArcsineQuadrature.lean)
+
+Set $v=j\tau$, $\tau=u/N$, and $L_c A=cA'+v A''/2$. For polynomials $B,F$, write $g_v(x)=B(vx)F(v(1-x))$ and $H=B\star F=Ig_v$. Differentiating in $v$ and applying $I[(2x-1)d]=2I[qd']$ gives
+$$
+ I[qg_v'']=2v\{L_1 H-(L_{1/2}B)\star F-B\star(L_{1/2}F)\}.
+$$
+The integration by parts uses $x=\sin^2t$ and the vanishing of $\sin t\cos t$ at both endpoints. The first correction to $H$ in $S_jg_v$ is therefore $\tau$ times the expression in braces. If $|g_v^{(s)}|\le v^sD_s$ for $s=3,4$, the remaining error is at most $\tau^2(vD_3/24+v^2D_4/128)$. [Arcsine identities](CentralUnimodality/ArcsineDifferentiation.lean) · [Differential identity](CentralUnimodality/SplitFirstCorrection.lean) · [Lattice-scaled estimate](CentralUnimodality/SmoothSplitQuadrature.lean)
+
+### The residual at each time
+
+Use $p=e^{-v^3/24}$, $b=e^{-v^3/96}$, $p_1=-\ell_p p$, $b_1=-\ell_b b$, with the log coefficients below. The signed trial at time $j$ is $r_j(F(v)+\tau G(v))$, where $G=M_\sigma+L_{1/2}F$ uses the correction for walk parity $\sigma$. Its residual is $R_0(v)+\tau R_1(v)+O(\tau^2)$ with $R_0=p-b\star F$. The earlier smooth-residual estimate gives $|R_0|\le1.5\,10^{-15}$ and Lipschitz constant $3.6\,10^{-13}$.
+
+First replace $p,b$ by the polynomials $P,B$. With $P_1=-\ell_p P$ and $B_1=-\ell_b B$, the polynomial first residual is exactly
+$$
+ P_1-L_1(B\star F)-(B_1-L_{1/2}B)\star F-B\star M_\sigma .
+$$
+The corrected-split identity cancels the two copies of $B\star L_{1/2}F$. For the true symbols the first residual before that identity is $p_1-b_1\star F-b\star G-(v/2)I[q(b'' F-2b'F'+bF'')]$, where the two factor arguments are $vx$ and $v(1-x)$. The transfer cost follows from Gaussian errors through derivative two, $q\le1/4$, and the Chebyshev coefficient norms of $F,F',F''$ and $G$. The Gaussian ODE $b'+(v^2/32)b=0$ and the differentiated polynomial ODE defect bound the second error. In both parities the polynomial norm is below $2.852\,10^{-12}$ and the transfer allowance below $9.06\,10^{-16}$. [Exact residual calculation](verify_split_correction.py)
+
+For the order-$\tau^2$ remainder use half-unit bins. Write $D_s(A,C)$ for a bound on $\sum_{h=0}^s\binom{s}{h}|A^{(h)}(vx)C^{(s-h)}(v(1-x))|$ at every split of every $v$ in a bin. The bounds $E_p,E_b$ for $|W-(g+\tau g_1)|/\tau^2$ are the log-product bounds in the next section. The largest trigonometric argument is below $1.116$. The verifier checks the sixth-order constants $.05,.001$ against the first Euler-product zeros. Add the following four bounds to $E_p$, taking their suprema separately over possible splits.
+
+- The lattice product remainder is $E_b(|F|+\tau_*|G|)+|b_1G|$, where $\tau_*=144/300000$.
+- Applying the leading quadrature to the order-$\tau$ terms costs $v[D_2(b_1,F)+D_2(b,G)]/8$.
+- The cubic contribution to the corrected leading split is $vD_3(b,F)/24$.
+- The fourth-order remainder is $v^2D_4(b,F)/128$.
+
+Denote the resulting bound in bin $i$ by $E_i$. At $j=0$ the split is evaluation at zero and both quadrature errors vanish. For a half-unit bin of index $a$, substitute $z=v/256=(2a+1+t)/1024$, $|t|\le1$. Absolute coefficient sums after differentiation give rigorous polynomial derivative bounds there. If $v$ lies in bin $i$, the two factor indices sum to $i$ or $i-1$. Half-open bins suffice under the final integral.
+
+### Inversion and the three signs
+
+Split the inverse first-return sum at $j=N/20$. For $u\in[i\Delta,(i+1)\Delta)$, $\Delta=1/2$, the endpoint and early returns together contribute at most
+$$
+ 2\sqrt N\,\tau^2(E_i+\max_{\lfloor.95i\rfloor\le k\le i}E_k).
+$$
+For later $j$, the recurrence for $r_j$ makes $\sqrt j\,r_j$ nondecreasing. Thus $q_j=r_j/(2j-1)$ satisfies $q_j/r_N\le.501/[N(j/N)^{3/2}]$. If the remaining time lies in bin $k$ and $a=i\Delta>0$, then $j/N\ge p_k=\max(.05,1-(k+1)\Delta/a)$ and the bin contains at most $N\Delta/a+1$ possible indices. Add $\tau^2(.501)(\Delta/a+1/N)p_k^{-3/2}E_k$ for each $k\le\lfloor.95(i+1)\rfloor$. In the first bin the early estimate covers every return. The smooth residual costs $(1+|\xi|/2)\|R_0\|+u\operatorname{Lip}(R_0)$, the first correction costs $4\sqrt N\tau\|R_1\|$, and removing the final trial correction costs $\tau |G(u)|$. After inserting $\tau=u/N$, each size-dependent upper bound decreases with $N$. [Pointwise inverse and mass ratio](CentralUnimodality/LocalizedInverse.lean)
+
+Integrate using $\xi^r\,d\xi=(3/2)\sqrt u\,u^{3r/2}\,du$. The retained errors through $\xi=1728$ are below $.176$ and $148.4$ for orders one and two. From $1728$ to $.008S$, put $t=\xi^{1/3}$. The derivative of $-1200t^{3r+1}e^{-.157t^2}$ dominates $300t^{3r+2}e^{-.157t^2}$ for $t\ge12$ and $r\le2$. The remaining arc to $\pi S$ costs at most $.001$ by the twentieth term of the exponential series. The integrated Taylor polynomial has respective signed margins $1/5,160,2$. The trial tail and the compact Taylor remainder are included in the verifier. [Inner arc](CentralUnimodality/ModerateFrequencyTail.lean) · [Outer arc](CentralUnimodality/SpatialOuterTail.lean) · [Full rational check](verify_direct_peak.py)
+
+Lean checks the corrected quadrature, the differential identity, the inverse mass estimate and both omitted-arc bounds. The local input and derivative tables, their bin summation, and the retained integral comparison at $N\ge300000$ still require formal verification.
+
 ## Local bounds for the input symbols
 
 We give the details of the discretization so that each inequality between mesh points is specified. Use the [last-return identity, equations (2)–(5)](return-expansion.md#splitting-at-zero) and the [corrected input approximation](return-bounds.md#a-bound-for-the-signed-transform). Put $u=|\xi|^{2/3}$ for $\theta=\xi/s_0$, $\tau=u/N$, $v=j\tau$, and use $0\le u\le U$, $U=150,160,180$ in the respective rows. Here $\tau\le\tau_*=1/5000$, and all cosine and sinc arguments have modulus below $.8$. Write $[g]_{j,c}=\mathbb E g(\tau T)$ for gamma shape $j+c$, rate one. Recall the free and bridge continuum functions $p=e^{-v^3/24}$, $\rho=e^{-v^3/96}$ and the corrections $D_g=-g\ell_g-cg'-vg''/2$ from the cited approximation. The inputs $W_j$ are the free transform ($g=p,c=1$) and the transform conditional on a bridge ($g=\rho,c=1/2$).

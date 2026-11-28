@@ -70,33 +70,45 @@ def check_moments():
                 raise ArithmeticError("monomial integration check failed")
 
 
-def main():
-    check_moments()
-    row = read_rows()["trial"]
-    power = [int(c) for c in monomial_coefficients(row, 1)]
-    F = Fraction(sum(map(abs, row)), SCALE)
+def trial_tail_check(power):
     tail = Fraction(1, 10**14)
     endpoints = [64, 88, 112, 160, 184, 208, 232, 244, 250, 256]
     for lo, hi in zip(endpoints, endpoints[1:]):
         for sign in (1, -1):
             positive_on(power, SCALE, lo, hi, sign, -tail, q=256)
-    outside = omitted_lattice_tail()
+    return tail
+
+
+def compact_signs(windows, cutoff):
+    """Return each signed margin and its trial error through frequency cutoff."""
+    if not 512 <= cutoff <= 4096:
+        raise ValueError("cutoff outside the certified trial tail")
+    check_moments()
+    row = read_rows()["trial"]
+    power = [int(c) for c in monomial_coefficients(row, 1)]
+    norm = Fraction(sum(map(abs, row)), SCALE)
+    tail = trial_tail_check(power)
     for r in (1, 2):
         coeffs, den = moment_polynomial(power, r, ORDER)
-        trunc = F*Fraction(512**(r+1), r+1)*Fraction(512*631, 1000)**(ORDER+1)/factorial(ORDER+1)
-        omitted = tail*Fraction(4096**(r+1)-512**(r+1), r+1)
+        trunc = norm*Fraction(512**(r+1), r+1)*Fraction(512*631, 1000)**(ORDER+1)/factorial(ORDER+1)
+        omitted = tail*Fraction(cutoff**(r+1)-512**(r+1), r+1)
         if trunc + omitted >= Fraction(1, 100):
             raise ArithmeticError("insufficient integral tail bound")
-        for order, lo, hi, sign, margin in WINDOWS:
+        for order, lo, hi, sign, margin in windows:
             if order == r:
                 positive_on(coeffs, den, lo, hi, sign, margin)
-                allowance = (trunc + omitted + outside
-                             + Fraction(4096**(r+1), (r+1)*10**10))
-                if margin <= allowance:
-                    raise ArithmeticError("insufficient full-period sign margin")
-                lower = Fraction(floor(10**6*(margin-allowance)), 10**6)
-                print(f"order {r}, {lo}/10000..{hi}/10000: Taylor margin {margin}, "
-                      f"full-period margin > {float(lower):.6f}", flush=True)
+                yield r, lo, hi, margin, trunc + omitted
+
+
+def main():
+    outside = omitted_lattice_tail()
+    for r, lo, hi, margin, trial_error in compact_signs(WINDOWS, 4096):
+        allowance = trial_error + outside + Fraction(4096**(r+1), (r+1)*10**10)
+        if margin <= allowance:
+            raise ArithmeticError("insufficient full-period sign margin")
+        lower = Fraction(floor(10**6*(margin-allowance)), 10**6)
+        print(f"order {r}, {lo}/10000..{hi}/10000: Taylor margin {margin}, "
+              f"full-period margin > {float(lower):.6f}", flush=True)
 
 
 if __name__ == "__main__":
