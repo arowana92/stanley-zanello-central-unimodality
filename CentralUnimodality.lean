@@ -72,5 +72,5 @@ public import CentralUnimodality.CertifiedFirstCorrection
 public import CentralUnimodality.CorrectedAmplitudeCost
 public import CentralUnimodality.BinnedInverseAllowance
 public import CentralUnimodality.RetainedBinIntegration
-public import CentralUnimodality.ModerateSpatialTransfer
+public import CentralUnimodality.UnboundedPolynomialPeak
 public import CentralUnimodality.LargePeakReduction

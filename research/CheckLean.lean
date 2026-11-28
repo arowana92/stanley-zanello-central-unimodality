@@ -419,3 +419,5 @@ example {m j : ℕ} (hm : 4096≤m) (hmid : staircaseDegree m≤2*(j+1))
 #print axioms ReturnSplit.conditioned_half_bin
 #print axioms PolynomialTrial.retained_error_from_bins
 #print axioms PolynomialTrial.certified_first_correction
+#print axioms peak_at_large_half_length
+#print axioms conjecture34_from_bounded_peaks
