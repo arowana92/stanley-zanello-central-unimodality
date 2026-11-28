@@ -14,7 +14,7 @@ open Real Set Witness intervalIntegral
 noncomputable def retainedError (n δ r : ℕ) :=
   ∫ ξ in (0:ℝ)..1728, |signedAmplitude n δ (ξ/cellScale (n+δ))-spectralTrial ξ| *ξ^r
 
-theorem retained_transfer {n δ r : ℕ} (hs : δ≤1) (hn : 150000≤n+δ) (hr : r≤2)
+theorem retained_transfer {n δ r : ℕ} (hs : δ≤1) (hn : 5000≤n+δ) (hr : r≤2)
     {x : ℝ} (hx : |x|≤0.631) :
     |rankIntegralOrder n δ r x-integratedTaylor r 1024 trialPower x|≤
       retainedError n δ r+1200*12^(3*r+1)*exp (-(0.157*144))+0.003 := by
@@ -36,9 +36,9 @@ theorem retained_transfer {n δ r : ℕ} (hs : δ≤1) (hn : 150000≤n+δ) (hr 
     exact mul_le_of_le_one_right (mul_nonneg (abs_nonneg _) (pow_nonneg h.1 _)) (abs_cos_le_one _)
   have compact : |(∫ ξ in (0:ℝ)..512,F ξ)-P|≤1/10^15 := compact_phase_bound hr hx
   have band : |∫ ξ in (512:ℝ)..1728,F ξ|≤1/1000 := trial_band_integral (by norm_num) hr x
-  have cut : 1728≤T := by have t := (long_scale_from_150000 hn).1; dsimp only [T]; linarith only [t]
+  have cut : 1728≤T := by have t := (long_scale_from_5000 hn).1; dsimp only [T]; linarith only [t]
   have middle := moderate_inner_tail hs (by omega) hr x cut (le_rfl : T≤0.008*cellScale (n+δ))
-  have outer := outer_rank_tail_from_150000 hs hn hr x
+  have outer := outer_rank_tail_from_5000 hs hn hr x
   have eq : rankIntegralOrder n δ r x-P=
       ((∫ ξ in (0:ℝ)..1728,A ξ)-(∫ ξ in (0:ℝ)..1728,F ξ))+
       ((∫ ξ in (0:ℝ)..512,F ξ)-P)+(∫ ξ in (512:ℝ)..1728,F ξ)+
@@ -77,12 +77,12 @@ private theorem tail_constants :
   · apply (mul_le_mul_of_nonneg_left exactBound (by norm_num)).trans
     norm_num at Q ⊢; exact Q
 
-theorem peak_of_retained_errors {n δ : ℕ} (hs : δ≤1) (hn : 150000≤n)
+theorem peak_of_retained_errors {n δ : ℕ} (hs : δ≤1) (hn : 5000≤n)
     (first : retainedError n δ 1≤0.176) (second : retainedError n δ 2≤148.4)
     (left : ∀ x∈Icc (0.1359:ℝ) 0.339, 1/5 ≤ integratedTaylor 1 1024 trialPower x)
     (middle : ∀ x∈Icc (0.333:ℝ) 0.404, integratedTaylor 2 1024 trialPower x≤ -160)
     (right : ∀ x∈Icc (0.398:ℝ) 0.631, integratedTaylor 1 1024 trialPower x≤ -2) : ThreeFifthsPeak n δ := by
-  apply threeFifths_of_integral_signs (by omega) hs
+  apply threeFifths_of_integral_signs hn hs
   · intro x hx
     have tr := (abs_le.mp (retained_transfer (n:=n) hs (by omega) (by decide : 1≤2) (x:=x)
       (abs_le.mpr ⟨by linarith only [hx.1],by linarith only [hx.2]⟩))).1

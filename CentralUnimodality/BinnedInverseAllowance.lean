@@ -3,7 +3,7 @@ module
 public import CentralUnimodality.CorrectedTimeBins
 
 /-! Compute a single inverse allowance from the certified half-unit
-costs. The estimate is uniform in every half-length above 150000. -/
+costs. The estimate is uniform in every half-length from 10,000 onward. -/
 @[expose] public section
 
 namespace CentralUnimodality.ReturnSplit
@@ -25,7 +25,7 @@ theorem conditioned_zero_bin {N : ℕ} (hn : 0<N) (K : ℕ → ℝ) {C : ℝ}
   have := mul_le_mul_of_nonneg_left (cap N le_rfl) (sqrt_nonneg (N:ℝ))
   linarith only [this]
 
-theorem conditioned_half_bin {N i : ℕ} (hn : 150000≤N) (ip : 0< i) {u : ℝ} (hu : u∈halfInterval i)
+theorem conditioned_half_bin {N i : ℕ} (hn : 10000≤N) (ip : 0< i) {u : ℝ} (hu : u∈halfInterval i)
     (K C : ℕ → ℝ) (c0 : ∀ k, 0≤C k) (kn : 0≤K N) (capN : K N≤C i)
     (caps : ∀ j≤N, K (N-j)≤C (cappedBin i (((N-j:ℕ):ℝ)*(u/N))))
     {E : ℝ} (e0 : 0≤E) (early : ∀ k, 19*i/20≤k → k≤ i → C k≤E) :
@@ -43,9 +43,9 @@ theorem conditioned_half_bin {N i : ℕ} (hn : 150000≤N) (ip : 0< i) {u : ℝ}
   have ulo : (i:ℝ)/2≤u := hu.1
   have up : 0<u := by linarith only [ulo,ip']
   have jle {j : ℕ} (h : j∈L) : j≤N := Nat.le_of_lt_succ (Finset.mem_range.mp (Finset.mem_sdiff.mp h).1)
-  have late {j : ℕ} (h : j∈L) : N≤20*j := by
+  have late {j : ℕ} (h : j∈L) : N<20*j := by
     by_contra! bad
-    exact (Finset.mem_sdiff.mp h).2 (Finset.mem_filter.mpr ⟨(Finset.mem_sdiff.mp h).1,bad.le⟩)
+    exact (Finset.mem_sdiff.mp h).2 (Finset.mem_filter.mpr ⟨(Finset.mem_sdiff.mp h).1,bad⟩)
   have hA (j : ℕ) (hj : j∈A) : K (N-j)≤E := by
     obtain ⟨r,small⟩ := Finset.mem_filter.mp hj
     have le : j≤N := Nat.le_of_lt_succ (Finset.mem_range.mp r)
@@ -55,7 +55,7 @@ theorem conditioned_half_bin {N i : ℕ} (hn : 150000≤N) (ip : 0< i) {u : ℝ}
   have group : (∑ k ∈ bins, ∑ j ∈ L.filter (fun j => tag j=k), f j)=∑ j ∈ L, f j := by
     apply Finset.sum_fiberwise_of_maps_to
     intro j hj
-    exact Finset.mem_range.mpr (Nat.lt_succ_of_le ((return_bin_index n0 (jle hj) hu).2.2.2 (late hj)).1)
+    exact Finset.mem_range.mpr (Nat.lt_succ_of_le ((return_bin_index n0 (jle hj) hu).2.2.2 (late hj).le).1)
   change conditionedCost N K≤2*sqrt N*(K N+E)+∑ j ∈ L, f j at reduce
   apply reduce.trans
   rw [← group]
@@ -71,7 +71,7 @@ theorem conditioned_half_bin {N i : ℕ} (hn : 150000≤N) (ip : 0< i) {u : ℝ}
     have le := jle hl
     have large := late hl
     have H := return_bin_index n0 le hu
-    have last := H.2.2.2 large
+    have last := H.2.2.2 large.le
     change tag j=k at t
     have share : (N:ℝ)*p≤j := by
       dsimp only [p,lateFraction]

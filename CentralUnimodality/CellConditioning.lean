@@ -53,7 +53,7 @@ theorem cell_conditioned_cost {N i : ℕ} (hn : 150000≤N) {u : ℝ} (hu : u∈
     have l : (qLate 0:ℝ)=0 := by simp [qLate]
     rw [l]; linarith only [e]
   · have ei := early i (by omega) le_rfl
-    have h := conditioned_half_bin hn (Nat.pos_of_ne_zero iz) hu (pricedTimeCost i N u) _ dpos
+    have h := conditioned_half_bin (N:=N) (by omega) (Nat.pos_of_ne_zero iz) hu (pricedTimeCost i N u) _ dpos
       (by rw [endpt]; exact pos _) (by rw [endpt,self]) (fun _ _ => (equal _).le) ((dpos i).trans ei) early
     rw [self] at h
     exact h.trans (add_le_add (le_refl _) (late_price hn (Nat.pos_of_ne_zero iz)))

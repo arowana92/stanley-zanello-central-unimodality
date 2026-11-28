@@ -13,7 +13,7 @@ open PolynomialTrial
 
 theorem peak_from_150000 {n δ : ℕ} (hs : δ≤1) (hn : 150000≤n) : ThreeFifthsPeak n δ := by
   obtain ⟨first,second⟩ := certified_retained_errors (n:=n) hs (by omega)
-  exact peak_from_retained_amplitudes hs hn (first.trans (by norm_num)) (second.trans (by norm_num))
+  exact peak_from_retained_amplitudes hs (by omega) (first.trans (by norm_num)) (second.trans (by norm_num))
 
 theorem peak_from_300000 {n δ : ℕ} (hs : δ≤1) (hn : 300000≤n) : ThreeFifthsPeak n δ :=
   peak_from_150000 hs (by omega)
