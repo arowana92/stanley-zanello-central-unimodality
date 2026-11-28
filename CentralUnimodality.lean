@@ -74,5 +74,5 @@ public import CentralUnimodality.VerifiedGaussianBins
 public import CentralUnimodality.CorrectedAmplitudeCost
 public import CentralUnimodality.BinnedInverseAllowance
 public import CentralUnimodality.RetainedBinIntegration
-public import CentralUnimodality.UnboundedPolynomialPeak
+public import CentralUnimodality.DirectPeakCertificate
 public import CentralUnimodality.LargePeakReduction

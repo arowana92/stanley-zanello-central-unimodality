@@ -426,3 +426,6 @@ example {m j : ℕ} (hm : 4096≤m) (hmid : staircaseDegree m≤2*(j+1))
 #print axioms PolynomialTrial.free_noise_bound
 #print axioms PolynomialTrial.bridge_noise_bound
 #print axioms PolynomialTrial.gaussian_witness_at
+#print axioms PolynomialTrial.certified_retained_errors
+#print axioms peak_from_300000
+#print axioms conjecture34_from_finite_peaks
