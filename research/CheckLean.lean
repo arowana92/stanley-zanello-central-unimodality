@@ -375,3 +375,6 @@ example {m j : ℕ} (hm : 4096≤m) (hmid : staircaseDegree m≤2*(j+1))
 #print axioms conjecture34_from_196
 #print axioms MarkedExcursion.firstReturn_absolute_area
 #print axioms uniform_smooth_amplitude
+#print axioms ReturnSplit.mixed_binomial_moment
+#print axioms ReturnSplit.residual_anchor
+#print axioms ReturnSplit.gaussian_residual_error

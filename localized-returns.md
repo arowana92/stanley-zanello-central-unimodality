@@ -24,6 +24,29 @@ For the proof, write $p_j=r_{j-1}-r_j$ for the fair probability of a first retur
 
 Thus $|H_j-p_j|\le|\theta|/4$ at each positive return time. In the inverse convolution, collect the coefficient of $E_N$ and leave the other terms as $H_j(E_N-E_{N-j})$. The first coefficient has modulus at most $r_N+N|\theta|/4$. The remaining terms total at most $br_N$, since $|H_j|\le p_j$. Division by $r_N$ and $1/r_N\le2\sqrt N$ give the stated estimate. [Return characteristic function](CentralUnimodality/ReturnCharacterMoment.lean) · [Cancellation in the inverse](CentralUnimodality/SmoothReturnInverse.lean)
 
+## Finite quadrature for the return split
+
+At half-length $N$, the zero-frequency split at $2k$ has mass $w_{N,k}=r_k r_{N-k}$. With $S_Ng=\sum_{k=0}^N w_{N,k}g(k/N)$, Lean proves
+$
+ |S_Ag-S_Ng|\le \frac{M}{8}\left(\frac1{A-1}-\frac1{N-1}\right),\qquad 2\le A\le N ,
+$
+whenever the absolute first-order Taylor remainder on $[0,1]$ is at most $M(y-x)^2/2$. To see the constant, draw $k$ from the law at $N+1$. Delete one position uniformly. The number remaining is $k-1$ with probability $x=k/(N+1)$ and $k$ otherwise. The new fraction has conditional mean $x$ and variance $x(1-x)/N^2$. The recurrence for $r_k$ proves that the remaining count has law $w_{N,\cdot}$. The same deletion proves the exact polynomial integration rule
+$
+ \sum_{k=0}^N w_{N,k}\binom{k}{a}\binom{N-k}{b}
+ =\binom N{a+b} r_a r_b .
+$
+[Quadrature proof](CentralUnimodality/ReturnSplitQuadrature.lean) · [Mixed binomial moments](CentralUnimodality/ReturnSplitMoments.lean)
+
+There is also a direct bound for the true last-return residual of any real trial sequence $f$. Write $t=2N+\sigma$ with $\sigma=0,1$, let $\omega=\theta/2$ be the frequency of the integer sum of heights, and give the trial coefficient at length $2j+\sigma$ the value $r_j f(j)$. Define
+$
+ P_t=\omega^2 t(t+1)(2t+1)/12,\qquad Q_k=\omega^2 k^2(2k+1)/6,\qquad H_t=\sum_{i=1}^t i^4 .
+$
+On $|\omega|t\le1$, if $|f(j)|\le B$ for $0\le j\le N$, the complex residual differs from the real number
+$
+ e^{-P_t}-\sum_{k=0}^N w_{N,k}e^{-Q_k}f(N-k)
+$
+by at most $\omega^4(3H_t/4+8BH_N/5)$. The cosine and sinc products give the two quadratic exponents. The logarithmic errors per factor are bounded by quartic powers, and the exponential has derivative at most one on the nonpositive real axis. The zero frequency follows by counting walks with a specified endpoint. At fixed $|\omega|N^{3/2}$ and bounded $B$, this error is $O(1/N)$. Bounding the displayed quadrature and the variation of the residual at the frequencies needed for peak inversion remains necessary. [Coefficient bounds](CentralUnimodality/GaussianSymbols.lean) · [Residual bound](CentralUnimodality/GaussianResidual.lean)
+
 ## Local bounds for the input symbols
 
 We give the details of the discretization so that each inequality between mesh points is specified. Use the [last-return identity, equations (2)–(5)](return-expansion.md#splitting-at-zero) and the [corrected input approximation](return-bounds.md#a-bound-for-the-signed-transform). Put $u=|\xi|^{2/3}$ for $\theta=\xi/s_0$, $\tau=u/N$, $v=j\tau$, and use $0\le u\le U$, $U=150,160,180$ in the respective rows. Here $\tau\le\tau_*=1/5000$, and all cosine and sinc arguments have modulus below $.8$. Write $[g]_{j,c}=\mathbb E g(\tau T)$ for gamma shape $j+c$, rate one. Recall the free and bridge continuum functions $p=e^{-v^3/24}$, $\rho=e^{-v^3/96}$ and the corrections $D_g=-g\ell_g-cg'-vg''/2$ from the cited approximation. The inputs $W_j$ are the free transform ($g=p,c=1$) and the transform conditional on a bridge ($g=\rho,c=1/2$).

@@ -96,6 +96,8 @@ The finite arithmetic certificate consists of 1,417 time bins. All seven margins
 
 For both staircase families, `uniform_smooth_amplitude` controls the error of a proposed conditional Fourier amplitude from the endpoint residual and its variation in time. At scaled frequency bounded by $\xi$ the multipliers are $1+\xi/2$ and $1$, respectively, uniformly over all positive half-lengths. Its proof computes the exact first absolute area moment on the first-return event at each positive even time. A proposed amplitude meeting the necessary bounds throughout the peak interval is still required. [Proof and normalization](../localized-returns.md#a-size-uniform-bound-for-smooth-residuals)
 
+Lean bounds the error in the Gaussian approximations to the two walk inputs by $O(1/N)$ at fixed $|\omega|N^{3/2}$ and bounded trial amplitude. It compares the split quadrature at every $N\ge A\ge2$ with quadrature at $A$, and evaluates products of binomial coefficients on both pieces exactly. The residual of a trial function throughout the peak interval and its time variation still need certified bounds. [Statements and constants](../localized-returns.md#finite-quadrature-for-the-return-split)
+
 ## Remaining proof obligations
 
 The theorem `conjecture34_from_196` reduces the universal strict-partition statement to the Dyck comparisons and two size ranges for the peak interval. [Lean reduction](../CentralUnimodality/ThreeFifthsReduction.lean)
