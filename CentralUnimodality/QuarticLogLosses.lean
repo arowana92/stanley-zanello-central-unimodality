@@ -15,19 +15,19 @@ open Real Set
 noncomputable def cosLoss (x : ℝ) := -log (cos x)-x^2/2-x^4/12
 noncomputable def sincLoss (x : ℝ) := -log (sinc x)-x^2/6-x^4/180
 
-private theorem control {f d : ℝ → ℝ} {c : ℝ} (hf : ContinuousOn f (Icc 0 (9/8)))
-    (zero : f 0=0) (df : ∀ x∈Ioo 0 (9/8), HasDerivAt f (d x) x ∧ 0≤d x ∧ d x≤6*c*x^5) :
-    MonotoneOn f (Icc 0 (9/8)) ∧ ∀ x∈Icc 0 (9/8), f x≤c*x^6 := by
+theorem loss_power_control (p : ℕ) {f d : ℝ → ℝ} {c : ℝ} (hf : ContinuousOn f (Icc 0 (9/8)))
+    (zero : f 0=0) (df : ∀ x∈Ioo 0 (9/8), HasDerivAt f (d x) x ∧ 0≤d x ∧ d x≤((p:ℝ)+1)*c*x^p) :
+    MonotoneOn f (Icc 0 (9/8)) ∧ ∀ x∈Icc 0 (9/8), f x≤c*x^(p+1) := by
   have m := monotoneOn_of_hasDerivWithinAt_nonneg (convex_Icc (0:ℝ) (9/8)) hf (f':=d)
     (fun x hx => (df x (by simpa only [interior_Icc] using hx)).1.hasDerivWithinAt)
     (fun x hx => (df x (by simpa only [interior_Icc] using hx)).2.1)
-  let g := fun x : ℝ => c*x^6-f x
-  have cg : ContinuousOn g (Icc 0 (9/8)) := (continuous_const.mul (continuous_id.pow 6)).continuousOn.sub hf
-  have dg (x : ℝ) (hx : x∈Ioo 0 (9/8)) : HasDerivAt g (6*c*x^5-d x) x := by
-    convert (((hasDerivAt_pow 6 x).const_mul c).sub (df x hx).1) using 1
-    norm_num; ring
+  let g := fun x : ℝ => c*x^(p+1)-f x
+  have cg : ContinuousOn g (Icc 0 (9/8)) := (continuous_const.mul (continuous_id.pow (p+1))).continuousOn.sub hf
+  have dg (x : ℝ) (hx : x∈Ioo 0 (9/8)) : HasDerivAt g (((p:ℝ)+1)*c*x^p-d x) x := by
+    convert (((hasDerivAt_pow (p+1) x).const_mul c).sub (df x hx).1) using 1
+    push_cast; ring
   have n := monotoneOn_of_hasDerivWithinAt_nonneg (convex_Icc (0:ℝ) (9/8)) cg
-    (f':=fun x => 6*c*x^5-d x)
+    (f':=fun x => ((p:ℝ)+1)*c*x^p-d x)
     (fun x hx => (dg x (by simpa only [interior_Icc] using hx)).hasDerivWithinAt)
     (fun x hx => sub_nonneg.mpr (df x (by simpa only [interior_Icc] using hx)).2.2)
   refine ⟨m,fun x hx => ?_⟩
@@ -41,7 +41,7 @@ theorem cosLoss_control : MonotoneOn cosLoss (Icc 0 (9/8)) ∧
     unfold cosLoss
     exact (((continuous_cos.continuousOn.log (fun x hx => (pos hx).ne')).neg.sub
       ((continuous_id.pow 2).div_const 2).continuousOn).sub ((continuous_id.pow 4).div_const 12).continuousOn)
-  apply control (d:=fun x => sin x/cos x-x-x^3/3) hf (by norm_num [cosLoss])
+  apply loss_power_control 5 (d:=fun x => sin x/cos x-x-x^3/3) hf (by norm_num [cosLoss])
   intro x hx
   have cp := pos (Ioo_subset_Icc_self hx)
   have ⟨a,b,_,_⟩ := trig_quartic_slopes hx.1 hx.2.le
@@ -66,7 +66,7 @@ theorem sincLoss_control : MonotoneOn sincLoss (Icc 0 (9/8)) ∧
     unfold sincLoss
     exact (((continuous_sinc.continuousOn.log (fun x hx => (pos hx).ne')).neg.sub
       ((continuous_id.pow 2).div_const 6).continuousOn).sub ((continuous_id.pow 4).div_const 180).continuousOn)
-  apply control (d:=fun x => 1/x-cos x/sin x-x/3-x^3/45) hf (by norm_num [sincLoss])
+  apply loss_power_control 5 (d:=fun x => 1/x-cos x/sin x-x/3-x^3/45) hf (by norm_num [sincLoss])
   intro x hx
   have sp := sin_pos_of_pos_of_lt_pi hx.1 (by linarith only [hx.2,pi_gt_three])
   have ⟨_,_,a,b⟩ := trig_quartic_slopes hx.1 hx.2.le
@@ -84,6 +84,69 @@ theorem sincLoss_control : MonotoneOn sincLoss (Icc 0 (9/8)) ∧
     apply HasDerivAt.congr_of_eventuallyEq _ localEq
     convert ((((hasDerivAt_log hx.1.ne').sub ((hasDerivAt_sin x).log sp.ne')).sub
       ((hasDerivAt_pow 2 x).div_const 6)).sub ((hasDerivAt_pow 4 x).div_const 180)) using 1
+    norm_num; ring
+  · apply (mul_le_mul_iff_of_pos_right (mul_pos hx.1 sp)).mp
+    rw [zero_mul,scaled]; linarith only [lo]
+  · apply (mul_le_mul_iff_of_pos_right (mul_pos hx.1 sp)).mp
+    rw [scaled]; linarith only [hi]
+
+noncomputable def cosSexticLoss (x : ℝ) := cosLoss x-x^6/45
+noncomputable def sincSexticLoss (x : ℝ) := sincLoss x-x^6/2835
+
+theorem cosSexticLoss_control : MonotoneOn cosSexticLoss (Icc 0 (9/8)) ∧
+    ∀ x∈Icc 0 (9/8), cosSexticLoss x≤(1/70)*x^8 := by
+  have pos {x : ℝ} (hx : x∈Icc 0 (9/8)) := cos_pos_nine_eighths (by rw [abs_of_nonneg hx.1]; exact hx.2)
+  have hf : ContinuousOn cosSexticLoss (Icc 0 (9/8)) := by
+    unfold cosSexticLoss cosLoss
+    exact ((((continuous_cos.continuousOn.log (fun x hx => (pos hx).ne')).neg.sub
+      ((continuous_id.pow 2).div_const 2).continuousOn).sub
+      ((continuous_id.pow 4).div_const 12).continuousOn).sub ((continuous_id.pow 6).div_const 45).continuousOn)
+  apply loss_power_control 7 (d:=fun x => sin x/cos x-x-x^3/3-2*x^5/15) hf (by norm_num [cosSexticLoss,cosLoss])
+  intro x hx
+  have cp := pos (Ioo_subset_Icc_self hx)
+  have ⟨a,b,_,_⟩ := trig_sextic_slopes hx.1 hx.2.le
+  have eq : x*sinc x=sin x := by rw [sinc_of_ne_zero hx.1.ne']; field_simp [hx.1.ne']
+  have lo := mul_le_mul_of_nonneg_left a hx.1.le
+  have hi := mul_le_mul_of_nonneg_left b hx.1.le
+  rw [eq] at lo hi
+  refine ⟨?_,?_,?_⟩
+  · convert (((((hasDerivAt_cos x).log cp.ne').neg.sub ((hasDerivAt_pow 2 x).div_const 2)).sub
+      ((hasDerivAt_pow 4 x).div_const 12)).sub ((hasDerivAt_pow 6 x).div_const 45)) using 1
+    · rfl
+    · norm_num; ring
+  · have h : x+x^3/3+2*x^5/15≤sin x/cos x := (le_div_iff₀ cp).mpr (by linarith only [lo])
+    linarith only [h]
+  · have h : sin x/cos x≤x+x^3/3+2*x^5/15+4*x^7/35 := (div_le_iff₀ cp).mpr (by linarith only [hi])
+    linarith only [h]
+
+theorem sincSexticLoss_control : MonotoneOn sincSexticLoss (Icc 0 (9/8)) ∧
+    ∀ x∈Icc 0 (9/8), sincSexticLoss x≤(1/32000)*x^8 := by
+  have pos {x : ℝ} (hx : x∈Icc 0 (9/8)) := sinc_pos_nine_eighths (by rw [abs_of_nonneg hx.1]; exact hx.2)
+  have hf : ContinuousOn sincSexticLoss (Icc 0 (9/8)) := by
+    unfold sincSexticLoss sincLoss
+    exact ((((continuous_sinc.continuousOn.log (fun x hx => (pos hx).ne')).neg.sub
+      ((continuous_id.pow 2).div_const 6).continuousOn).sub
+      ((continuous_id.pow 4).div_const 180).continuousOn).sub ((continuous_id.pow 6).div_const 2835).continuousOn)
+  apply loss_power_control 7 (d:=fun x => 1/x-cos x/sin x-x/3-x^3/45-2*x^5/945) hf
+    (by norm_num [sincSexticLoss,sincLoss])
+  intro x hx
+  have sp := sin_pos_of_pos_of_lt_pi hx.1 (by linarith only [hx.2,pi_gt_three])
+  have ⟨_,_,a,b⟩ := trig_sextic_slopes hx.1 hx.2.le
+  rw [sinc_of_ne_zero hx.1.ne'] at a b
+  have lo : cos x*x≤(1-x^2/3-x^4/45-2*x^6/945)*sin x := by
+    rwa [← mul_div_assoc,le_div_iff₀ hx.1] at a
+  have hi : (1-x^2/3-x^4/45-2*x^6/945-x^8/4000)*sin x≤cos x*x := by
+    rwa [← mul_div_assoc,div_le_iff₀ hx.1] at b
+  have scaled : (1/x-cos x/sin x-x/3-x^3/45-2*x^5/945)*(x*sin x)=
+      (1-x^2/3-x^4/45-2*x^6/945)*sin x-cos x*x := by field_simp [hx.1.ne',sp.ne']; ring
+  refine ⟨?_,?_,?_⟩
+  · have localEq : sincSexticLoss =ᶠ[nhds x] (fun y => log y-log (sin y)-y^2/6-y^4/180-y^6/2835) := by
+      filter_upwards [lt_mem_nhds hx.1,gt_mem_nhds (show x<π by linarith only [hx.2,pi_gt_three])] with y hp hpi
+      rw [sincSexticLoss,sincLoss,sinc_of_ne_zero hp.ne',log_div (sin_pos_of_pos_of_lt_pi hp hpi).ne' hp.ne']; ring
+    apply HasDerivAt.congr_of_eventuallyEq _ localEq
+    convert (((((hasDerivAt_log hx.1.ne').sub ((hasDerivAt_sin x).log sp.ne')).sub
+      ((hasDerivAt_pow 2 x).div_const 6)).sub ((hasDerivAt_pow 4 x).div_const 180)).sub
+      ((hasDerivAt_pow 6 x).div_const 2835)) using 1
     norm_num; ring
   · apply (mul_le_mul_iff_of_pos_right (mul_pos hx.1 sp)).mp
     rw [zero_mul,scaled]; linarith only [lo]

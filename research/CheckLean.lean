@@ -446,3 +446,7 @@ example {m j : ℕ} (hm : 4096≤m) (hmid : staircaseDegree m≤2*(j+1))
 #print axioms ReturnSplit.centered_high_bounds
 #print axioms ReturnSplit.sample_second_correction
 #print axioms ReturnSplit.sample_split_second
+#print axioms ReturnSplit.sample_split_polynomial_second
+#print axioms ReturnSplit.cosSexticLoss_control
+#print axioms ReturnSplit.sincSexticLoss_control
+#print axioms PolynomialTrial.outer_rank_tail_from_5000

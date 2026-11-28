@@ -81,4 +81,54 @@ theorem trig_quartic_slopes {x : ℝ} (hx : 0<x) (h : x≤9/8) :
   exact ⟨lo.trans (a.trans (by linarith only [ss.1])),(show sinc x≤_ by linarith only [ss.2]).trans (b.trans hi),
     (show cos x≤_ by linarith only [cc.2]).trans (c.trans sl),su.trans (d.trans (by linarith only [cc.1]))⟩
 
+private theorem sextic_brackets {z : ℝ} (hz : z∈Icc (0:ℝ) (81/64)) :
+    (1+z/3+2*z^2/15)*(cosPoly z+z^5/3628800)≤sincPoly z-z^5/39916800 ∧
+    sincPoly z+z^5/39916800≤(1+z/3+2*z^2/15+4*z^3/35)*(cosPoly z-z^5/3628800) ∧
+    cosPoly z+z^5/3628800≤(1-z/3-z^2/45-2*z^3/945)*(sincPoly z-z^5/39916800) ∧
+    (1-z/3-z^2/45-2*z^3/945-z^4/4000)*(sincPoly z+z^5/39916800)≤cosPoly z-z^5/3628800 ∧
+    0≤1-z/3-z^2/45-2*z^3/945-z^4/4000 := by
+  have sound (a : List ℤ) (h : rowTest 1 0 (projectiveRows 0 81 64 a)=true) :
+      0≤(realDense a).eval z := by
+    simpa using projective_bound 0 81 64 1 0 a (by decide) (by decide) h (x:=z) (by simpa using hz)
+  refine ⟨?_,?_,?_,?_,?_⟩
+  · have h := sound [0,0,0,32313600,-3062400,105750,-2035,-22] (by decide)
+    norm_num [realDense,densePoly,Polynomial.eval_add,Polynomial.eval_mul] at h
+    dsimp only [cosPoly,sincPoly]; linarith only [h]
+  · have h := sound [0,0,0,252806400,-218064000,19215630,-651805,11726,-132] (by decide)
+    norm_num [realDense,densePoly,Polynomial.eval_add,Polynomial.eval_mul] at h
+    dsimp only [cosPoly,sincPoly]; linarith only [h]
+  · have h := sound [0,0,0,0,7983360,-544950,13845,-199,2] (by decide)
+    norm_num [realDense,densePoly,Polynomial.eval_add,Polynomial.eval_mul] at h
+    dsimp only [cosPoly,sincPoly]; linarith only [h]
+  · have h := sound [0,0,0,0,1157587200,-839563200,52296960,-1304080,22390,189] (by decide)
+    norm_num [realDense,densePoly,Polynomial.eval_add,Polynomial.eval_mul] at h
+    dsimp only [cosPoly,sincPoly]; linarith only [h]
+  · have h := sound [756000,-252000,-16800,-1600,-189] (by decide)
+    norm_num [realDense,densePoly,Polynomial.eval_add,Polynomial.eval_mul] at h
+    linarith only [h]
+
+theorem trig_sextic_slopes {x : ℝ} (hx : 0<x) (h : x≤9/8) :
+    (1+x^2/3+2*x^4/15)*cos x≤sinc x ∧ sinc x≤(1+x^2/3+2*x^4/15+4*x^6/35)*cos x ∧
+    cos x≤(1-x^2/3-x^4/45-2*x^6/945)*sinc x ∧
+    (1-x^2/3-x^4/45-2*x^6/945-x^8/4000)*sinc x≤cos x := by
+  let z := x^2
+  have zn : 0≤z := sq_nonneg _
+  have zlim : z≤81/64 := (pow_le_pow_left₀ hx.le h 2).trans (by norm_num)
+  obtain ⟨a,b,c,d,e⟩ := sextic_brackets ⟨zn,zlim⟩
+  obtain ⟨C,S⟩ := trig_polynomials hx
+  have cc := abs_le.mp C
+  have ss := abs_le.mp S
+  change -(z^5/3628800)≤cos x-cosPoly z ∧ _≤z^5/3628800 at cc
+  change -(z^5/39916800)≤sinc x-sincPoly z ∧ _≤z^5/39916800 at ss
+  have t : 0≤1-z/3-z^2/45-2*z^3/945 := by linarith only [e,pow_nonneg zn 4]
+  have lo := mul_le_mul_of_nonneg_left (show cos x≤cosPoly z+z^5/3628800 by linarith only [cc.2])
+    (show 0≤1+z/3+2*z^2/15 by positivity)
+  have hi := mul_le_mul_of_nonneg_left (show cosPoly z-z^5/3628800≤cos x by linarith only [cc.1])
+    (show 0≤1+z/3+2*z^2/15+4*z^3/35 by positivity)
+  have sl := mul_le_mul_of_nonneg_left (show sincPoly z-z^5/39916800≤sinc x by linarith only [ss.1]) t
+  have su := mul_le_mul_of_nonneg_left (show sinc x≤sincPoly z+z^5/39916800 by linarith only [ss.2]) e
+  rw [show x^4=z^2 by dsimp [z]; ring,show x^6=z^3 by dsimp [z]; ring,show x^8=z^4 by dsimp [z]; ring]
+  exact ⟨lo.trans (a.trans (by linarith only [ss.1])),(show sinc x≤_ by linarith only [ss.2]).trans (b.trans hi),
+    (show cos x≤_ by linarith only [cc.2]).trans (c.trans sl),su.trans (d.trans (by linarith only [cc.1]))⟩
+
 end CentralUnimodality.ReturnSplit

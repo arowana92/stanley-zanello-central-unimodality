@@ -80,4 +80,4 @@ public import CentralUnimodality.RemainingDyckComparisons
 public import CentralUnimodality.GroundColumnRanks
 public import CentralUnimodality.LargePeakReduction
 public import CentralUnimodality.FirstReturnInnerArc
-public import CentralUnimodality.SecondOrderQuadrature
+public import CentralUnimodality.PolynomialSecondSplit
