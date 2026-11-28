@@ -16,10 +16,10 @@ $$
 $$
 The average of two integers loses at most half a unit at each step. Summing over the $\lfloor m/2\rfloor+1$ endpoints gives an error allowance of $m(\lfloor m/2\rfloor+1)$ in doubled units. A difference between two stored rank sums larger than this allowance in doubled units proves a strict comparison of the true ranks. [Formal error and comparison theorems](CentralUnimodality/RoundedDeficit.lean)
 
-At $U=2^{128}$, the integer implementation separates every adjacent pair on the finite induction interval from $\lfloor m^{3/2}/10\rfloor$ through $\lfloor D/2\rfloor$ in both shapes at $n=192$. The respective corank peaks are 2615 for $m=384$ and 2627 for $m=385$. This calculation checks 35,453 comparisons in Python. A separate, unrounded recurrence gives exact counts inside all 36,962 upper-half enclosures. The Lean theorem certifies the rounding rule and its error bound. Formal verification of the packed evaluation at these sizes is pending. The program also compares its enclosures with direct partition enumeration for both shapes through 12 rows at three precisions. [Reproducible integer check](verify_rounded_deficits.py)
+At $U=2^{128}$, the integer implementation separates every adjacent pair on the finite induction interval from $\lfloor m^{3/2}/10\rfloor$ through $\lfloor D/2\rfloor$ in both shapes at $n=192$. The respective corank peaks are 2615 for $m=384$ and 2627 for $m=385$. This calculation checks 35,453 comparisons in Python. A separate, unrounded recurrence gives exact counts inside all 36,962 upper-half enclosures. Lean independently verifies the packed evaluation and its comparison with the true integer ranks, using the smaller unit $U=2^{100}$ for these two shapes. [Packed calculation in Lean](CentralUnimodality/RoundedBase.lean) The program also compares its enclosures with direct partition enumeration for both shapes through 12 rows at three precisions. [Reproducible integer check](verify_rounded_deficits.py)
 
 ~~~sh
-lake build CentralUnimodality.RoundedDeficit
+lake build CentralUnimodality.RoundedBase
 python3 -B verify_rounded_deficits.py --rows 192 --precision 128 --exact
 ~~~
 

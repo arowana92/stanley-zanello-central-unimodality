@@ -26,16 +26,19 @@ private theorem small_start_le_midpoint {n δ : ℕ} (hn : 96≤n) (hs : n≤204
     linarith only [hl,hb,hD,sq_nonneg (n:ℝ)]
   exact_mod_cast H
 
-theorem midpoint_through_191 {n δ : ℕ} (hn : 96≤n) (hbase : n≤191) (hδ : δ≤1) :
-    CentralToMidpoint n δ := by
-  have hu : UnimodalOn (rankCount (2*n+δ)) 0 (n*(n+δ)) := by
-    rcases (show δ=0 ∨ δ=1 by omega) with rfl|rfl
-    · simpa using (central_through_191 hbase).1
-    · exact (central_through_191 hbase).2
+theorem midpoint_of_full_row {n δ : ℕ} (hn : 96≤n) (hbase : n≤2048) (hδ : δ≤1)
+    (hu : UnimodalOn (rankCount (2*n+δ)) 0 (n*(n+δ))) : CentralToMidpoint n δ := by
   have H := (unimodalOn_iff_no_valley _ (Nat.zero_le _)).mp hu.reverse
-  apply (unimodalOn_iff_no_valley _ (small_start_le_midpoint hn (by omega) hδ)).mpr
+  apply (unimodalOn_iff_no_valley _ (small_start_le_midpoint hn hbase hδ)).mpr
   intro i j _ hij hj hf
   exact H i j (Nat.zero_le _) hij (by omega) hf
+
+theorem midpoint_through_191 {n δ : ℕ} (hn : 96≤n) (hbase : n≤191) (hδ : δ≤1) :
+    CentralToMidpoint n δ := by
+  apply midpoint_of_full_row hn (by omega) hδ
+  rcases (show δ=0 ∨ δ=1 by omega) with rfl|rfl
+  · simpa using (central_through_191 hbase).1
+  · exact (central_through_191 hbase).2
 
 theorem conjecture34_from_192 (hD : DyckComparisons)
     (hsmall : ∀ n ≥ 192, ∀ δ ≤ 1, 2*n+δ < 4096 → CentralToMidpoint n δ)
