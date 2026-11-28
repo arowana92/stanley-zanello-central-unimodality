@@ -56,3 +56,4 @@ public import CentralUnimodality.UpperHalfVariance
 public import CentralUnimodality.MarkedLateRankBounds
 public import CentralUnimodality.ScaledPrefixSurvival
 public import CentralUnimodality.ThreeFifthsReduction
+public import CentralUnimodality.RoundedDeficit

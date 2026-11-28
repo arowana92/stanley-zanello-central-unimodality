@@ -6,6 +6,23 @@ Write $m=2n$ or $2n+1$, $D=\lfloor m^2/4\rfloor$ and $b_k=a_{D-k}$. The [first-p
 $$1\le k\le\min\{\lfloor D/2\rfloor,\lfloor 2m^{3/2}\rfloor\}.$$
 The upper endpoint is computed by taking an integer square root of $4m^3$, with the resulting integer and its successor checked by squaring. The single-scale computation makes **150,138,442** such comparisons over both families at $9\le n\le1019$. The extension below uses a separate certificate for the first 4096 coranks.
 
+## Fixed-point enclosures for adjacent ranks
+
+For a partition with exactly $d$ parts, set $i=d(m-d)-j$, where $j$ is its rank. The largest $d$ allowed parts have sum $d(m-d)$. At a positive admissible length $d$, the two predecessor counts at time $m-1$ have indices $i$ and $i-(m-2d)$, respectively. Negative indices contribute zero. This gives an exact recurrence using only smaller or equal deficit indices. [Endpoint recurrence in Lean](CentralUnimodality/EndpointDeficit.lean)
+
+Start the empty path with an integer weight $U$. At each step average the two stored predecessors and round down. A missing predecessor has weight zero. If the stored entry is $A$ and the true endpoint count is $v$, Lean proves
+$$
+2A\,2^m\le 2U v\le(2A+m)\,2^m .
+$$
+The average of two integers loses at most half a unit at each step. Summing over the $\lfloor m/2\rfloor+1$ endpoints gives an error allowance of $m(\lfloor m/2\rfloor+1)$ in doubled units. A difference between two stored rank sums larger than this allowance in doubled units proves a strict comparison of the true ranks. [Formal error and comparison theorems](CentralUnimodality/RoundedDeficit.lean)
+
+At $U=2^{128}$, the integer implementation separates every adjacent pair on the finite induction interval from $\lfloor m^{3/2}/10\rfloor$ through $\lfloor D/2\rfloor$ in both shapes at $n=192$. The respective corank peaks are 2615 for $m=384$ and 2627 for $m=385$. This calculation checks 35,453 comparisons in Python. A separate, unrounded recurrence gives exact counts inside all 36,962 upper-half enclosures. The Lean theorem certifies the rounding rule and its error bound. Formal verification of the packed evaluation at these sizes is pending. The program also compares its enclosures with direct partition enumeration for both shapes through 12 rows at three precisions. [Reproducible integer check](verify_rounded_deficits.py)
+
+~~~sh
+lake build CentralUnimodality.RoundedDeficit
+python3 -B verify_rounded_deficits.py --rows 192 --precision 128 --exact
+~~~
+
 ## Truncated ballot recurrence
 
 The [ballot bijection](README.md#exact-coefficient-checks) gives the missing-cell count of a word as $K=\sum_{v=1}^t\lfloor H_v/2\rfloor$, where $H_v$ is its height after step $v$. For endpoint $h$ the minimum area is $A(h)=\lfloor h^2/4\rfloor$. The path must visit each of the heights $1,\ldots,h$ and an alternating prefix followed by a straight climb attains their total contribution. With $d=(t-h)/2$ down steps, the greatest area is $D_t-d(d+1)/2$, $D_t=\lfloor t^2/4\rfloor$. Indeed the $d$ selected labels have sum at least $1+\cdots+d$, attained by putting all down steps last.

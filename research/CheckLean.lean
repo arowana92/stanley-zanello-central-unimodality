@@ -369,3 +369,4 @@ example {m j : ℕ} (hm : 4096≤m) (hmid : staircaseDegree m≤2*(j+1))
 
 #print axioms MarkedExcursion.BinArithmetic.Peak.upper_half_three_fifths
 #print axioms conjecture34_from_three_fifths
+#print axioms EndpointDeficit.rank_lt_of_separated
