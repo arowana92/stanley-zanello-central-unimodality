@@ -92,6 +92,10 @@ For both parities and every $m\ge4096$, put $D=\lfloor m^2/4\rfloor$ and $s=m\sq
 
 The finite arithmetic certificate consists of 1,417 time bins. All seven margins exceed $22/1000$ in units of surviving probability divided by suffix variance. For the lowest parameter interval the three exact bounds, expressed in millionths, are $353187$ for the prefix, $172493$ for early losses, and $158513$ for late losses, leaving $22181$. The odd hitting times occupy disjoint cells. The proof charges each cell to the lengths of its intersections with the time bins, including the endpoint cells. This makes the bounds apply to all lengths in the theorem. Run `python3 -B verify_peak_growth.py` to recompute each rational margin or add `--lean-witnesses` to regenerate the shift choices. [Kernel-checked arithmetic](../CentralUnimodality/PeakGrowthChecks.lean) · [Lattice sum](../CentralUnimodality/PeakTimeSum.lean) · [Independent calculation](../verify_peak_growth.py)
 
+## A size-uniform estimate near the peak
+
+For both staircase families, `uniform_smooth_amplitude` controls the error of a proposed conditional Fourier amplitude from the endpoint residual and its variation in time. At scaled frequency bounded by $\xi$ the multipliers are $1+\xi/2$ and $1$, respectively, uniformly over all positive half-lengths. Its proof computes the exact first absolute area moment on the first-return event at each positive even time. A proposed amplitude meeting the necessary bounds throughout the peak interval is still required. [Proof and normalization](../localized-returns.md#a-size-uniform-bound-for-smooth-residuals)
+
 ## Remaining proof obligations
 
 The theorem `conjecture34_from_196` reduces the universal strict-partition statement to the Dyck comparisons and two size ranges for the peak interval. [Lean reduction](../CentralUnimodality/ThreeFifthsReduction.lean)

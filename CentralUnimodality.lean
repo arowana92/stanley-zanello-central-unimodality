@@ -58,3 +58,4 @@ public import CentralUnimodality.ScaledPrefixSurvival
 public import CentralUnimodality.ThreeFifthsReduction
 public import CentralUnimodality.FiniteBase196
 public import CentralUnimodality.RoundedBase
+public import CentralUnimodality.SmoothBallotAmplitude

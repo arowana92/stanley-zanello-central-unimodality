@@ -12,6 +12,18 @@ We use the signed walk of length $m+1=2N+\delta$, $s_0=(2N)^{3/2}$ and $d=(m+1+\
 
 The last line also applies at smaller coranks. At $N\ge125000$ a separate estimate below bounds the density error by $.069$. The proof estimates errors at the time remaining after a return. A late return can leave a substantial error there but has small point probability and a decaying conditional area transform. [Previous bound with a uniform return error](return-bounds.md) · [Rational verifier](verify_local_returns.py)
 
+## A size-uniform bound for smooth residuals
+
+A separate kernel-checked estimate exploits cancellation in the inverse convolution. Let $N=n+\delta\ge1$, let $r_N=4^{-N}\binom{2N}{N}$, and fix the frequency $\theta$. Given a proposed series $V$, let $E_j$ be coefficient $2j+1-\delta$ in the free series minus the bridge series times $V$, evaluated at area frequency $\theta/2$. If $|E_N|\le e$, $|E_N-E_{N-j}|\le jb/N$ for $0\le j\le N$, and $|\theta|N\sqrt N\le\xi$, then the conditional signed amplitude differs from the proposed real coefficient divided by $r_N$ by at most
+$
+(1+\xi/2)e+b.
+$
+The bound holds for both parities and has no upper size cutoff. Applying it to the signs around the peak requires a trial series with certified residual and variation bounds. [Lean amplitude theorem](CentralUnimodality/SmoothBallotAmplitude.lean)
+
+For the proof, write $p_j=r_{j-1}-r_j$ for the fair probability of a first return at time $2j$, and let $H_j$ be its unnormalized Fourier transform. Take $p_0=H_0=0$. The identity $\sum_{j=1}^N j p_j=Nr_N$ follows by induction from the central binomial recurrence. For every $j\ge1$ the unnormalized first absolute area moment of those returns is exactly $1/2$. Indeed, a positive first return encloses a Dyck path of semilength $d=j-1$. Its area equals the sum of height plus one over the $2d+1$ vertices of that inner path. At threshold $h\le d$, the number of marked vertices at height at least $h$ is $\binom{2d+1}{d-h}$. Summing these tails gives $4^d$. Reflection doubles the total, and fair weighting gives $2\cdot 4^d/4^j=1/2$. [Marked-height sum](CentralUnimodality/ExcursionFirstMoment.lean) · [First-return moment](CentralUnimodality/FirstReturnArea.lean)
+
+Thus $|H_j-p_j|\le|\theta|/4$ at each positive return time. In the inverse convolution, collect the coefficient of $E_N$ and leave the other terms as $H_j(E_N-E_{N-j})$. The first coefficient has modulus at most $r_N+N|\theta|/4$. The remaining terms total at most $br_N$, since $|H_j|\le p_j$. Division by $r_N$ and $1/r_N\le2\sqrt N$ give the stated estimate. [Return characteristic function](CentralUnimodality/ReturnCharacterMoment.lean) · [Cancellation in the inverse](CentralUnimodality/SmoothReturnInverse.lean)
+
 ## Local bounds for the input symbols
 
 We give the details of the discretization so that each inequality between mesh points is specified. Use the [last-return identity, equations (2)–(5)](return-expansion.md#splitting-at-zero) and the [corrected input approximation](return-bounds.md#a-bound-for-the-signed-transform). Put $u=|\xi|^{2/3}$ for $\theta=\xi/s_0$, $\tau=u/N$, $v=j\tau$, and use $0\le u\le U$, $U=150,160,180$ in the respective rows. Here $\tau\le\tau_*=1/5000$, and all cosine and sinc arguments have modulus below $.8$. Write $[g]_{j,c}=\mathbb E g(\tau T)$ for gamma shape $j+c$, rate one. Recall the free and bridge continuum functions $p=e^{-v^3/24}$, $\rho=e^{-v^3/96}$ and the corrections $D_g=-g\ell_g-cg'-vg''/2$ from the cited approximation. The inputs $W_j$ are the free transform ($g=p,c=1$) and the transform conditional on a bridge ($g=\rho,c=1/2$).

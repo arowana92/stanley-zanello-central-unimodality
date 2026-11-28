@@ -91,7 +91,7 @@ theorem sum_height (d : ℕ) (f : ℕ → ℝ) :
   rw [← Finset.sum_filter,Finset.sum_const,nsmul_eq_mul]
   rfl
 
-private theorem path_area (w : List Bool) :
+theorem path_area (w : List Bool) :
     ∑ i ∈ Finset.range (w.length+1), height (w,i) = walkArea w := by
   induction w using List.reverseRecOn with
   | nil => simp [height,displacement,walkArea,heights]
