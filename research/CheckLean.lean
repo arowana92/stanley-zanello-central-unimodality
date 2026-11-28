@@ -360,3 +360,12 @@ example {n : ℕ} (hn : n ≤ 191) :
 #print axioms MarkedExcursion.marked_late_rank_bound
 #print axioms MarkedExcursion.scaled_prefix_survival
 #print axioms MarkedExcursion.fair_ruin_identity
+
+example {m j : ℕ} (hm : 4096≤m) (hmid : staircaseDegree m≤2*(j+1))
+    (hj : j+1≤staircaseDegree m)
+    (hl : (3/5)*MarkedExcursion.BinArithmetic.sizeScale m≤(staircaseDegree m:ℝ)-(j+1)) :
+    rankCount m (j+1)<rankCount m (j+2) :=
+  MarkedExcursion.BinArithmetic.Peak.upper_half_three_fifths hm hmid hj hl
+
+#print axioms MarkedExcursion.BinArithmetic.Peak.upper_half_three_fifths
+#print axioms conjecture34_from_three_fifths
