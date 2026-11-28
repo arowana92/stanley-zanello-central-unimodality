@@ -67,6 +67,8 @@ Lean also computes the two signed polynomials directly from the checked trial ro
 
 For the cellwise bounds, round the exact Chebyshev coefficients of $R_2$ to the nearest multiple of $2^{-120}$. If the polynomial has $d+1$ coefficients, this costs at most $(d+1)2^{-121}$ on the entire interval. Shift that polynomial to each half-unit cell and bound it by the sum of the absolute shifted coefficients. For $G_\sigma$ combine the signed coefficients of the trial and its drift *before* bounding derivatives on a cell. This preserves their cancellation.
 
+Lean also permits truncating the symmetric dyadic row. The proof converts physical monomials with $v=128(1-x)$, rounds at scale $2^{-120}$, and charges each discarded Chebyshev mode its absolute coefficient. Both dyadic rows have 611 modes after trimming trailing zeros. Keeping modes 0 through 255 costs less than $2\times10^{-9}$ in either parity. The independent integer calculation with these prefixes and the Lean Gaussian allowance gives retained errors below $0.130777$ and $34.134210$. The three full-period margins exceed $0.064400$, $1.864400$, and $119.258411$. The Lean cell theorem takes the coefficient and cell evaluations as hypotheses. [Change of basis](CentralUnimodality/PhysicalChebyshevRows.lean) · [Rounding and truncation](CentralUnimodality/RoundedQuadraticRows.lean) · [Cell theorem](CentralUnimodality/LocalQuadraticResidual.lean)
+
 After subtracting $R_2$, the cubic error has five terms, in addition to the free cubic symbol error. Let $E_\rho$ denote the cubic bridge error per unit $\tau^3$. In each product evaluate the left and right factors in their respective split cells. Use $D_r(A,B)$ for the local sum of absolute derivative products. The five bounds, per unit $\tau^3$, are
 
 - $E_\rho(|F|+s|G_\sigma|)+|\rho_2G_\sigma|$ for the bridge product.
@@ -86,5 +88,6 @@ On $114\le u\le144$ use $100e^{-.186u}$ for the true signed amplitude and check 
 python3 -B verify_second_split.py
 python3 -B verify_quadratic_peak.py
 python3 -B verify_quadratic_peak.py --lean-gaussian-bound
+python3 -B verify_quadratic_peak.py --lean-cheb-prefix
 lake env lean --run research/ExportSecondResidual.lean | python3 -B verify_second_split.py --check-lean-rows
 ~~~

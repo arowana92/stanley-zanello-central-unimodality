@@ -1,6 +1,7 @@
 module
 
 public import CentralUnimodality.PackedBaseResidual
+public import CentralUnimodality.BalancedDensePacking
 
 /-! Exact dense evaluation of arbitrary beta products. A single signed integer
 multiplication supplies all convolution coefficients, and the output shares
@@ -14,7 +15,17 @@ def productBits (a b : List ℤ) := (coefficientMass a*coefficientMass b).log2+1
 
 def packedDenseProduct (a b : List ℤ) :=
   let k := productBits a b
-  centeredDigits k (a.length+b.length-1) (packDense (k+1) a*packDense (k+1) b)
+  blockCenteredDigits k 7 (a.length+b.length-1) (blockPackDense (k+1) 6 a*blockPackDense (k+1) 6 b)
+
+theorem packedDenseProduct_eq (a b : List ℤ) :
+    packedDenseProduct a b=let k := productBits a b
+      centeredDigits k (a.length+b.length-1) (packDense (k+1) a*packDense (k+1) b) := by
+  simp only [packedDenseProduct,blockCenteredDigits_exact,blockPackDense_exact]
+
+@[simp] theorem packedDenseProduct_length (a b : List ℤ) :
+    (packedDenseProduct a b).length=a.length+b.length-1 := by
+  rw [packedDenseProduct_eq]
+  exact centeredDigits_length ..
 
 theorem packed_dense_product (a b : List ℤ) : densePoly (packedDenseProduct a b)=densePoly a*densePoly b := by
   let k := productBits a b
@@ -24,7 +35,7 @@ theorem packed_dense_product (a b : List ℤ) : densePoly (packedDenseProduct a 
   have eval : packDense (k+1) a*packDense (k+1) b=(densePoly a*densePoly b).eval (2^(k+1)) := by
     rw [eval_mul,packDense_eval,packDense_eval]
   ext i
-  rw [dense_coeff]
+  rw [packedDenseProduct_eq,dense_coeff]
   change (centeredDigits k (a.length+b.length-1) _)[i]?.getD 0=_
   rw [eval]
   by_cases hi : i<a.length+b.length-1

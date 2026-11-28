@@ -47,13 +47,30 @@ def trial_cells():
     return cell_jets(trial,7), both
 
 
-def residual_cells(gaussian_error):
+def symmetric_dyadic_row(coeffs, den):
+    scale = 2**120
+    result = []
+    for k, c in enumerate(coeffs):
+        multiplicity = 1 if k == 0 else 2
+        d = multiplicity*den
+        result.append(multiplicity*((2*c*scale+d)//(2*d)))
+    return result
+
+
+def residual_cells(gaussian_error, truncated=False):
     result = [Q(0)]*CELLS
     for poly in residuals():
         coeffs,den = chebyshev_coefficients(poly)
         scale = 2**120
-        row = [round(Q(c*scale,den)) for c in coeffs]
-        omitted = Q(len(row),2*scale)
+        if truncated:
+            row = symmetric_dyadic_row(coeffs, den)
+            tail = sum(map(abs, row[256:]))
+            assert len(row) <= 1031 and Q(tail,scale) < Q(2,10**9)
+            omitted = Q(2*1031+1+tail,scale)
+            row = row[:256]
+        else:
+            row = [round(Q(c*scale,den)) for c in coeffs]
+            omitted = Q(len(row),2*scale)
         while row and row[-1]==0:
             row.pop()
         jets = cell_jets(monomial_coefficients(row,scale),1)
@@ -161,7 +178,7 @@ def return_cost(i, costs):
     return inverse
 
 
-def retained_errors(use_lean_gaussian_bound=False):
+def retained_errors(use_lean_gaussian_bound=False, truncated=False):
     check_symbol_bounds()
     assert MAX_STEP <= Q(".02") and MIN_SIZE//20+1 >= 501
     assert CUTOFF*sqrt_hi(CUTOFF) <= Q(".001")*2*MIN_SIZE*sqrt_lo(2*MIN_SIZE)
@@ -170,9 +187,9 @@ def retained_errors(use_lean_gaussian_bound=False):
     first_error = check_first_correction(CUTOFF)
     replacement = second_input_error()
     assert replacement <= Q(18,10**14)
-    if use_lean_gaussian_bound:
+    if use_lean_gaussian_bound or truncated:
         replacement = Q(3,10**7)  # second_residual_transfer on [0,144].
-    second = residual_cells(replacement)
+    second = residual_cells(replacement, truncated)
     trial,signed = trial_cells()
     cubic = cubic_costs(trial,signed)
     total = [Q(0)]*3
@@ -208,7 +225,10 @@ def main():
     parser = ArgumentParser(description=__doc__)
     parser.add_argument('--lean-gaussian-bound', action='store_true',
                         help='use the uniform Gaussian replacement error proved in Lean')
-    total = retained_errors(parser.parse_args().lean_gaussian_bound)
+    parser.add_argument('--lean-cheb-prefix', action='store_true',
+                        help='use the Lean Gaussian allowance and the first 256 symmetric dyadic modes')
+    options = parser.parse_args()
+    total = retained_errors(options.lean_gaussian_bound, options.lean_cheb_prefix)
     for r,lo,hi,margin,trial_error in compact_signs(WINDOWS,1728):
         remaining = margin-total[r]-tail_error(r)-trial_error
         assert remaining > 0
