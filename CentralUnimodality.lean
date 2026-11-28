@@ -61,6 +61,6 @@ public import CentralUnimodality.RoundedBase
 public import CentralUnimodality.GaussianResidual
 public import CentralUnimodality.ContinuumResidual
 public import CentralUnimodality.PolynomialGaussianInputs
-public import CentralUnimodality.LargePolynomialAmplitude
+public import CentralUnimodality.SpatialTrialTransfer
 public import CentralUnimodality.IntegralPeakWindow
 public import CentralUnimodality.InterpolatedAmplitude
