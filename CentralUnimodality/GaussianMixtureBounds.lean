@@ -87,6 +87,40 @@ theorem gaussian_average {ι : Type*} (F : (ι → ℝ) →ₗ[ℝ] ℝ) (hf : M
 
 /-- Transfer three pointwise suffix estimates to a mixture. The functions
 g₀,g₁,g₂ already include the powers σ,σ²,σ³ respectively. -/
+theorem gaussian_difference_allowances {ε₀ ε₁ ε₂ : ℝ} {ι : Type*} (F : (ι → ℝ) →ₗ[ℝ] ℝ) (hf : Monotone F) (hn : F 1=1)
+    (y g₀ g₁ g₂ : ι → ℝ) {B : ℝ} (hb : 0 ≤ B) (hY : F (fun i => (y i)^2) ≤ B)
+    (h₀ : ∀ i, |g₀ i-normalHeight*bell (y i)| ≤ ε₀)
+    (h₁ : ∀ i, |g₁ i+normalHeight*y i*bell (y i)| ≤ ε₁)
+    (h₂ : ∀ i, |g₂ i-normalHeight*((y i)^2-1)*bell (y i)| ≤ ε₂) :
+    3989/10000*exp (-B/2)-ε₀ ≤ F g₀ ∧ |F g₁| ≤ 97/400+ε₁ ∧
+      F g₂ ≤ normalHeight*(B/(1+B/2)-exp (-B/2))+ε₂ := by
+  obtain ⟨hlo,hhi⟩ := gaussian_average F hf hn y hb hY
+  have hN : 0 ≤ normalHeight := by dsimp [normalHeight]; positivity
+  constructor
+  · have h := hf (show (fun i => -(ε₀)+normalHeight*bell (y i)) ≤ g₀ by
+      intro i; linarith only [(abs_le.mp (h₀ i)).1])
+    rw [average_affine F hn _ _ (fun i => bell (y i))] at h
+    linarith only [h,mul_le_mul_of_nonneg_left hlo hN,
+      mul_le_mul_of_nonneg_right normal_height_bounds.1 (exp_pos (-B/2)).le]
+  constructor
+  · have h (i) : |g₁ i| ≤ (97/400+ε₁) := by
+      have H := abs_lt.mp (normal_slope (y i))
+      have G := abs_le.mp (h₁ i)
+      rw [abs_le]; constructor <;> linarith only [H.1,H.2,G.1,G.2]
+    have hlo' := hf (show (-((97/400+ε₁):ℝ)) • (1:ι → ℝ) ≤ g₁ from fun i => by simpa using (abs_le.mp (h i)).1)
+    have hhi' := hf (show g₁ ≤ ((97/400+ε₁):ℝ) • (1:ι → ℝ) from fun i => by simpa using (abs_le.mp (h i)).2)
+    rw [map_smul,hn,smul_eq_mul,mul_one] at hlo' hhi'
+    exact abs_le.mpr ⟨hlo',hhi'⟩
+  · let a := fun i => (y i)^2*bell (y i)
+    let b := fun i => bell (y i)
+    have h := hf (show g₂ ≤ (ε₂:ℝ) • (1:ι → ℝ) + normalHeight • (a-b) by
+      intro i
+      change g₂ i ≤ ε₂*1+normalHeight*((y i)^2*bell (y i)-bell (y i))
+      linarith only [(abs_le.mp (h₂ i)).2])
+    rw [map_add,map_smul,map_smul,map_sub,hn] at h
+    change F g₂ ≤ ε₂*1+normalHeight*(F a-F b) at h
+    exact h.trans (by dsimp only [a,b]; linarith only [mul_le_mul_of_nonneg_left (sub_le_sub hhi hlo) hN])
+
 theorem gaussian_difference_bounds {ι : Type*} (F : (ι → ℝ) →ₗ[ℝ] ℝ) (hf : Monotone F) (hn : F 1=1)
     (y g₀ g₁ g₂ : ι → ℝ) {B : ℝ} (hb : 0 ≤ B) (hY : F (fun i => (y i)^2) ≤ B)
     (h₀ : ∀ i, |g₀ i-normalHeight*bell (y i)| ≤ 5/1000)
@@ -94,31 +128,7 @@ theorem gaussian_difference_bounds {ι : Type*} (F : (ι → ℝ) →ₗ[ℝ] �
     (h₂ : ∀ i, |g₂ i-normalHeight*((y i)^2-1)*bell (y i)| ≤ 10/1000) :
     3989/10000*exp (-B/2)-5/1000 ≤ F g₀ ∧ |F g₁| < 1/4 ∧
       F g₂ ≤ normalHeight*(B/(1+B/2)-exp (-B/2))+10/1000 := by
-  obtain ⟨hlo,hhi⟩ := gaussian_average F hf hn y hb hY
-  have hN : 0 ≤ normalHeight := by dsimp [normalHeight]; positivity
-  constructor
-  · have h := hf (show (fun i => -(5/1000)+normalHeight*bell (y i)) ≤ g₀ by
-      intro i; linarith only [(abs_le.mp (h₀ i)).1])
-    rw [average_affine F hn _ _ (fun i => bell (y i))] at h
-    linarith only [h,mul_le_mul_of_nonneg_left hlo hN,
-      mul_le_mul_of_nonneg_right normal_height_bounds.1 (exp_pos (-B/2)).le]
-  constructor
-  · have h (i) : |g₁ i| ≤ 499/2000 := by
-      have H := abs_lt.mp (normal_slope (y i))
-      have G := abs_le.mp (h₁ i)
-      rw [abs_le]; constructor <;> linarith only [H.1,H.2,G.1,G.2]
-    have hlo' := hf (show (-(499/2000:ℝ)) • (1:ι → ℝ) ≤ g₁ from fun i => by simpa using (abs_le.mp (h i)).1)
-    have hhi' := hf (show g₁ ≤ (499/2000:ℝ) • (1:ι → ℝ) from fun i => by simpa using (abs_le.mp (h i)).2)
-    rw [map_smul,hn,smul_eq_mul,mul_one] at hlo' hhi'
-    exact lt_of_le_of_lt (abs_le.mpr ⟨hlo',hhi'⟩) (by norm_num)
-  · let a := fun i => (y i)^2*bell (y i)
-    let b := fun i => bell (y i)
-    have h := hf (show g₂ ≤ (10/1000:ℝ) • (1:ι → ℝ) + normalHeight • (a-b) by
-      intro i
-      change g₂ i ≤ 10/1000*1+normalHeight*((y i)^2*bell (y i)-bell (y i))
-      linarith only [(abs_le.mp (h₂ i)).2])
-    rw [map_add,map_smul,map_smul,map_sub,hn] at h
-    change F g₂ ≤ 10/1000*1+normalHeight*(F a-F b) at h
-    exact h.trans (by dsimp only [a,b]; linarith only [mul_le_mul_of_nonneg_left (sub_le_sub hhi hlo) hN])
+  obtain ⟨h₀',h₁',h₂'⟩ := gaussian_difference_allowances F hf hn y g₀ g₁ g₂ hb hY h₀ h₁ h₂
+  exact ⟨h₀',h₁'.trans_lt (by norm_num),h₂'⟩
 
 end CentralUnimodality.MarkedExcursion

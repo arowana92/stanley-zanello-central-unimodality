@@ -11,7 +11,7 @@ rounded time bin and sum over its odd times. -/
 namespace CentralUnimodality.MarkedExcursion.BinArithmetic
 open Real
 
-private theorem scaled_time_sum {m : ℕ} (hm : 4096 ≤ m) {v w : ℚ} (hv : 0 ≤ v) (hvw : v ≤ w)
+theorem scaled_time_sum {m : ℕ} (hm : 4096 ≤ m) {v w : ℚ} (hv : 0 ≤ v) (hvw : v ≤ w)
     (c : ℝ) (r : Fin 3) (j : ℤ) {σ P C : ℝ} (hσ : 0<σ) (hP : 0<P) (hC : 0 ≤ C)
     (H : ∀ k : ℕ, timeCut m v < 2*k+1 → 2*k+1 ≤ timeCut m w →
       σ^(r.val+1)/(P/m)*firstRankLoss c m (2*k+1) r j ≤ C) :

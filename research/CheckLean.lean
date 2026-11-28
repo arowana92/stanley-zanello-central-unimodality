@@ -341,3 +341,12 @@ example {m j : ℕ} (hm : 4096 ≤ m) (hj : j+1 ≤ staircaseDegree m)
 #print axioms MarkedExcursion.upper_half_saddle
 #print axioms MarkedExcursion.suffix_variance_ratio
 #print axioms MarkedExcursion.upper_half_suffix_labels
+
+open MarkedExcursion.BinArithmetic in
+example {m j : ℕ} (hm : 4096 ≤ m) (hmid : staircaseDegree m ≤ 2*(j+1))
+    (hj : j+1 ≤ staircaseDegree m)
+    (hl : (3/4)*sizeScale m ≤ (staircaseDegree m:ℝ)-(j+1)) :
+    rankCount m (j+1)<rankCount m (j+2) := upper_half_growth hm hmid hj hl
+
+#print axioms MarkedExcursion.BinArithmetic.upper_half_growth
+#print axioms conjecture34_of_peak_windows

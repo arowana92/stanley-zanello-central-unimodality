@@ -11,12 +11,13 @@ namespace CentralUnimodality.MarkedExcursion
 open Real
 
 /-- Uniform lattice errors at orders zero, one (forward), and two (centered). -/
-def FreeSuffixApproximation (c : ℝ) (M : ℕ) (σ : ℝ) : Prop := ∀ k : ℤ,
+def FreeSuffixApproximation (c : ℝ) (M : ℕ) (σ : ℝ)
+    (ε₀ : ℝ := 5/1000) (ε₁ : ℝ := 7/1000) (ε₂ : ℝ := 10/1000) : Prop := ∀ k : ℤ,
   let A := freeRankMass c M
   let y := ((k:ℝ)-meanRank c M)/σ
-  |σ*A k-normalHeight*bell y| ≤ 5/1000 ∧
-  |σ^2*(A (k+1)-A k)+normalHeight*y*bell y| ≤ 7/1000 ∧
-  |σ^3*(A (k-1)+A (k+1)-2*A k)-normalHeight*(y^2-1)*bell y| ≤ 10/1000
+  |σ*A k-normalHeight*bell y| ≤ ε₀ ∧
+  |σ^2*(A (k+1)-A k)+normalHeight*y*bell y| ≤ ε₁ ∧
+  |σ^3*(A (k-1)+A (k+1)-2*A k)-normalHeight*(y^2-1)*bell y| ≤ ε₂
 
 private noncomputable def prefixAverage (c u : ℝ) (L : ℕ) : (↥(ballots L) → ℝ) →ₗ[ℝ] ℝ :=
   (live c u L 1)⁻¹ • ∑ w : ballots L, signMass c u w • LinearMap.proj w
@@ -41,14 +42,14 @@ noncomputable def varianceLimit (m : ℕ) (c f σ : ℝ) :=
   let d := tanh (c*m)
   ((m:ℝ)^3/(4*σ^2))*(f+(1+d)/(1-f)*(f^2+1/(2*m*d^2)))
 
-theorem conditional_prefix_differences {m L : ℕ} (hm : 0 < m) {c f σ : ℝ} (hc : 0 < c)
+theorem conditional_prefix_allowances {ε₀ ε₁ ε₂ : ℝ} {m L : ℕ} (hm : 0 < m) {c f σ : ℝ} (hc : 0 < c)
     (hf : 0 ≤ f) (hf' : f < 1) (hL : (L:ℝ) ≤ f*m) (hσ : 0 < σ)
-    (hs : FreeSuffixApproximation c (m-L) σ) {j : ℤ} (hj : meanRank c m=j) :
+    (hs : FreeSuffixApproximation c (m-L) σ ε₀ ε₁ ε₂) {j : ℤ} (hj : meanRank c m=j) :
     let P := live c (c*m) L 1
     let A := fun k => prefixSiteMass c m L k/P
     let B := varianceLimit m c f σ
-    3989/10000*exp (-B/2)-5/1000 ≤ σ*A j ∧ |σ^2*(A (j+1)-A j)| < 1/4 ∧
-      σ^3*(A (j-1)+A (j+1)-2*A j) ≤ normalHeight*(B/(1+B/2)-exp (-B/2))+10/1000 := by
+    3989/10000*exp (-B/2)-ε₀ ≤ σ*A j ∧ |σ^2*(A (j+1)-A j)| ≤ 97/400+ε₁ ∧
+      σ^3*(A (j-1)+A (j+1)-2*A j) ≤ normalHeight*(B/(1+B/2)-exp (-B/2))+ε₂ := by
   dsimp only
   let M := m-L
   let u := c*m
@@ -90,17 +91,28 @@ theorem conditional_prefix_differences {m L : ℕ} (hm : 0 < m) {c f σ : ℝ} (
   let g₀ := σ • S j
   let g₁ := σ^2 • (S (j+1)-S j)
   let g₂ := σ^3 • (S (j-1)+S (j+1)-(2:ℝ) • S j)
-  have h₀ (i : ballots L) : |g₀ i-normalHeight*bell (y i)| ≤ 5/1000 := (hs _).1
-  have h₁ (i : ballots L) : |g₁ i+normalHeight*y i*bell (y i)| ≤ 7/1000 := by
+  have h₀ (i : ballots L) : |g₀ i-normalHeight*bell (y i)| ≤ ε₀ := (hs _).1
+  have h₁ (i : ballots L) : |g₁ i+normalHeight*y i*bell (y i)| ≤ ε₁ := by
     have H := (hs (j-shiftedPrefixRank M i)).2.1
     simpa only [g₁,S,y,M,Pi.smul_apply,Pi.sub_apply,smul_eq_mul,
       show ∀ a : ℤ, j+1-a=j-a+1 by omega] using H
-  have h₂ (i : ballots L) : |g₂ i-normalHeight*((y i)^2-1)*bell (y i)| ≤ 10/1000 := by
+  have h₂ (i : ballots L) : |g₂ i-normalHeight*((y i)^2-1)*bell (y i)| ≤ ε₂ := by
     have H := (hs (j-shiftedPrefixRank M i)).2.2
     simpa only [g₂,S,y,M,Pi.smul_apply,Pi.sub_apply,Pi.add_apply,smul_eq_mul,
       show ∀ a : ℤ, j+1-a=j-a+1 by omega,show ∀ a : ℤ, j-1-a=j-a-1 by omega] using H
-  have h := gaussian_difference_bounds F (average_mono ..) (average_one _ _ _ hP)
+  have h := gaussian_difference_allowances F (average_mono ..) (average_one _ _ _ hP)
     y g₀ g₁ g₂ hB hY h₀ h₁ h₂
   simpa only [g₀,g₁,g₂,map_smul,map_add,map_sub,smul_eq_mul,hmass] using h
+
+theorem conditional_prefix_differences {m L : ℕ} (hm : 0 < m) {c f σ : ℝ} (hc : 0 < c)
+    (hf : 0 ≤ f) (hf' : f < 1) (hL : (L:ℝ) ≤ f*m) (hσ : 0 < σ)
+    (hs : FreeSuffixApproximation c (m-L) σ) {j : ℤ} (hj : meanRank c m=j) :
+    let P := live c (c*m) L 1
+    let A := fun k => prefixSiteMass c m L k/P
+    let B := varianceLimit m c f σ
+    3989/10000*exp (-B/2)-5/1000 ≤ σ*A j ∧ |σ^2*(A (j+1)-A j)| < 1/4 ∧
+      σ^3*(A (j-1)+A (j+1)-2*A j) ≤ normalHeight*(B/(1+B/2)-exp (-B/2))+10/1000 := by
+  obtain ⟨H₀,H₁,H₂⟩ := conditional_prefix_allowances hm hc hf hf' hL hσ hs hj
+  exact ⟨H₀,H₁.trans_lt (by norm_num),H₂⟩
 
 end CentralUnimodality.MarkedExcursion

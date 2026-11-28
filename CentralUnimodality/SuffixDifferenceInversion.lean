@@ -123,10 +123,10 @@ noncomputable def scaledSpectralMoment (c σ : ℝ) (m r : ℕ) :=
 
 /-- Three scalar integrals suffice for the uniform rank estimates used in
 the prefix variance argument. The derivative allowances use the actual σ. -/
-theorem free_suffix_of_spectral_moments (c : ℝ) {σ : ℝ} (hσ : 0 < σ) (m : ℕ)
-    (h₀ : scaledSpectralMoment c σ m 0 ≤ 5/1000)
-    (h₁ : scaledSpectralMoment c σ m 1+1/σ ≤ 7/1000)
-    (h₂ : scaledSpectralMoment c σ m 2+1/σ^2 ≤ 10/1000) : FreeSuffixApproximation c m σ := by
+theorem free_suffix_of_spectral_allowances {ε₀ ε₁ ε₂ : ℝ} (c : ℝ) {σ : ℝ} (hσ : 0 < σ) (m : ℕ)
+    (h₀ : scaledSpectralMoment c σ m 0 ≤ ε₀)
+    (h₁ : scaledSpectralMoment c σ m 1+1/σ ≤ ε₁)
+    (h₂ : scaledSpectralMoment c σ m 2+1/σ^2 ≤ ε₂) : FreeSuffixApproximation c m σ ε₀ ε₁ ε₂ := by
   intro k
   let y (j : ℤ) := ((j:ℝ)-meanRank c m)/σ
   let N (j : ℤ) := normalDensity (y j)
@@ -172,5 +172,11 @@ theorem free_suffix_of_spectral_moments (c : ℝ) {σ : ℝ} (hσ : 0 < σ) (m :
   · apply le_trans _ ((add_le_add F₂ G₂).trans h₂)
     apply le_trans _ (abs_add_le _ _)
     apply le_of_eq; congr 1; dsimp [B,N,normalDensity]; ring
+
+theorem free_suffix_of_spectral_moments (c : ℝ) {σ : ℝ} (hσ : 0 < σ) (m : ℕ)
+    (h₀ : scaledSpectralMoment c σ m 0 ≤ 5/1000)
+    (h₁ : scaledSpectralMoment c σ m 1+1/σ ≤ 7/1000)
+    (h₂ : scaledSpectralMoment c σ m 2+1/σ^2 ≤ 10/1000) : FreeSuffixApproximation c m σ :=
+  free_suffix_of_spectral_allowances c hσ m h₀ h₁ h₂
 
 end CentralUnimodality.MarkedExcursion

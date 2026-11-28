@@ -1,8 +1,7 @@
 module
 
 public import CentralUnimodality.SuffixSpectralEnvelope
-import Mathlib.MeasureTheory.Measure.Lebesgue.Basic
-import Mathlib.Analysis.Real.Pi.Bounds
+public import CentralUnimodality.UniformSuffixMoments
 
 /-! Numerical local normal approximation for every independent suffix in
 the right-flank range, and its use for the surviving prefix. -/
@@ -10,41 +9,6 @@ the right-flank range, and its use for the surviving prefix. -/
 
 namespace CentralUnimodality.MarkedExcursion
 open Real MeasureTheory Set
-
-private theorem last_integrable (M σ : ℝ) (r : ℕ) : Integrable (lastArc M σ r) := by
-  unfold lastArc
-  rw [integrable_indicator_iff measurableSet_Ioc]
-  exact integrableOn_const (by rw [Real.volume_Ioc]; exact ENNReal.ofReal_ne_top)
-
-private theorem envelope_integral (M : ℝ) {σ : ℝ} (hσ : 0 < σ) (r : ℕ) :
-    Integrable (suffixEnvelope M σ r) ∧
-    (∫ x, suffixEnvelope M σ r x) =
-      innerCubic*absoluteGaussianMoment (9/20) (r+3)+innerQuartic*absoluteGaussianMoment (9/20) (r+4)+
-      2/1000000*absoluteGaussianMoment (1/10) r+2*π*σ*(π*σ)^r*exp (-(3*M/25)) := by
-  have h₀ := (momentKernel_integrable (b := 9/20) (by norm_num) (r+3)).const_mul innerCubic
-  have h₁ := (momentKernel_integrable (b := 9/20) (by norm_num) (r+4)).const_mul innerQuartic
-  have h₂ := (momentKernel_integrable (b := 1/10) (by norm_num) r).const_mul (2/1000000)
-  have h₃ := last_integrable M σ r
-  refine ⟨((h₀.add h₁).add h₂).add h₃,?_⟩
-  unfold suffixEnvelope
-  rw [integral_add (f := fun x => _+_+_) ((h₀.add h₁).add h₂) h₃,
-    integral_add (f := fun x => _+_) (h₀.add h₁) h₂,integral_add h₀ h₁]
-  simp only [integral_const_mul,absoluteGaussianMoment,lastArc,integral_indicator_const _ measurableSet_Ioc,
-    Real.volume_real_Ioc_of_le (by nlinarith only [mul_pos pi_pos hσ] : -π*σ ≤ π*σ),smul_eq_mul]
-  ring
-
-private theorem scaled_moment_integral (c : ℝ) {σ : ℝ} (hσ : 0 < σ) (M r : ℕ) :
-    scaledSpectralMoment c σ M r =
-      (∫ x : ℝ, ‖suffixSpectralError c σ M (x/σ)‖*|x|^r)/(2*π) := by
-  let g := fun θ => ‖suffixSpectralError c σ M θ‖*|θ|^r
-  have he (x : ℝ) : ‖suffixSpectralError c σ M (x/σ)‖*|x|^r=σ^r*g (σ⁻¹*x) := by
-    dsimp [g]
-    rw [show σ⁻¹*x=x/σ by ring,abs_div,abs_of_pos hσ,div_pow]
-    field_simp
-  simp_rw [he]
-  rw [integral_const_mul,Measure.integral_comp_inv_mul_left,abs_of_pos hσ,smul_eq_mul]
-  change σ^(r+1)/(2*π)*spectralMoment c σ M r = σ^r*(σ*spectralMoment c σ M r)/(2*π)
-  rw [pow_succ]; ring
 
 /-- The three signed errors at every integer site for the actual modeled
 suffix. No limiting argument or finite enumeration of rank sites is used. -/
@@ -62,29 +26,12 @@ theorem right_free_suffix {m M : ℕ} (hm : 4096 ≤ m) (hM : 3685 ≤ M) (hMm :
   have H (r : ℕ) (hr : r ≤ 2) {a b : ℝ}
       (ha : absoluteGaussianMoment (9/20) (r+3) ≤ a) (hb : absoluteGaussianMoment (9/20) (r+4) ≤ b) :
       scaledSpectralMoment c σ M r ≤ (innerCubic*a+innerQuartic*b+2/1000000*30)/6+1/1000000 := by
-    have I := right_suffix_envelope c M hσ hlo (by omega) hV hp r
-    obtain ⟨hg,hgi⟩ := envelope_integral (M:ℝ) hσ r
-    have hi := integral_mono_of_nonneg (Filter.Eventually.of_forall
-      (fun x : ℝ => by positivity : ∀ x : ℝ, 0 ≤ ‖suffixSpectralError c σ M (x/σ)‖*|x|^r)) hg
-      (Filter.Eventually.of_forall I)
-    rw [hgi] at hi
-    rw [scaled_moment_integral c hσ]
-    apply (div_le_div_of_nonneg_right hi (by positivity)).trans
-    rw [add_div,show 2*π*σ*(π*σ)^r*exp (-(3*(M:ℝ)/25))/(2*π) =
-        σ*(π*σ)^r*exp (-(3*M/25)) by field_simp]
-    apply add_le_add _ (outer_exponential_budget hM' hσ.le hhi r hr)
-    have h₁ : 0 ≤ innerCubic := by norm_num [innerCubic]
-    have h₂ : 0 ≤ innerQuartic := by norm_num [innerQuartic]
-    have hmon := add_le_add (add_le_add (mul_le_mul_of_nonneg_left ha h₁) (mul_le_mul_of_nonneg_left hb h₂))
-      (mul_le_mul_of_nonneg_left (tail_gaussian_moments r hr) (by norm_num : (0:ℝ) ≤ 2/1000000))
-    have hn : 0 ≤ innerCubic*absoluteGaussianMoment (9/20) (r+3)+innerQuartic*absoluteGaussianMoment (9/20) (r+4)+
-        2/1000000*absoluteGaussianMoment (1/10) r := by
-      have pos (d : ℝ) (k : ℕ) : 0 ≤ absoluteGaussianMoment d k :=
-        integral_nonneg (fun x => by dsimp [momentKernel]; positivity)
-      exact add_nonneg (add_nonneg (mul_nonneg h₁ (pos ..)) (mul_nonneg h₂ (pos ..)))
-        (mul_nonneg (by norm_num) (pos ..))
-    apply (div_le_div_of_nonneg_right hmon (by positivity)).trans
-    exact div_le_div_of_nonneg_left (hn.trans hmon) (by norm_num) (by linarith only [pi_gt_three])
+    have H := uniform_spectral_budget (by norm_num) (by norm_num) (by norm_num) right_gaussian_tail c M hσ hlo
+      (by omega) hV hp hr ha hb
+    have ht := outer_exponential_budget hM' hσ.le hhi r hr
+    rw [show (6/25)*(M:ℝ)/2 = 3*M/25 by ring] at H
+    dsimp only [cubicFactor,quarticFactor] at H
+    unfold innerCubic innerQuartic; linarith only [H,ht]
   obtain ⟨u,v,w,z⟩ := inner_gaussian_moments
   have h₀ := H 0 (by decide) u v
   have h₁ := H 1 (by decide) v w

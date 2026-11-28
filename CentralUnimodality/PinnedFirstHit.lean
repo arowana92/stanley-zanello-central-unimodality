@@ -27,6 +27,17 @@ private theorem middle_variance {x : ℝ} (hx : |x| ≤ 21/100) : 119/500 ≤ up
     show upChance x=(1+tanh x)/2 by linarith only [up_drift x,up_total x]]
   nlinarith only [hh]
 
+theorem three_blocks_of_middle {c : ℝ} (d a q b : ℕ) (hlen : a+q+b+1=2*d+1)
+    (hq : 80 ≤ q) (hmid : ∀ i ∈ Finset.range q, |c*d-c*a-c*i| ≤ 21/100) :
+    (∑ w ∈ hitWords 1 (2*d+1), signMass c (c*d) w) ≤
+      live c (c*d) a 1*upChance (c*d)*live c (c*d-c) b 1 / √q := by
+  have hl : (a+q+b:ℕ)=2*d := by omega
+  have H := first_hit_three_blocks c (c*d) a q b (K := 1/√q) (fun z =>
+    middle_displacement_bound c (c*d-c*a) hq z (fun i hi => middle_variance (hmid i (Finset.mem_range.mpr hi))))
+  dsimp only at H
+  rw [hlen,hl,Nat.cast_mul,Nat.cast_ofNat,show c*(2*(d:ℝ))-c*d=c*d by ring] at H
+  simpa only [mul_one_div] using H
+
 /-- The middle endpoint has the required site variances anywhere in the
 centered prefix with cd≤.21, including the negative-parameter half. -/
 theorem centered_three_blocks {c : ℝ} (hc : 0 ≤ c) (d a q b : ℕ) (hlen : a+q+b+1=2*d+1)
@@ -34,29 +45,24 @@ theorem centered_three_blocks {c : ℝ} (hc : 0 ≤ c) (d a q b : ℕ) (hlen : a
     (∑ w ∈ hitWords 1 (2*d+1), signMass c (c*d) w) ≤
       live c (c*d) a 1*upChance (c*d)*live c (c*d-c) b 1 / √q := by
   have hl : (a+q+b:ℕ)=2*d := by omega
-  have H := first_hit_three_blocks c (c*d) a q b (K := 1/√q) (fun z =>
-    middle_displacement_bound c (c*d-c*a) hq z (by
-      intro i hi
-      have hil : (a:ℝ)+i ≤ 2*d := by exact_mod_cast (by omega : a+i ≤ 2*d)
-      apply middle_variance (abs_le.mpr ⟨?_,?_⟩)
-      · nlinarith only [mul_le_mul_of_nonneg_left hil hc,hcap]
-      · nlinarith only [hcap,mul_nonneg hc (Nat.cast_nonneg (α:=ℝ) i),mul_nonneg hc (Nat.cast_nonneg (α:=ℝ) a)]))
-  dsimp only at H
-  rw [hlen,hl,Nat.cast_mul,Nat.cast_ofNat,show c*(2*(d:ℝ))-c*d=c*d by ring] at H
-  simpa only [mul_one_div] using H
+  apply three_blocks_of_middle d a q b hlen hq
+  intro i hi
+  have hi' := Finset.mem_range.mp hi
+  have hil : (a:ℝ)+i ≤ 2*d := by exact_mod_cast (by omega : a+i ≤ 2*d)
+  apply abs_le.mpr ⟨?_,?_⟩
+  · nlinarith only [mul_le_mul_of_nonneg_left hil hc,hcap]
+  · nlinarith only [hcap,mul_nonneg hc (Nat.cast_nonneg (α:=ℝ) i),mul_nonneg hc (Nat.cast_nonneg (α:=ℝ) a)]
 
-/-- Dimensionless first-hit bin factor. The parameter β bounds the maximum
-prefix natural parameter times √m. The proof chooses a=floor(t/3) and
-retains the compulsory first upward step of the reversed last piece. -/
-theorem pinned_hit_bin {m d : ℕ} (hm : 4096 ≤ m) {c v e lam : ℝ} (hc : 0 ≤ c)
-    (hlam : lam=2*c*((m:ℝ)*√m)) (hmax : lam ≤ 57) (he : e ≤ 15/16+1/4096)
+theorem pinned_hit_bin_of_middle {m d : ℕ} (hm : 4096 ≤ m) {c v e lam C : ℝ} (hc : 0 ≤ c)
+    (hlam : lam=2*c*((m:ℝ)*√m)) (hprob : upChance (c*d) ≤ C)
+    (hmid : ∀ i ∈ Finset.range ((2*d+1)-2*((2*d+1)/3)), |c*d-c*((2*d+1)/3:ℕ)-c*i| ≤ 21/100)
     (hlo : v*m ≤ 2*(d:ℝ)+1) (hhi : 2*(d:ℝ)+1 ≤ e*m)
     (hcore : 80 ≤ (v/3-2/4096)*m) :
     let β := lam*e/4
     let z := v/3-2/4096
     let F := 2*β+(4/5)/√z
     (∑ w ∈ hitWords 1 (2*d+1), signMass c (c*d) w) ≤
-      (1/2+β/128)*F^2/(√z*((m:ℝ)*√m)) := by
+      C*F^2/(√z*((m:ℝ)*√m)) := by
   let t := 2*d+1
   let a := t/3
   let b := a-1
@@ -65,7 +71,6 @@ theorem pinned_hit_bin {m d : ℕ} (hm : 4096 ≤ m) {c v e lam : ℝ} (hc : 0 �
   let β := lam*e/4
   have hm' : (4096:ℝ) ≤ m := by exact_mod_cast hm
   have hm0 : (0:ℝ) < m := by linarith
-  have hr : (64:ℝ) ≤ √m := (Real.le_sqrt (by norm_num) hm0.le).mpr (by linarith only [hm'])
   have hr0 : 0 < √(m:ℝ) := by positivity
   have hlam' : 0 ≤ lam := by rw [hlam]; positivity
   have he' : 0 ≤ e := by by_contra! H; nlinarith only [mul_nonpos_of_nonpos_of_nonneg H.le hm0.le,hhi,Nat.cast_nonneg (α:=ℝ) d]
@@ -75,10 +80,6 @@ theorem pinned_hit_bin {m d : ℕ} (hm : 4096 ≤ m) {c v e lam : ℝ} (hc : 0 �
     have hd : 2*(d:ℝ) ≤ e*m := by linarith only [hhi]
     dsimp [β]; rw [hlam]
     nlinarith only [mul_le_mul_of_nonneg_right hd (mul_nonneg hc hr0.le)]
-  have hcap : c*d ≤ 21/100 := by
-    have hβ' := mul_le_mul hmax he he' (by norm_num : (0:ℝ) ≤ 57)
-    dsimp only [β] at hscaled
-    nlinarith only [hscaled,hβ',mul_le_mul_of_nonneg_left hr hcd]
   have ht : (t:ℝ)=2*d+1 := by dsimp [t]; push_cast; rfl
   have ha : (t:ℝ) ≤ 3*a+2 := by exact_mod_cast (by dsimp [a]; omega : t ≤ 3*a+2)
   have hz : 0 < z := by
@@ -109,12 +110,8 @@ theorem pinned_hit_bin {m d : ℕ} (hm : 4096 ≤ m) {c v e lam : ℝ} (hc : 0 �
     have hs := (le_div_iff₀ hr0).mpr hscaled
     apply (add_le_add (mul_le_mul_of_nonneg_left hs (by norm_num : (0:ℝ) ≤ 2)) hfrac).trans_eq
     dsimp [F]; ring
-  have hprob : upChance (c*d) ≤ 1/2+β/128 := by
-    have h₁ := up_drift (c*d)
-    have h₂ := up_total (c*d)
-    have h₃ := tanh_le_linear hcd
-    nlinarith only [h₁,h₂,h₃,hscaled,mul_le_mul_of_nonneg_left hr hcd]
-  have top := centered_three_blocks hc d a q b hlen hq hcap
+  have top := three_blocks_of_middle d a q b hlen hq hmid
+  have hC : 0 ≤ C := (by unfold upChance; positivity : 0 ≤ upChance (c*d)).trans hprob
   have hA := hlive a ha' (by linarith only [hza]) (c*d) le_rfl
   have hB := hlive b hb' hzb (c*d-c) (by linarith)
   have hQ := hroot q hzq
@@ -122,9 +119,54 @@ theorem pinned_hit_bin {m d : ℕ} (hm : 4096 ≤ m) {c v e lam : ℝ} (hc : 0 �
   apply le_trans (div_le_div_of_nonneg_right (mul_le_mul (mul_le_mul hA hprob (by unfold upChance; positivity)
     (by positivity)) hB (live_nonneg ..) (by positivity)) (sqrt_nonneg _))
   apply le_trans (div_le_div_of_nonneg_left (by positivity) (mul_pos (sqrt_pos.mpr hz) hr0) hQ)
-  change F/√m*(1/2+β/128)*(F/√m)/(√z*√m) ≤ (1/2+β/128)*F^2/(√z*((m:ℝ)*√m))
+  change F/√m*C*(F/√m)/(√z*√m) ≤ C*F^2/(√z*((m:ℝ)*√m))
   apply le_of_eq
   have he : (m:ℝ)*√m=(√(m:ℝ))^3 := by rw [pow_succ,Real.sq_sqrt hm0.le]
   rw [he]; ring
+
+/-- Dimensionless first-hit bin factor. The parameter β bounds the maximum
+prefix natural parameter times √m. The proof chooses a=floor(t/3) and
+retains the compulsory first upward step of the reversed last piece. -/
+theorem pinned_hit_bin {m d : ℕ} (hm : 4096 ≤ m) {c v e lam : ℝ} (hc : 0 ≤ c)
+    (hlam : lam=2*c*((m:ℝ)*√m)) (hmax : lam ≤ 57) (he : e ≤ 15/16+1/4096)
+    (hlo : v*m ≤ 2*(d:ℝ)+1) (hhi : 2*(d:ℝ)+1 ≤ e*m)
+    (hcore : 80 ≤ (v/3-2/4096)*m) :
+    let β := lam*e/4
+    let z := v/3-2/4096
+    let F := 2*β+(4/5)/√z
+    (∑ w ∈ hitWords 1 (2*d+1), signMass c (c*d) w) ≤
+      (1/2+β/128)*F^2/(√z*((m:ℝ)*√m)) := by
+  let β := lam*e/4
+  have hm' : (4096:ℝ) ≤ m := by exact_mod_cast hm
+  have hm0 : (0:ℝ) < m := by linarith
+  have hr : (64:ℝ) ≤ √m := (Real.le_sqrt (by norm_num) hm0.le).mpr (by linarith only [hm'])
+  have hr0 : 0 < √(m:ℝ) := by positivity
+  have hlam' : 0 ≤ lam := by rw [hlam]; positivity
+  have he' : 0 ≤ e := by by_contra! H; nlinarith only [mul_nonpos_of_nonpos_of_nonneg H.le hm0.le,hhi,Nat.cast_nonneg (α:=ℝ) d]
+  have hcd : 0 ≤ c*d := by positivity
+  have hscaled : c*d*√m ≤ β := by
+    have hd : 2*(d:ℝ) ≤ e*m := by linarith only [hhi]
+    dsimp [β]; rw [hlam]
+    nlinarith only [mul_le_mul_of_nonneg_right hd (mul_nonneg hc hr0.le)]
+  have hcap : c*d ≤ 21/100 := by
+    have hβ' := mul_le_mul hmax he he' (by norm_num : (0:ℝ) ≤ 57)
+    dsimp only [β] at hscaled
+    nlinarith only [hscaled,hβ',mul_le_mul_of_nonneg_left hr hcd]
+  have hprob : upChance (c*d) ≤ 1/2+β/128 := by
+    have h₁ := up_drift (c*d)
+    have h₂ := up_total (c*d)
+    have h₃ := tanh_le_linear hcd
+    nlinarith only [h₁,h₂,h₃,hscaled,mul_le_mul_of_nonneg_left hr hcd]
+  apply pinned_hit_bin_of_middle hm hc hlam hprob _ hlo hhi hcore
+  intro i hi
+  have hlen := Finset.mem_range.mp hi
+  let a := (2*d+1)/3
+  have hn : a+i ≤ 2*d := by dsimp only [a]; omega
+  have hl : (a:ℝ)+i ≤ 2*d := by exact_mod_cast hn
+  apply abs_le.mpr ⟨?_,?_⟩
+  · change _ ≤ c*d-c*a-c*i
+    nlinarith only [mul_le_mul_of_nonneg_left hl hc,hcap]
+  · change c*d-c*a-c*i ≤ _
+    linarith only [hcap,mul_nonneg hc (Nat.cast_nonneg (α:=ℝ) i),mul_nonneg hc (Nat.cast_nonneg (α:=ℝ) a)]
 
 end CentralUnimodality.MarkedExcursion

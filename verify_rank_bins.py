@@ -114,6 +114,26 @@ def saddle(curve, index):
     return (*digits, late_code), margin
 
 
+def upper_half_first_hits():
+    base = Q(119, 5)
+    drift = Q(19, 50)
+    cuts = [min(H, Q(1, 10) + Q(i, 8)) for i in range(8)]
+    assert cuts[0] == Q(1, 10) and cuts[-1] == H
+    result = Q(0)
+    for v, w in zip(cuts, cuts[1:]):
+        e = w + EPS
+        chunk = v/3 - 2*EPS
+        root = root_lo(chunk)
+        a = v*(1-e/2)**2/8
+        assert v < w and e < 1 and chunk/EPS >= 80 and a >= Q(1, 160)
+        width = e/2 + Q(4, 5)/(root*base)
+        decay = exp_cost(-a*Q(19, 20)*base**2)
+        per_time = base/drift*width**2/root*decay/(1-e)**3
+        result += charge(((w-v)/2 + EPS)*per_time)
+    assert result <= Q(1, 40)
+    return result
+
+
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--lean-witnesses", action="store_true", help="print the four packed shift-index columns")
@@ -126,6 +146,10 @@ def main():
         else:
             margin = min(value for _, value in rows)
             print(f"{'Curvature' if curve else 'Growth'}: {count} saddle bins, margin > {int(margin*10000)/10000:.4f}")
+
+
+    if not args.lean_witnesses:
+        print(f"Upper-half first-hit loss in seven time bins: {upper_half_first_hits()} <= 1/40")
 
 
 if __name__ == "__main__":
