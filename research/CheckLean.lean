@@ -402,6 +402,9 @@ example {m j : ℕ} (hm : 4096≤m) (hmid : staircaseDegree m≤2*(j+1))
 #print axioms PolynomialTrial.amplitude_4096
 #print axioms PolynomialTrial.integratedTaylor_exact
 #print axioms PolynomialTrial.full_period_error
+#print axioms PolynomialTrial.peak_of_trial_margins
+#print axioms PolynomialTrial.retained_transfer
+#print axioms PolynomialTrial.peak_of_retained_errors
 #print axioms ReturnSplit.sample_split_corrected
 #print axioms returnMass_ratio
 #print axioms inverseAt_local_error

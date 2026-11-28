@@ -19,6 +19,24 @@ private theorem integral_cap {a b c : ℝ} {f : ℝ → ℝ} (hab : a≤b) (hf :
     simpa only [Real.norm_eq_abs] using hf ξ ⟨h.1.le,h.2⟩)
   rwa [Real.norm_eq_abs,abs_of_nonneg (sub_nonneg.mpr hab)] at H
 
+theorem trial_band_integral {T : ℝ} (hT : T∈Icc (512:ℝ) 4096) {r : ℕ} (hr : r≤2) (x : ℝ) :
+    |∫ ξ in (512:ℝ)..T, spectralTrial ξ*ξ^r*phase r (x*ξ)|≤1/1000 := by
+  apply (integral_cap hT.1 (c:=(1/10^14)*4096^2) ?_).trans
+  · linarith only [hT.2]
+  · intro ξ h
+    have nn : 0≤ξ := by linarith only [h.1]
+    have lower := rpow_le_rpow (by norm_num : (0:ℝ)≤512) h.1 (by norm_num : (0:ℝ)≤2/3)
+    have upper := rpow_le_rpow nn (h.2.trans hT.2) (by norm_num : (0:ℝ)≤2/3)
+    rw [show (512:ℝ)=(8:ℝ)^(3:ℝ) by norm_num,← rpow_mul (by norm_num)] at lower
+    rw [show (4096:ℝ)=(16:ℝ)^(3:ℝ) by norm_num,← rpow_mul (by norm_num)] at upper
+    norm_num at lower upper
+    have band := trial_tail ⟨lower,upper⟩
+    dsimp only [spectralTrial]
+    rw [abs_of_nonneg nn,abs_mul,abs_mul,abs_pow,abs_of_nonneg nn]
+    apply (mul_le_of_le_one_right (mul_nonneg (abs_nonneg _) (pow_nonneg nn _)) (abs_cos_le_one _)).trans
+    apply mul_le_mul band ((pow_le_pow_left₀ nn (h.2.trans hT.2) r).trans (pow_le_pow_right₀ (by norm_num) hr))
+      (pow_nonneg nn r) (by norm_num)
+
 theorem full_period_error {n δ r : ℕ} (hs : δ≤1) (hn : 10^54≤n+δ) (hr : r≤2)
     {x : ℝ} (hx : |x|≤0.631) :
     |rankIntegralOrder n δ r x-integratedTaylor r 1024 trialPower x|≤
@@ -40,21 +58,7 @@ theorem full_period_error {n δ r : ℕ} (hs : δ≤1) (hn : 10^54≤n+δ) (hr :
       rw [← sub_mul,← sub_mul,abs_mul,abs_mul,abs_pow,abs_of_nonneg h.1]
       apply (mul_le_of_le_one_right (mul_nonneg (abs_nonneg _) (pow_nonneg h.1 r)) (abs_cos_le_one _)).trans
       exact mul_le_mul amp (pow_le_pow_left₀ h.1 h.2 r) (pow_nonneg h.1 r) (by norm_num)
-  have far : |∫ ξ in (512:ℝ)..4096, F ξ|≤1/1000 := by
-    apply (integral_cap (by norm_num) (c:=(1/10^14)*4096^2) ?_).trans (by norm_num)
-    intro ξ h
-    have nn : 0≤ξ := by linarith only [h.1]
-    have lower := rpow_le_rpow (by norm_num : (0:ℝ)≤512) h.1 (by norm_num : (0:ℝ)≤2/3)
-    have upper := rpow_le_rpow nn h.2 (by norm_num : (0:ℝ)≤2/3)
-    rw [show (512:ℝ)=(8:ℝ)^(3:ℝ) by norm_num,← rpow_mul (by norm_num)] at lower
-    rw [show (4096:ℝ)=(16:ℝ)^(3:ℝ) by norm_num,← rpow_mul (by norm_num)] at upper
-    norm_num at lower upper
-    have band := trial_tail ⟨lower,upper⟩
-    dsimp only [F,spectralTrial]
-    rw [abs_of_nonneg nn,abs_mul,abs_mul,abs_pow,abs_of_nonneg nn]
-    apply (mul_le_of_le_one_right (mul_nonneg (abs_nonneg _) (pow_nonneg nn _)) (abs_cos_le_one _)).trans
-    apply mul_le_mul band ((pow_le_pow_left₀ nn h.2 r).trans (pow_le_pow_right₀ (by norm_num) hr))
-      (pow_nonneg nn r) (by norm_num)
+  have far : |∫ ξ in (512:ℝ)..4096, F ξ|≤1/1000 := trial_band_integral (by norm_num) hr x
   have low := compact_phase_bound hr hx
   have mid := inner_rank_tail hs (by omega) hr x (long_scale hn).1 le_rfl
   have high := outer_rank_tail hs hn hr x

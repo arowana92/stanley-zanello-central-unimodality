@@ -68,3 +68,5 @@ public import CentralUnimodality.SmoothSplitQuadrature
 public import CentralUnimodality.LocalizedInverse
 public import CentralUnimodality.ModerateFrequencyTail
 public import CentralUnimodality.DirectCorrectedResidual
+public import CentralUnimodality.ModerateSpatialTransfer
+public import CentralUnimodality.LargePeakReduction
