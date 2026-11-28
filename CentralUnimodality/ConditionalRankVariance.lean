@@ -17,7 +17,7 @@ private theorem drift_ratio (u : ℝ) : (1+tanh u)*exp (-2*u)=1-tanh u := by
 
 /-- If all the prefix parameters are between (1-f)u and u, the smallest
 drift is at least (1-f) times the initial drift. -/
-private theorem drift_cost {u f : ℝ} (hu : 0 < u) (hf : 0 ≤ f) (hf' : f < 1) :
+theorem drift_cost {u f : ℝ} (hu : 0 < u) (hf : 0 ≤ f) (hf' : f < 1) :
     2*(1-f)*tanh u ≤ (1+tanh u)*(1-exp (-2*((1-f)*u))) ∧
     exp (-2*((1-f)*u))-exp (-2*u) ≤ 2*f*tanh u := by
   let v := (1-f)*u

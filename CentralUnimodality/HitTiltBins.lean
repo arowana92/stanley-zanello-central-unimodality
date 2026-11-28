@@ -53,6 +53,36 @@ theorem first_hit_bin {m d : ℕ} (ht : 2*d+1 ≤ m) {c z s γ Δ v e : ℝ}
   rw [hform] at bound ⊢
   linarith only [bound]
 
+/-- The lower-endpoint drift throughout a saddle bin and at every
+length from 4096 onward. -/
+theorem bin_drift_lower {m : ℕ} (hM : 4096 ≤ m) {g c : ℝ} (hg : 0 ≤ g) (hg' : g ≤ 2*c*((m:ℝ)*√m)) :
+    g/2*(1-g^2/(12*4096)) ≤ √m*tanh (c*m) := by
+  let M := (m:ℝ)
+  let r := √M
+  have hm : (4096:ℝ) ≤ M := by dsimp [M]; exact_mod_cast hM
+  have hm' : 0 < M := by linarith
+  have hr : 0 < r := Real.sqrt_pos.mpr hm'
+  have hr2 : r^2=M := Real.sq_sqrt hm'.le
+  let u := g/(2*r)
+  have hu : 0 ≤ u := div_nonneg hg (by positivity)
+  have hug : u ≤ c*M := by
+    apply (div_le_iff₀ (by positivity)).mpr
+    dsimp [M,r] at *; linarith only [hg']
+  have hmono : tanh u ≤ tanh (c*M) := by
+    rw [tanh_eq_sinh_div_cosh,tanh_eq_sinh_div_cosh,div_le_div_iff₀ (cosh_pos _) (cosh_pos _)]
+    have hsub := sinh_nonneg_iff.mpr (sub_nonneg.mpr hug)
+    rw [sinh_sub] at hsub
+    linarith only [hsub]
+  have hcubic := (tanh_cubic_lower hu).trans hmono
+  have hid : r*(u-u^3/3) = g/2-g^3/(24*M) := by
+    dsimp [u]; rw [← hr2]; field_simp; ring
+  have hinv : g^3/(24*M) ≤ g^3/(24*4096) := by
+    apply div_le_div_of_nonneg_left (by positivity) (by norm_num)
+    linarith
+  have hc' := mul_le_mul_of_nonneg_left hcubic hr.le
+  rw [hid] at hc'
+  linarith only [hc',hinv]
+
 /-- Equation (7) in the verifier's variables. The lower endpoint g of a
 parameter bin can be used throughout it; the cut need only be at least hm. -/
 theorem late_bin_parameters {m t : ℕ} (hM : 4096 ≤ m) (ht : t ≤ m) {c z g h : ℝ}
@@ -73,26 +103,7 @@ theorem late_bin_parameters {m t : ℕ} (hM : 4096 ≤ m) (ht : t ≤ m) {c z g 
   have hr : 0 < r := Real.sqrt_pos.mpr hm'
   have hr2 : r^2=M := Real.sq_sqrt hm'.le
   have hs : s^2=M^3 := by dsimp [s]; rw [mul_pow,hr2]; ring
-  let u := g/(2*r)
-  have hu : 0 ≤ u := div_nonneg hg (by positivity)
-  have hug : u ≤ c*M := by
-    apply (div_le_iff₀ (by positivity)).mpr
-    dsimp [M,r] at *; linarith only [hg']
-  have hmono : tanh u ≤ tanh (c*M) := by
-    rw [tanh_eq_sinh_div_cosh,tanh_eq_sinh_div_cosh,div_le_div_iff₀ (cosh_pos _) (cosh_pos _)]
-    have hsub := sinh_nonneg_iff.mpr (sub_nonneg.mpr hug)
-    rw [sinh_sub] at hsub
-    linarith only [hsub]
-  have hcubic := (tanh_cubic_lower hu).trans hmono
-  have hid : r*(u-u^3/3) = g/2-g^3/(24*M) := by
-    dsimp [u]; rw [← hr2]; field_simp; ring
-  have hinv : g^3/(24*M) ≤ g^3/(24*4096) := by
-    apply div_le_div_of_nonneg_left (by positivity) (by norm_num)
-    linarith
-  have hdrift : g/2*(1-g^2/(12*4096)) ≤ r*tanh (c*M) := by
-    have hc' := mul_le_mul_of_nonneg_left hcubic hr.le
-    rw [hid] at hc'
-    linarith only [hc',hinv]
+  have hdrift := bin_drift_lower hM hg hg'
   let K := g/2*(1-g^2/(12*4096)) + (2*z*s)/2
   let H := h*(1-h/2)
   let a := K*H

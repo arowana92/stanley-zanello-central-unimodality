@@ -314,3 +314,11 @@ example (hD : DyckComparisons)
 #print axioms MarkedExcursion.late_rank_arcs
 #print axioms MarkedExcursion.late_rank_moments
 #print axioms MarkedExcursion.late_rank_loss
+#print axioms MarkedExcursion.late_uniform_budget
+#print axioms MarkedExcursion.early_loss_bin_bound
+#print axioms MarkedExcursion.integer_rank_signs
+#print axioms MarkedExcursion.bin_suffix_scale
+#print axioms MarkedExcursion.bin_prefix_survival
+#print axioms MarkedExcursion.bin_prefix_variance
+#print axioms MarkedExcursion.BinArithmetic.growth_bin_checks
+#print axioms MarkedExcursion.BinArithmetic.curvature_bin_checks
