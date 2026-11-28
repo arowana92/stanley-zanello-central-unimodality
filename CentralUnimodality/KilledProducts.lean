@@ -48,6 +48,23 @@ private theorem kernel_product (ω : ℝ) (a : ℤ) (m n : ℕ) (z : ℤ) :
     · have hz' := le_of_not_gt hz
       simp [killedAt_nonpos _ _ _ hz']
 
+/-- Split at a prescribed time and pay the largest terminal entry on positive heights. -/
+theorem killedAt_split_cap {ω P T : ℝ} {a z : ℤ} {m n : ℕ}
+    (hpre : ∀ s : Finset ℤ, (∑ y ∈ s, ‖killedAt ω a m y‖) ≤ P)
+    (terminal : ∀ y : ℕ, 0 < y → ‖killedAt ω y n z‖ ≤ T) (ht : 0 ≤ T) :
+    ‖killedAt ω a (m+n) z‖ ≤ P*T := by
+  rw [kernel_product]
+  apply (norm_sum_le ..).trans
+  calc
+    _ ≤ ∑ y ∈ ends a m, ‖killedAt ω a m y‖*T := by
+      apply Finset.sum_le_sum
+      intro y hy
+      have hp : 0 < y := (Finset.mem_filter.mp hy).2
+      rw [norm_mul]
+      apply mul_le_mul_of_nonneg_left _ (norm_nonneg _)
+      simpa only [Int.toNat_of_nonneg hp.le] using terminal y.toNat (by omega)
+    _ ≤ _ := by rw [← Finset.sum_mul]; exact mul_le_mul_of_nonneg_right (hpre _) ht
+
 /-- A normalized bound on the sum of endpoint norms from each positive height. -/
 def KilledBound (ω : ℝ) (n : ℕ) (q : ℝ) : Prop :=
   ∀ (a : ℕ), 0 < a → ∀ s : Finset ℤ, (∑ z ∈ s, ‖killedAt ω a n z‖) ≤ 2^n*q

@@ -270,6 +270,13 @@ For a first return at $2j$, remove the two exterior steps and translate the posi
 
 Beyond $U$ integrate the two transforms with $100e^{-.162u}$ through $|\theta|=.001$ and on the full continuum tail. Beyond that lattice frequency use the earlier full-period bound $8e^{-u/101}$, extracting $e^{-2N/20200}$. For the forward and centered lattice multipliers integrate $\xi^2/(2s_0)$ and $\xi^4/(12s_0^2)$ against the continuum cosine transform. Use the Airy bounds above through $u=40$ and $|f(u)|\le10\sqrt u e^{-.58u}$ thereafter. These calculations give the error table. The comparison of its errors with derivative signs, including the lower endpoint $.145$, is in the [cubic integral argument](cubic-tilt.md#the-peak-interval).
 
+Lean gives a sharper conditional first-return estimate. At return time $2j$, let $d=j-1$ and write $|\theta|=z^3\le .001$. Keep $\lfloor d/8\rfloor$ initial steps and $t=\lfloor d/4\rfloor$ terminal steps of the interior bridge. Appending one down-step to a surviving terminal path ending at height one makes it a first hit of zero. The fair first-hit point bound at time $t+1$ therefore bounds every normalized terminal kernel entry by $1/(t+1)$. The initial survival probability is at most five times the fair bridge return probability $r_d$ for $d\ge40$. Whole killed blocks on the remaining steps give the following bound on the signed first-return symbol $H_j$ with fair mass $p_j$:
+$$
+ |H_j(\theta/2)|\le p_j\,125\exp(-0.30jz^2)
+ = p_j\,125\exp(-0.15uj/N),\qquad u=2Nz^2,\quad j\ge41.
+$$
+The proof uses positive frequency. Complex conjugation gives the same modulus at negative frequency. [Pinned endpoint estimate](CentralUnimodality/FirstReturnFourier.lean) · [Explicit rate and constants](CentralUnimodality/FirstReturnInnerArc.lean)
+
 ## The density at 125000 pairs
 
 For $N\ge125000$ take $U=85$, $\tau_* = .0007$ and use the same half-unit bins and input polynomials. All cosine and sinc arguments still have modulus below $.8$. Enlarge the gamma windows to $W=[\max(0,.88a-1),1.12b+1]$. At tilt $\lambda=.12$ the probability of $|\tau(T-j)|>.12v+1$ is at most $3\exp(-.004j-.12/\tau)$, since $.12\lambda-\lambda^2/(2(1-\lambda))>.004$. In the Cauchy–Schwarz exceptional bound replace $.015/\tau_*$ by $.06/\tau_*$ and use the new $\tau_*$. The result is still below $10^{-16}$. For late returns $j>N/20\ge6250$ the Wallis and segment estimates still give factors $1.01$ and $240$, as checked at the lower endpoint.

@@ -79,6 +79,18 @@ private theorem firstReturn_arches (d : ℕ) :
     apply Nat.le_of_mul_le_mul_left (c:=2*d+1) _ (by omega)
     nlinarith only [H]
 
+/-- Both orientations of a first return have the same Dyck interior. The
+extra area of its upper arch is exactly twice the semilength plus one. -/
+theorem sum_firstReturn_orientations {R : Type*} [AddCommMonoid R] (f : ℤ → R) (d : ℕ) :
+    (∑ w ∈ firstReturns (2*(d+1)), f (walkArea w)) =
+      (∑ w ∈ dycks d, f (walkArea w+(2*d+1))) +
+       ∑ w ∈ dycks d, f (-(walkArea w+(2*d+1))) := by
+  rw [← firstReturn_arches,Finset.sum_union (arch_disjoint d),
+    Finset.sum_image arch_injective.injOn,Finset.sum_image (reflect_injective.comp arch_injective).injOn]
+  congr 1 <;> apply Finset.sum_congr rfl <;> intro w hw
+  · rw [(arch_data hw).2.1]
+  · rw [Function.comp_apply,walkArea_reflect,(arch_data hw).2.1]
+
 theorem firstReturn_absolute_area (d : ℕ) :
     (∑ w ∈ firstReturns (2*(d+1)), |(walkArea w:ℝ)|) / 2^(2*(d+1)) = 1/2 := by
   rw [← firstReturn_arches,Finset.sum_union (arch_disjoint d),
