@@ -350,3 +350,10 @@ example {m j : ℕ} (hm : 4096 ≤ m) (hmid : staircaseDegree m ≤ 2*(j+1))
 
 #print axioms MarkedExcursion.BinArithmetic.upper_half_growth
 #print axioms conjecture34_of_peak_windows
+
+example {n : ℕ} (hn : n ≤ 191) :
+    UnimodalOn (rankCount (2*n)) 0 (n*n) ∧
+    UnimodalOn (rankCount (2*n+1)) 0 (n*(n+1)) := central_through_191 hn
+
+#print axioms central_through_191
+#print axioms conjecture34_from_192

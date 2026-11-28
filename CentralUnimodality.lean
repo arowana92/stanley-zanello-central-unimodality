@@ -50,6 +50,6 @@ public import CentralUnimodality.RankBinChecks
 public import CentralUnimodality.RankBinSurvival
 public import CentralUnimodality.RankBinGaussian
 public import CentralUnimodality.ScaledEventLoss
-public import CentralUnimodality.PeakWindowReduction
+public import CentralUnimodality.FinitePeakReduction
 public import CentralUnimodality.UpperHalfSaddle
 public import CentralUnimodality.UpperHalfVariance

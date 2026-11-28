@@ -1,6 +1,6 @@
 # Lean verification status
 
-**Partial formalization.** Lean proves weak unimodality for both central staircase families for every row count through 95. The full conjecture is stated as `CentralUnimodality.Conjecture34`. Its universal proof is still in progress. The [computer-assisted research proof](../proof.md) gives the intended argument for the remaining sizes.
+**Partial formalization.** Lean proves weak unimodality for both central staircase families for every row count through 191. The full conjecture is stated as `CentralUnimodality.Conjecture34`. Its universal proof is still in progress. The [computer-assisted research proof](../proof.md) gives the intended argument for the remaining sizes.
 
 ## What the kernel checks
 
@@ -20,6 +20,7 @@
 | `sum_rankCount`, `survival_even`, `survival_odd`, `firstReturn_probability` | The total staircase count is the middle binomial coefficient. Survival at lengths $2n$ and $2n+1$ is $r_n=4^{-n}\binom{2n}{n}$. The first-return mass at $2n$ is $r_n/(2n-1)$ for positive $n$. Lean also checks $1/(4n)\le r_n^2\le 1/(n+1)$. [Ballot count](../CentralUnimodality/Survival.lean) · [First returns](../CentralUnimodality/FirstReturnMass.lean) · [Probability bounds](../CentralUnimodality/SurvivalBounds.lean) |
 | `ballot_rank_polynomial`, `odd_ballot_convolution`, `dyck_convolution`, `stump_convolution` | The corank generating polynomial of either staircase is the ballot area polynomial. Cutting at the last zero gives the odd-length recurrence. Removing the final down-step gives Carlitz–Riordan, and eliminating the odd-length series yields Stump’s type B area recurrence for the odd-part staircase. [Coranks](../CentralUnimodality/Corank.lean) · [Last zero](../CentralUnimodality/BallotCut.lean) · [Ordinary Dyck recurrence](../CentralUnimodality/DyckRecurrence.lean) · [Stump recurrence](../CentralUnimodality/Stump.lean) |
 | `central_through_95`, `reflected_through_191` | All 190 positive-size shapes through 95 rows are unimodal. At each ballot length through 191, Lean verifies the reflected comparisons with cutoff $131/250$ used in the small-size moment argument. [Exact test](../CentralUnimodality/ReflectedCheck.lean) · [Checked cases](../CentralUnimodality/ReflectedBase.lean) |
+| `central_through_191`, `conjecture34_from_192` | Lean proves unimodality at every rank for all 382 positive-size shapes through 191 rows. For ballot lengths 192 through 383 it computes the exact coefficient rows in three blocks of 64 lengths. Guard bits in a packed integer compare all consecutive coefficients on each side of the candidate peak. The correctness theorem allows ties at the peak. [Packed comparisons](../CentralUnimodality/PackedComparisons.lean) · [Peak test](../CentralUnimodality/PackedPeak.lean) · [Checked rows](../CentralUnimodality/PackedBase.lean) · [Induction from 192](../CentralUnimodality/FinitePeakReduction.lean) |
 | `Witness.reflected_from_two_witnesses` | For the explicit degree-20 and degree-6 witnesses, Lean verifies the two rational antiderivative gaps and the monotonicity on the three real intervals. Negative expectations for a unimodal row imply the reflected inequalities. [Polynomial arithmetic](../CentralUnimodality/WitnessPolynomial.lean) · [Witness proof](../CentralUnimodality/MomentWitnesses.lean) |
 | `oddPart_prefix_step`, `evenPart_prefix_step` | Given the Dyck interval decompositions, their endpoint bounds, and the reflected inequalities on the smaller rows, the shifted intervals in the exact recurrences give nondecreasing steps on the stated prefix. [Interval factors](../CentralUnimodality/IntervalProduct.lean) · [Induction](../CentralUnimodality/PrefixInduction.lean) |
 | `even_momentColumn`, `odd_momentColumn`, `momentColumn_rescale` | Substitution of the formal exponential generates every exact rank-weighted corank moment divided by its factorial. Coefficient columns satisfy the product and size-rescaling laws. The Catalan square root and the size derivatives of the base series have exact formal identities. [Moment series](../CentralUnimodality/MomentSeries.lean) · [Base identities](../CentralUnimodality/CatalanBase.lean) · [Size derivatives](../CentralUnimodality/EulerBase.lean) |
@@ -77,13 +78,13 @@ For $m\ge4096$, the upper-half saddle has $cm<1$ and $\gamma=2cm^{3/2}\ge23.8$ o
 
 ## Remaining proof obligations
 
-The theorem `conjecture34_of_comparisons_and_midpoints` reduces the universal strict-partition statement to two hypotheses. [Lean reduction](../CentralUnimodality/ReflectedPolynomials.lean)
+The theorem `conjecture34_from_192` reduces the universal strict-partition statement to the Dyck comparisons and two size ranges for the peak interval. [Lean reduction](../CentralUnimodality/FinitePeakReduction.lean)
 
 1. For every ordinary Dyck area polynomial, prove the reflected coefficient inequalities in `DyckComparisons`. The theorem `Polarization.dyck_comparisons_of_hilbert` reduces this to `DyckHilbertSpecialization`, the identification of each ordinary Dyck area count with the sum of the corresponding alternating coinvariant dimensions. Haiman's Corollary 3.14 and Garsia–Haiman's Theorem 4.4 at $m=1$ give the published ingredients. [Formal reduction](../CentralUnimodality/DiagonalCoinvariants.lean) · [Character argument and sources](../excursion-centers.md#ordinary-excursions-and-two-variable-characters)
 
    Lean proves that each individual Dyck-indexed determinant survives in the quotient at every semilength. This gives positive dimension in every area/dinv bidegree occupied by a path. For several paths in the same bidegree, `slice_independent_of_minor` proves that a nonsingular matrix of rational curve evaluations implies linear independence of their classes. The theorem `dyck_hilbert_of_minors_and_dimension` derives the required identity from joint minors at all sizes and a Catalan upper bound on the sum of the slice dimensions. Both hypotheses remain open in this formalization. The independent integer verifier checks full quotient bases through semilength 6 and joint minors through semilength 10. [Formal nonvanishing](../CentralUnimodality/DyckCurveDetection.lean) · [Joint minors and dimension bounds](../CentralUnimodality/DyckCurveMinors.lean) · [Written proof and exact tests](../excursion-centers.md#testing-the-dyck-determinants-after-quotienting)
 
-2. For each family and every $n\ge96$, prove unimodality from `centralStart` through the midpoint when $m<4096$, and through the smaller of the midpoint and $\lfloor3m^{3/2}/4\rfloor$ when $m\ge4096$. The written proof combines finite central-window calculations, a uniform large-size estimate and a right-flank bound. Lean already proves the extension past that midpoint. [Reduced peak interval](../CentralUnimodality/PeakWindowReduction.lean) · [Research proof and reproducible checks](../proof.md)
+2. For each family and every $n\ge192$, prove unimodality from `centralStart` through the midpoint when $m<4096$, and through the smaller of the midpoint and $\lfloor3m^{3/2}/4\rfloor$ when $m\ge4096$. The written proof combines finite central-window calculations, a uniform large-size estimate and a right-flank bound. Lean already proves the extension past that midpoint. [Reduced peak interval](../CentralUnimodality/PeakWindowReduction.lean) · [Research proof and reproducible checks](../proof.md)
 
 ## Reproduction
 
@@ -95,6 +96,8 @@ lake env lean research/CheckLean.lean
 LEAN_NUM_THREADS=1 lake env leanchecker --verbose --fresh CentralUnimodality
 ~~~
 
+An independent exact coefficient calculation covers both families at every size through 191. For the first 12 sizes it also enumerates the strict partitions directly. Run `python3 -B verify.py --max-n 191 --direct-n 12 --upper-curvature`.
+
 The 321-avoiding superpatterns repository also replays each project module separately. To reproduce that check, run
 
 ~~~sh
@@ -104,4 +107,4 @@ for file in CentralUnimodality/*.lean; do
 done
 ~~~
 
-The audit checks the types of both finite theorems, the strict-partition characterization, the signed rank identity, and the Fourier residual bound. It checks the transitive dependencies of every project declaration against the same axiom allowlist used in the 321-avoiding superpatterns repository, consisting of `propext`, `Classical.choice` and `Quot.sound`. The fresh replay checks the imported declarations and the project modules from an empty kernel environment.
+The audit checks the exact finite unimodality theorems, the strict-partition characterization, the signed rank identity, and the Fourier residual bound. It checks the transitive dependencies of every project declaration against the same axiom allowlist used in the 321-avoiding superpatterns repository, consisting of `propext`, `Classical.choice` and `Quot.sound`. The fresh replay checks the imported declarations and the project modules from an empty kernel environment.
