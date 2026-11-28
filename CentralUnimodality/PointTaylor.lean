@@ -10,7 +10,7 @@ actual Fourier amplitude at every real frequency in both families. -/
 namespace CentralUnimodality.Witness
 open Real Laurent
 
-private theorem rankMean_mul (n δ : ℕ) (c : ℝ) (f : ℕ → ℝ) :
+theorem rankMean_mul (n δ : ℕ) (c : ℝ) (f : ℕ → ℝ) :
     rankMean n δ (fun i => c*f i)=c*rankMean n δ f := by
   unfold rankMean
   rw [← mul_div_assoc,Finset.mul_sum]
@@ -18,17 +18,17 @@ private theorem rankMean_mul (n δ : ℕ) (c : ℝ) (f : ℕ → ℝ) :
   apply Finset.sum_congr rfl
   intro i _; ring
 
-private theorem rankMean_sum (n δ t : ℕ) (f : ℕ → ℕ → ℝ) :
+theorem rankMean_sum (n δ t : ℕ) (f : ℕ → ℕ → ℝ) :
     rankMean n δ (fun i => ∑ j ∈ Finset.range t, f j i)=
       ∑ j ∈ Finset.range t, rankMean n δ (f j) := by
   simp only [rankMean,Finset.mul_sum,← Finset.sum_div]
   rw [Finset.sum_comm]
 
-private theorem rankMean_sub (n δ : ℕ) (f g : ℕ → ℝ) :
+theorem rankMean_sub (n δ : ℕ) (f g : ℕ → ℝ) :
     rankMean n δ (fun i => f i-g i)=rankMean n δ f-rankMean n δ g := by
   simp only [rankMean,mul_sub,Finset.sum_sub_distrib,sub_div]
 
-private theorem rankMean_bound (n δ : ℕ) (f g : ℕ → ℝ)
+theorem rankMean_bound (n δ : ℕ) (f g : ℕ → ℝ)
     (h : ∀ i∈Finset.range (n*(n+δ)+1), |f i|≤g i) :
     |rankMean n δ f|≤rankMean n δ g := by
   have hm : (0:ℝ)<(massFactor n δ:ℝ) := by exact_mod_cast massFactor_pos n δ

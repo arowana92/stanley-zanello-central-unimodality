@@ -380,3 +380,6 @@ example {m j : ℕ} (hm : 4096≤m) (hmid : staircaseDegree m≤2*(j+1))
 #print axioms ReturnSplit.gaussian_residual_error
 #print axioms Witness.pointCoefficients_exact
 #print axioms Witness.low_frequency_four
+#print axioms Interpolation.interpolation_error
+#print axioms Witness.node_product_cost
+#print axioms Witness.interpolation_twelve

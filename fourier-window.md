@@ -62,6 +62,28 @@ lake build CentralUnimodality.PointFrequencyWindow
 python3 -B verify_point_window.py --max-n 196 --direct-n 12
 ~~~
 
+### Interpolating on the positive area axis
+
+A second enclosure reaches $|\xi|=12$ for both families at every $N\ge96$. Interpolate $x\mapsto\cos(\xi x)$ by a polynomial $I_\xi$ of degree at most 19. Its 20 nodes are $a_i/1000$ and $(a_i-1)/1000$, where
+$$
+ (a_1,\ldots,a_{10})=(198,277,380,513,672,853,1054,1278,1532,1840).
+$$
+The approximation is $\mathbb E I_\xi(X)$. It uses the twenty cosine values, rational moment polynomials in $1/N$ and the exact factor $4^N/(\binom{2N}N\sqrt{2N})$ for odd moments. Its error at every frequency satisfies
+$$
+ \left|\mathbb E\cos(\xi X)-\mathbb E I_\xi(X)\right|
+ \le \frac{|\xi|^{20}}{10^9\,20!}.
+$$
+In particular the error is at most $1/600\,000$ on $|\xi|\le12$. [Kernel-checked approximation](CentralUnimodality/InterpolatedAmplitude.lean)
+
+To prove the bound, write the monic product over all nodes as $P_0P_1$, with one degree-ten polynomial per group. Repeated Rolle's theorem bounds the pointwise error by $|\xi|^{20}|P_0(x)P_1(x)|/20!$. The inequality $2|ab|\le a^2+b^2$ reduces the bound to two expected squares. Lean proves $\mathbb E P_d(X)^2\le10^{-9}$ for $d=0,1$ using the finite-size moment formulas and the two checked bounds on the Wallis factor. The nodes were chosen numerically. The verification uses their stated rational values. [Interpolation remainder](CentralUnimodality/RolleInterpolation.lean) · [Two rational certificates](CentralUnimodality/PointInterpolationCost.lean)
+
+For an independent check at $\xi=12$, the following program evaluates the quadrature and the actual rank sum with rational enclosures. At row sizes 95, 96 and 196, five shapes meet $N\ge96$. The largest enclosed difference was below $1.55\cdot10^{-7}$.
+
+~~~sh
+lake build CentralUnimodality.InterpolatedAmplitude
+python3 -B verify_interpolated_amplitude.py --rows 95 96 196 --frequency 12
+~~~
+
 ## A posteriori verification of the signed transforms
 
 At fixed $\theta$, let $P_j^\delta,R_j,U_j^\delta$ be the transforms of the free walk of length $2j+\delta$, the paths returning at $2j$, and the paths with no return by $2j+\delta$. These transforms include the event probabilities. In the half-length convolution,

@@ -16,12 +16,16 @@ open CentralUnimodality.Witness
 """
 
 
-def read_coefficients(lake):
-    run = subprocess.run([lake, "env", "lean", "--stdin"], input=EXPORT,
+def lean_value(lake, source):
+    run = subprocess.run([lake, "env", "lean", "--stdin"], input=source,
                          text=True, capture_output=True, cwd=Path(__file__).resolve().parent)
     if run.returncode:
         raise RuntimeError(run.stdout + run.stderr)
-    tables = json.loads(run.stdout)
+    return json.loads(run.stdout)
+
+
+def read_coefficients(lake):
+    tables = lean_value(lake, EXPORT)
     if len(tables) != 2 or any(len(family) != 11 or not all(family) for family in tables):
         raise ValueError("Expected both parities and the eleven even orders from 0 through 20")
     return [[[Fraction(a, b) for a, b in row] for row in family] for family in tables]

@@ -60,4 +60,4 @@ public import CentralUnimodality.FiniteBase196
 public import CentralUnimodality.RoundedBase
 public import CentralUnimodality.GaussianResidual
 public import CentralUnimodality.ReturnSplitMoments
-public import CentralUnimodality.PointFrequencyWindow
+public import CentralUnimodality.InterpolatedAmplitude
