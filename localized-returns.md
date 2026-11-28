@@ -69,6 +69,50 @@ The two input polynomials approximate $p(v)=e^{-v^3/24}$ and $\rho(v)=e^{-v^3/96
 
 The verifier expands the convolution in monomials, converts back to Chebyshev coefficients, and sums their absolute values. The derivative uses the exact Chebyshev differentiation recurrence. It also evaluates the split independently at 33 combinations of size and step for a pair of test polynomials. Run `python3 -B verify_gamma_polynomials.py` from the checkout. These bounds certify the polynomial residual on a continuum of frequencies. Transferring them to the lattice input errors and then to adjacent coefficient signs requires further estimates.
 
+## An unbounded lattice peak check using polynomial trials
+
+For every strict-walk half-length $N=n+\delta\ge10^{54}$, the peak interval from `centralStart` to the three-fifths cutoff is unimodal in both staircase families. This gives a second computer-assisted proof of the peak assertion at these sizes. It uses the polynomial table above and the finite walk recurrence. Lean verifies the comparison theorem for an arbitrary smooth trial. The concrete rational estimates and the spatial quadrature in this section have external verifiers.
+
+Let $S=(2N)^{3/2}$, $\theta=\xi/S$, $u=|\xi|^{2/3}\le256$, $\tau=u/N$ and $\omega=\theta/2$, so $\omega^2=\tau^3/32$. Define an arcsine average by $I(g)=\pi^{-1}\int_0^\pi g(\sin^2 t)\,dt$. For any continuous trial $f$, write
+$$
+ R(v)=p(v)-I\big(x\mapsto\rho(vx)f(v(1-x))\big).
+$$
+Lean proves $I(x^a(1-x)^b)=h_{ab}$ and therefore $I(B(vx)F(v(1-x)))=(B\star F)(v)$. It also proves the binomial-mixture identity $I(\binom jk x^k(1-x)^{j-k})=r_kr_{j-k}$. The conditional binomial mean is $x$ and its variance after division by $j^2$ is $x(1-x)/j$. Taylor's theorem thus bounds the difference between the discrete split average at $j>0$ and $I$ by $M_2/(8j)$ for any integrand with second derivative bounded by $M_2$. [Angular moment identity](CentralUnimodality/ArcsineSplit.lean) · [Finite-size quadrature theorem](CentralUnimodality/ArcsineQuadrature.lean)
+
+For either parity and $0\le j\le N$, the actual free and normalized bridge inputs are respectively within $\tau^3 N^2+\tau^6 N^5$ of $p(\tau j),\rho(\tau j)$ whenever $|\omega|(2N+1)\le1$. The quadratic exponent differs by at most $\tau^3N^2$, and the quartic remainder follows from $\sum_{i=1}^t i^4\le t^5$ and $t\le3N$. If $|f|\le M$ on $[0,u]$ and the second derivative in $x$ of $\rho(vx)f(v(1-x))$ is bounded by $K v^2$, the true residual of the trial $r_j f(\tau j)$ thus differs from $R(\tau j)$ uniformly by at most $((1+M)(u^3+u^6)+Ku^2/8)/N$. The $j=0$ quadrature is exact. The inverse theorem gives, with $e=\sup|R|$ and $L$ a Lipschitz constant for $R$ on that interval,
+$$
+ |\Phi_N(\xi/S)-f(u)|\le (1+|\xi|/2)e+uL+
+ \frac{4}{\sqrt N}\left((1+M)(u^3+u^6)+Ku^2/8\right).
+$$
+Here $\Phi_N$ is the actual signed conditional amplitude. The kernel statement accepts a quadratic Taylor remainder, so it also applies when that remainder is available directly. [Lattice input estimates](CentralUnimodality/LatticeCubicInputs.lean) · [Finite amplitude theorem](CentralUnimodality/ContinuumResidual.lean)
+
+Apply the estimate with $f=F$ from the table. The Chebyshev coefficient sums enclose $|F|,|F'|,|F''|$ by $1.881,1.342,1.600$. With $V=256$, use $|\rho'|\le V^2/32$ and $|\rho''|\le V^4/1024+V/16$. The product rule gives $K<9\,000\,000$. For an input polynomial with total ODE error $\eta$ as defined above, its derivative differs from the derivative of its cubic exponential by at most $(1/V+3V^2/D)\eta$. Finally,
+$$
+ R(v)=(P-B\star F)(v)+(p-P)(v)-I\big((\rho-B)(vx)F(v(1-x))\big).
+$$
+Use the triangle inequality, the product rule, and $0\le x,1-x\le1$ to bound its value and Lipschitz constant. The verifier uses the rational errors themselves before rounding. Including the finite-size term gives **$|\Phi_N(\xi/S)-F(|\xi|^{2/3})|<10^{-10}$ on $|\xi|\le4096$** for every $N\ge10^{54}$. The angle restriction holds since $|\omega|^2(2N+1)^2\le9V^3/(32N)$. [Exact error calculation](verify_gamma_polynomials.py)
+
+For the spatial calculation let $J_N(x)=\int_0^{\pi S}\Phi_N(\xi/S)\cos(x\xi)\,d\xi$. At $x=(k+d)/S$, with $d=(3n+2\delta+1)/2$, this is a positive size-dependent constant times the number of partitions of corank $k$. Indeed the characteristic function is the mean of $\cos((k+d)\xi/S)$, and on the interval $[0,\pi]$ the product-to-sum formula kills every off-diagonal term. The difference of distinct sites and their sum are nonzero integers before scaling. At the same site the integral is $\pi/2$ since $k+d>0$. Derivatives of orders 1 and 2 come from differentiating the cosine.
+
+The verifier substitutes $\xi=w^3$ on the retained interval. On $0\le w\le8$ it applies composite Simpson quadrature with spacing $1/256$ to $3w^{3r+2}F(w^2)\cos(xw^3+r\pi/2)$, where $r=1,2$. On each unit interval it restricts the Chebyshev polynomial exactly to the corresponding range of $w^2$ and bounds the first four derivatives. Expanding $(w+h)^{3r+2}$, $F(w^2+2wh+h^2)$ and the phase exponential to order four gives the fourth-derivative bound by the product rule. The integrated and endpoint remainders of the cubic Taylor expansion about the midpoint of each two-step panel together cost at most $\|\partial_w^4\|_\infty h^4/45$ per unit interval. On $8\le w\le16$ the verifier uses the Chebyshev bound for $F$ restricted to $[64,256]$.
+
+The spatial grid has spacing $1/H$, $H=4096$. The floor and ceiling nodes enclosing each interval are included. The linear interpolation cost is at most $\sup|\partial_x^{r+2}J|/(8H^2)$ for the low-frequency trial piece, bounded by the absolute frequency integral there. For phase arithmetic write $D=2^{120}$. At a frequency node $k$ the mesh rotation angle is $(k/256)^3/H\le1/8$. Taylor's polynomial through degree 28 and a single floor put each rotation coordinate within $2/D$ of its true value. If the current complex error is at most one then its computed modulus is at most two. Multiplication by the rotation increases the error by at most $2(2\sqrt2)/D+\sqrt2/D<8/D$, including both output floors. Thus every phase error is below $8H/D$. Horner evaluation at the dyadic area node rounds the trial just once, within $1/D$.
+
+The amplitude replacement on $[0,4096]$ costs at most $10^{-10}4096^{r+1}/(r+1)$. From there to $.008S$ the kernel bound is $100e^{-.157u}$. At $r\le2$ its integral costs at most $150\cdot256^4 e^{-.157\cdot256}/(.157-4/256)$ using $(256+y)^4\le256^4e^{4y/256}$. On $.008S\le\xi\le\pi S$, the 216-step killed-walk bound is at most $16e^{2-N/200}$, and $\pi S\le12N^2$. The two omitted arcs together cost less than $.001$. [Frequency bounds](CentralUnimodality/SignedArcBounds.lean) · [216-step constant](CentralUnimodality/KilledProducts.lean)
+
+| Quantity | Spatial interval | Lower bound throughout the interval |
+| --- | --- | ---: |
+| $J_N'$ | $[.1359,.339]$ | $.216$ |
+| $-J_N''$ | $[.333,.404]$ | $162.58$ |
+| $-J_N'$ | $[.398,.631]$ | $2.681$ |
+
+The margins are rounded down after every allowance. The derivative decreases strictly across the middle interval and has opposite signs at its ends, giving a unique maximum there. Sampling this function on a lattice gives a weakly unimodal row on the covered interval. At these sizes the corank window in `ThreeFifthsPeak` lies inside the three spatial intervals. In fact $m=2N-\delta$, $d=(3N-\delta+1)/2$, the lower corank is $\lceil .1375m^{3/2}\rceil$ and the upper corank is at most $.6m^{3/2}$. The scaled endpoints lie between $.1375(1-1/(2N))^2$ and $.6+(3N+1)/(2S)$, inside $[.1359,.631]$. This proves the stated peak assertion. The threshold $10^{54}$ comes from the coarse uniform discretization bound and leaves the intermediate sizes to the earlier proof. The two numerical verifiers run with the Python standard library.
+
+~~~sh
+python3 -B verify_gamma_polynomials.py
+python3 -B verify_polynomial_peak.py
+~~~
+
 ## Local bounds for the input symbols
 
 We give the details of the discretization so that each inequality between mesh points is specified. Use the [last-return identity, equations (2)–(5)](return-expansion.md#splitting-at-zero) and the [corrected input approximation](return-bounds.md#a-bound-for-the-signed-transform). Put $u=|\xi|^{2/3}$ for $\theta=\xi/s_0$, $\tau=u/N$, $v=j\tau$, and use $0\le u\le U$, $U=150,160,180$ in the respective rows. Here $\tau\le\tau_*=1/5000$, and all cosine and sinc arguments have modulus below $.8$. Write $[g]_{j,c}=\mathbb E g(\tau T)$ for gamma shape $j+c$, rate one. Recall the free and bridge continuum functions $p=e^{-v^3/24}$, $\rho=e^{-v^3/96}$ and the corrections $D_g=-g\ell_g-cg'-vg''/2$ from the cited approximation. The inputs $W_j$ are the free transform ($g=p,c=1$) and the transform conditional on a bridge ($g=\rho,c=1/2$).

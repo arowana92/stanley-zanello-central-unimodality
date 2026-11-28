@@ -43,6 +43,11 @@ example (n δ : ℕ) (hδ : δ ≤ 1) (F : ℤ → ℤ) :
 #print axioms ReturnSplit.gamma_polynomial_split
 #print axioms ReturnSplit.gamma_residual_bound
 #print axioms amplitude_of_residual_model
+#print axioms ReturnSplit.arc_polynomial
+#print axioms ReturnSplit.sample_arc_bound
+#print axioms ReturnSplit.free_curve_bound
+#print axioms ReturnSplit.bridge_curve_bound
+#print axioms ReturnSplit.signed_curve_bound
 
 #print axioms lastReturn_convolution
 #print axioms reflected_of_negative_sum

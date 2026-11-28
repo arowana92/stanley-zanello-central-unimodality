@@ -77,17 +77,22 @@ def chebyshev_coefficients(poly):
     return row, denominator
 
 
-def uniform_bounds(poly, width):
-    """Triangle bounds for the value and v derivative using |T_j| <= 1."""
-    row, denominator = chebyshev_coefficients(poly)
+def derivative_coefficients(row):
+    """Differentiate a Chebyshev series in its unshifted argument."""
     derivative = [0] * (len(row) + 1)
     for k in range(len(row) - 1, 0, -1):
         derivative[k-1] = derivative[k+1] + 2*k*row[k]
     # dT_k/dy = k U_(k-1)(y). The constant cosine has half weight.
     assert derivative[0] % 2 == 0
     derivative[0] //= 2
+    return derivative[:-2] or [0]
+
+
+def uniform_bounds(poly, width):
+    """Triangle bounds for the value and v derivative using |T_j| <= 1."""
+    row, denominator = chebyshev_coefficients(poly)
     return (Fraction(sum(map(abs, row)), denominator),
-            Fraction(2 * sum(map(abs, derivative)), width * denominator))
+            Fraction(2 * sum(map(abs, derivative_coefficients(row))), width * denominator))
 
 
 def gaussian_defect(poly, width, divisor):
@@ -145,6 +150,34 @@ def check(label, value, limit):
     print(f"{label}: {float(value):.6g} < {limit}")
 
 
+def check_amplitude_bound(width, trial, free_error, bridge_error, base, base_slope):
+    """Apply the finite-size arcsine residual theorem on the full scaled window."""
+    denominator = 2**120
+    norms = []
+    for order in range(3):
+        norms.append(Fraction(sum(map(abs, trial)) * 2**order, denominator * width**order))
+        trial = derivative_coefficients(trial)
+    value, slope, curvature = norms
+    # The ODE defect is in the unit variable z; the derivative in v gains 1/width.
+    def derivative_error(error, divisor):
+        return error * (Fraction(1, width) + Fraction(3 * width**2, divisor))
+
+    endpoint = base + free_error + bridge_error*value
+    lipschitz = (base_slope + derivative_error(free_error, 24)
+                 + derivative_error(bridge_error, 96)*value + bridge_error*slope)
+    bridge_slope = Fraction(width**2, 32)
+    bridge_curvature = bridge_slope**2 + Fraction(width, 16)
+    split_curvature = bridge_curvature*value + 2*bridge_slope*slope + curvature
+    check("split second derivative divided by v^2", split_curvature, 9_000_000)
+    # N >= 10^54, u <= 256, xi <= 4096. omega^2 = (u/N)^3/32.
+    root_n = 10**27
+    assert Fraction(9 * width**3, 32*root_n**2) <= 1
+    discretization = (1+value)*(width**3 + width**6) + split_curvature*width**2/8
+    error = (1+4096//2)*endpoint + width*lipschitz + 4*discretization/root_n
+    check("conditional amplitude error for N >= 10^54", error, Fraction(1, 10**10))
+    return error
+
+
 def main():
     check_identities()
     record = json.loads(TABLE.read_text())
@@ -155,15 +188,18 @@ def main():
     assert [len(rows[k]) for k in keys] == [601, 601, 421, 421, 421]
     free, bridge, trial, even, odd = [
         monomial_coefficients(rows[k], 2**record["denominatorBits"]) for k in keys]
+    errors = {}
     for label, poly, divisor in (("free", free, 24), ("bridge", bridge, 96)):
         defect = gaussian_defect(poly, width, divisor)
         error = abs(poly[0] - 1) + uniform_bounds(defect, width)[0]
         check(f"{label} Gaussian error", error, Fraction(1, 10**21))
+        errors[label] = error
 
     residual = subtract(free, split_product(bridge, trial))
     value, slope = uniform_bounds(residual, width)
     check("base residual", value, Fraction(2, 10**15))
     check("base residual v derivative", slope, Fraction(4, 10**13))
+    check_amplitude_bound(width, rows["trial"], errors["free"], errors["bridge"], value, slope)
     bridge_correction = correction(bridge, width, Fraction(1, 24), Fraction(-1, 1920))
     bridge_term = split_product(bridge_correction, trial)
     for parity, candidate in enumerate((even, odd)):
