@@ -39,6 +39,11 @@ example (n δ : ℕ) (hδ : δ ≤ 1) (F : ℤ → ℤ) :
       ∑ j ∈ Finset.range (n*(n+δ)+1), rankCount (2*n+δ) j •
         (F (signedAreaAtRank n δ j) + F (-signedAreaAtRank n δ j)) := signed_ranks F n δ hδ
 
+#print axioms ReturnSplit.rising_split
+#print axioms ReturnSplit.gamma_polynomial_split
+#print axioms ReturnSplit.gamma_residual_bound
+#print axioms amplitude_of_residual_model
+
 #print axioms lastReturn_convolution
 #print axioms reflected_of_negative_sum
 #print axioms firstReturn_renewal

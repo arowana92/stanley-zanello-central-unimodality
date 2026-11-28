@@ -29,10 +29,12 @@ theorem sum_even_indices (f : ℕ → ℂ) (hz : ∀ j, f (2*j+1)=0) (N σ : ℕ
   · simpa using base N
   · rw [Finset.sum_range_succ,hz,add_zero,base]
 
-theorem smooth_strict_error (ω : ℝ) (V : PowerSeries ℂ) (N σ : ℕ) (hs : σ≤1) {L : ℝ}
-    (h : ∀ j≤N, ‖parityResidual ω V σ N-parityResidual ω V σ (N-j)‖≤j*L) :
-    ‖coeff (2*N+σ) (fairSeries (areaCharacter ω) strictWords - V)‖ ≤
-      (survival N+N*(|ω|/2))*‖parityResidual ω V σ N‖+(N*survival N)*L := by
+noncomputable def inverseAt (ω : ℝ) (N : ℕ) (E : ℕ → ℂ) : ℂ :=
+  E N-∑ j ∈ Finset.range (N+1), returnSymbol ω j*E (N-j)
+
+theorem strict_error_eq_inverseAt (ω : ℝ) (V : PowerSeries ℂ) (N σ : ℕ) (hs : σ≤1) :
+    coeff (2*N+σ) (fairSeries (areaCharacter ω) strictWords - V)=
+      inverseAt ω N (parityResidual ω V σ) := by
   let R := fairSeries (areaCharacter ω) words - fairSeries (areaCharacter ω) bridges * V
   let H := fairSeries (areaCharacter ω) firstReturns
   let f (i : ℕ) := coeff i H * coeff (2*N+σ-i) R
@@ -50,6 +52,13 @@ theorem smooth_strict_error (ω : ℝ) (V : PowerSeries ℂ) (N σ : ℕ) (hs : 
   have id := walkSeries_residual (2:ℂ)⁻¹ (areaCharacter ω) (areaCharacter_zero _) (areaCharacter_add _) V
   change fairSeries (areaCharacter ω) strictWords-V=(1-H)*R at id
   rw [id,sub_mul,one_mul,map_sub,he]
+  rfl
+
+theorem smooth_strict_error (ω : ℝ) (V : PowerSeries ℂ) (N σ : ℕ) (hs : σ≤1) {L : ℝ}
+    (h : ∀ j≤N, ‖parityResidual ω V σ N-parityResidual ω V σ (N-j)‖≤j*L) :
+    ‖coeff (2*N+σ) (fairSeries (areaCharacter ω) strictWords - V)‖ ≤
+      (survival N+N*(|ω|/2))*‖parityResidual ω V σ N‖+(N*survival N)*L := by
+  rw [strict_error_eq_inverseAt _ _ _ _ hs]
   exact inverse_smooth_bound ω N _ h
 
 theorem smooth_amplitude_error (n δ : ℕ) (hδ : δ≤1) (θ : ℝ) (V : PowerSeries ℂ) {L : ℝ}

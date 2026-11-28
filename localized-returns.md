@@ -47,6 +47,28 @@ $
 $
 by at most $\omega^4(3H_t/4+8BH_N/5)$. The cosine and sinc products give the two quadratic exponents. The logarithmic errors per factor are bounded by quartic powers, and the exponential has derivative at most one on the nonpositive real axis. The zero frequency follows by counting walks with a specified endpoint. At fixed $|\omega|N^{3/2}$ and bounded $B$, this error is $O(1/N)$. Bounding the displayed quadrature and the variation of the residual at the frequencies needed for peak inversion remains necessary. [Coefficient bounds](CentralUnimodality/GaussianSymbols.lean) · [Residual bound](CentralUnimodality/GaussianResidual.lean)
 
+## A polynomial trial on the wider frequency interval
+
+Write $v=j\tau$, where $\tau=|\xi|^{2/3}/N$, and put $r_j=4^{-j}\binom{2j}{j}$. For a polynomial $A(x)=\sum_a A_a x^a$, let $G_{j,c}A=\sum_a A_a\tau^a(j+c)^{\overline a}$, where the superscript denotes a rising factorial. Put $h_{ab}=(1/2)^{\overline a}(1/2)^{\overline b}/(a+b)!$ and define $B\star F$ by multiplying each pair of monomials with weight $h_{ab}$. At every $N\ge0$ and every real step $\tau$, Lean proves
+$$
+ \sum_{k=0}^N r_kr_{N-k}\,(G_{k,1/2}B)(G_{N-k,1/2}F)
+ =G_{N,1}(B\star F).
+$$
+For the monomial proof, apply the exact mixed binomial moment at $N+a+b$ and shift the surviving indices by $a$. Linearity gives the polynomial identity. Approximating the free symbol by $G_{N,1}P$ within $e$ and each normalized bridge by $G_{k,1/2}B$ within $d$ then bounds the discrepancy between the actual complex residual and $G_{N,1}(P-B\star F)$ by $e+d\max_{j\le N}|G_{j,1/2}F|$. [Rising moments](CentralUnimodality/GammaSplitMoments.lean) · [Polynomial identity and residual bound](CentralUnimodality/GammaPolynomialSplit.lean)
+
+A separate inverse estimate handles a smooth model with an additional discretization error. If the true residual differs from $G(j)$ by at most $v_0$ at each $j\le N$, and $G$ satisfies the endpoint and variation bounds $e,b$ above, the conditional signed amplitude error is at most $(1+\xi/2)e+b+4\sqrt N\,v_0$. Indeed the first-return masses after time zero sum to $1-r_N$, giving the unconditioned error factor $2-r_N$. Thus a discretization error of order $1/N$ vanishes after conditioning, even without a derivative estimate for that error. [Kernel proof](CentralUnimodality/ResidualModel.lean)
+
+For $0\le v\le256$ there is a rational certificate for five specific polynomials. Their coefficients are integers in units of $2^{-120}$ in the basis $T_i(1-2v/256)$. The free and bridge trials $P,B$ have degree at most 600. The amplitude trial $F$ and the first-correction trials $M_0,M_1$ have degree at most 420. The candidates came from cosine interpolation of the elementary exponentials, and of the moment and Airy approximations in the return expansion. All bounds below are verified from the stored integers. [Coefficient table](research/gamma-polynomials.json) · [Independent standard-library verifier](verify_gamma_polynomials.py)
+
+The two input polynomials approximate $p(v)=e^{-v^3/24}$ and $\rho(v)=e^{-v^3/96}$ uniformly within $10^{-21}$. To check this, put $z=v/256$, $V=256$, let $D=24$ or $96$ and compute the defect $A'(z)+(3V^3/D)z^2 A(z)$. Its maximum absolute value plus $|A(0)-1|$ bounds the solution error on $[0,1]$ by the integrating factor formula. For the corrections put $D_{P,\sigma}(v)=P(v)\big((7-2\sigma)v^2/32-v^5/120\big)$ and $D_B(v)=B(v)(v^2/24-v^5/1920)$. Exact rational bounds over the full interval are
+
+| Polynomial | Absolute value | Absolute $v$ derivative |
+| --- | ---: | ---: |
+| $P-B\star F$ | $2\times10^{-15}$ | $4\times10^{-13}$ |
+| $D_{P,\sigma}-B\star M_\sigma-D_B\star F$, either parity | $3\times10^{-14}$ | $6\times10^{-12}$ |
+
+The verifier expands the convolution in monomials, converts back to Chebyshev coefficients, and sums their absolute values. The derivative uses the exact Chebyshev differentiation recurrence. It also evaluates the split independently at 33 combinations of size and step for a pair of test polynomials. Run `python3 -B verify_gamma_polynomials.py` from the checkout. These bounds certify the polynomial residual on a continuum of frequencies. Transferring them to the lattice input errors and then to adjacent coefficient signs requires further estimates.
+
 ## Local bounds for the input symbols
 
 We give the details of the discretization so that each inequality between mesh points is specified. Use the [last-return identity, equations (2)–(5)](return-expansion.md#splitting-at-zero) and the [corrected input approximation](return-bounds.md#a-bound-for-the-signed-transform). Put $u=|\xi|^{2/3}$ for $\theta=\xi/s_0$, $\tau=u/N$, $v=j\tau$, and use $0\le u\le U$, $U=150,160,180$ in the respective rows. Here $\tau\le\tau_*=1/5000$, and all cosine and sinc arguments have modulus below $.8$. Write $[g]_{j,c}=\mathbb E g(\tau T)$ for gamma shape $j+c$, rate one. Recall the free and bridge continuum functions $p=e^{-v^3/24}$, $\rho=e^{-v^3/96}$ and the corrections $D_g=-g\ell_g-cg'-vg''/2$ from the cited approximation. The inputs $W_j$ are the free transform ($g=p,c=1$) and the transform conditional on a bridge ($g=\rho,c=1/2$).

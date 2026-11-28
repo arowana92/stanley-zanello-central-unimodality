@@ -59,5 +59,5 @@ public import CentralUnimodality.ThreeFifthsReduction
 public import CentralUnimodality.FiniteBase196
 public import CentralUnimodality.RoundedBase
 public import CentralUnimodality.GaussianResidual
-public import CentralUnimodality.ReturnSplitMoments
+public import CentralUnimodality.ResidualModel
 public import CentralUnimodality.InterpolatedAmplitude

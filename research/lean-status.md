@@ -102,6 +102,8 @@ The signed Fourier amplitude now has an explicit degree-eighteen polynomial in s
 
 A second quadrature uses 20 rational area nodes and both parities of the point moments. It has absolute error at most $|\xi|^{20}/(10^9\,20!)$ at every $N\ge96$, giving $1/600\,000$ through $|\xi|=12$. [Proof and independent evaluations](../fourier-window.md#interpolating-on-the-positive-area-axis)
 
+Lean proves the exact last-return convolution for arbitrary polynomials evaluated at rising factorial moments. Its inverse estimate allows a separate uniform discretization error, with explicit amplification at most $4\sqrt N$. An external rational certificate bounds the base polynomial residual below $2\times10^{-15}$ throughout $0\le |\xi|^{2/3}\le256$. The bound for the actual signed amplitude in the preceding paragraph still ends at $|\xi|=12$. [Polynomial trials and reproduction](../localized-returns.md#a-polynomial-trial-on-the-wider-frequency-interval)
+
 ## Remaining proof obligations
 
 The theorem `conjecture34_from_196` reduces the universal strict-partition statement to the Dyck comparisons and two size ranges for the peak interval. [Lean reduction](../CentralUnimodality/ThreeFifthsReduction.lean)
