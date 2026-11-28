@@ -75,4 +75,5 @@ public import CentralUnimodality.CorrectedAmplitudeCost
 public import CentralUnimodality.BinnedInverseAllowance
 public import CentralUnimodality.RetainedBinIntegration
 public import CentralUnimodality.DirectPeakCertificate
+public import CentralUnimodality.FiniteBase224
 public import CentralUnimodality.LargePeakReduction

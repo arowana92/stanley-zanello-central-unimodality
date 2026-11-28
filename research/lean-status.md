@@ -1,6 +1,6 @@
 # Lean verification status
 
-**Partial formalization.** Lean proves weak unimodality for both central staircase families for every row count through 195. The full conjecture is stated as `CentralUnimodality.Conjecture34`. Its universal proof is still in progress. The [computer-assisted research proof](../proof.md) gives the intended argument for the remaining sizes.
+**Partial formalization.** Lean proves weak unimodality for both central staircase families for every row count through 223. The full conjecture is stated as `CentralUnimodality.Conjecture34`. Its universal proof is still in progress. The [computer-assisted research proof](../proof.md) gives the intended argument for the remaining sizes.
 
 ## What the kernel checks
 
@@ -80,9 +80,9 @@ For the peak estimates, a second pair of time cuts uses $L=\lceil3m/40\rceil$ an
 
 Lean also proves a finite-time lower bound for the prefix survival probability. Under fair signs, the sum over surviving words of their height plus one is exactly $2^L$. Conditioning on survival gives the mean displacement $1/P-1$, with $P$ the fair survival probability. Applying the exponential tangent inequality after tilting by $-u$ gives a positive correction to the usual escape-probability lower bound. Combining these estimates with the early crossing and central-rank estimates to prove the adjacent coefficient signs closer to the peak remains a separate step. [Exact height sum and tilt](../CentralUnimodality/PrefixSurvivalLower.lean) · [Scaled survival bound](../CentralUnimodality/ScaledPrefixSurvival.lean)
 
-## Finite central ranks and exact rows through 195
+## Finite central ranks and exact rows through 223
 
-Lean proves full-row unimodality for the 390 positive-size shapes through 195 rows. The last eight ballot lengths, 384 through 391, use exact integer coefficient rows. The theorem `conjecture34_from_196` inserts these cases into the induction for both families. [Exact rows](../CentralUnimodality/ExtendedPackedBase.lean) · [Induction](../CentralUnimodality/FiniteBase196.lean)
+Lean proves full-row unimodality for all 446 positive-size shapes through 223 rows. At ballot lengths 392 through 447, the packed endpoint for a partition with $d$ parts omits the first $d(d+1)/2$ zero digits. One pass over adjacent endpoints constructs the next layer. Lean proves that restoring the shifts gives the original rank polynomial, then compares every adjacent coefficient on each side of the candidate peak. [Packed recurrence](../CentralUnimodality/ExcessPackedRows.lean) · [Exact rows](../CentralUnimodality/ExcessBase.lean)
 
 A second verification checks the central intervals of both 192-row shapes with 100 fractional bits. Each packed digit is proved equal to its rounded endpoint coefficient at every size, including entries at the ballot boundary. Reassembling the endpoint rows gives the rounded count at the actual partition rank. The checker compares all adjacent pairs against their rounding allowance. At ballot lengths 384 and 385 these comparisons place the peaks at coranks 2615 and 2627. [Packed endpoints](../CentralUnimodality/PackedRoundedLayers.lean) · [Rank reconstruction](../CentralUnimodality/PackedRoundedRanks.lean) · [Certified comparison](../CentralUnimodality/RoundedPeakCheck.lean) · [Checked cases](../CentralUnimodality/RoundedBase.lean)
 
@@ -112,13 +112,13 @@ The direct corrected-split argument now has an independent rational peak certifi
 
 ## Remaining proof obligations
 
-The theorem `conjecture34_from_196` reduces the universal strict-partition statement to the Dyck comparisons and two size ranges for the peak interval. [Lean reduction](../CentralUnimodality/ThreeFifthsReduction.lean)
+The theorem `conjecture34_from_224` reduces the universal strict-partition statement to the Dyck comparisons and two size ranges for the peak interval. [Lean reduction](../CentralUnimodality/FiniteBase224.lean)
 
 1. For every ordinary Dyck area polynomial, prove the reflected coefficient inequalities in `DyckComparisons`. The theorem `Polarization.dyck_comparisons_of_hilbert` reduces this to `DyckHilbertSpecialization`, the identification of each ordinary Dyck area count with the sum of the corresponding alternating coinvariant dimensions. Haiman's Corollary 3.14 and Garsia–Haiman's Theorem 4.4 at $m=1$ give the published ingredients. [Formal reduction](../CentralUnimodality/DiagonalCoinvariants.lean) · [Character argument and sources](../excursion-centers.md#ordinary-excursions-and-two-variable-characters)
 
    Lean proves that each individual Dyck-indexed determinant survives in the quotient at every semilength. This gives positive dimension in every area/dinv bidegree occupied by a path. For several paths in the same bidegree, `slice_independent_of_minor` proves that a nonsingular matrix of rational curve evaluations implies linear independence of their classes. The theorem `dyck_hilbert_of_minors_and_dimension` derives the required identity from joint minors at all sizes and a Catalan upper bound on the sum of the slice dimensions. Both hypotheses remain open in this formalization. The independent integer verifier checks full quotient bases through semilength 6 and joint minors through semilength 10. [Formal nonvanishing](../CentralUnimodality/DyckCurveDetection.lean) · [Joint minors and dimension bounds](../CentralUnimodality/DyckCurveMinors.lean) · [Written proof and exact tests](../excursion-centers.md#testing-the-dyck-determinants-after-quotienting)
 
-2. For each family and every $196\le n<300000$, prove unimodality from `centralStart` through the midpoint when $m<4096$, and through the smaller of the midpoint and $\lfloor3m^{3/2}/5\rfloor$ when $m\ge4096$. The written proof combines finite central-window calculations, a uniform large-size estimate and a right-flank bound. Lean proves the peak comparison above this range and the extension past the midpoint. The theorem `conjecture34_from_finite_peaks` expresses the remaining conditions. [Reduced peak interval](../CentralUnimodality/ThreeFifthsReduction.lean) · [Research proof and reproducible checks](../proof.md)
+2. For each family and every $224\le n<300000$, prove unimodality from `centralStart` through the midpoint when $m<4096$, and through the smaller of the midpoint and $\lfloor3m^{3/2}/5\rfloor$ when $m\ge4096$. The written proof combines finite central-window calculations, a uniform large-size estimate and a right-flank bound. Lean proves the peak comparison above this range and the extension past the midpoint. The theorem `conjecture34_from_224` expresses the remaining conditions. [Reduced peak interval](../CentralUnimodality/ThreeFifthsReduction.lean) · [Research proof and reproducible checks](../proof.md)
 
 ## Reproduction
 
@@ -130,7 +130,7 @@ lake env lean research/CheckLean.lean
 LEAN_NUM_THREADS=1 lake env leanchecker --verbose --fresh CentralUnimodality
 ~~~
 
-An independent exact coefficient calculation covers both families at every size through 195. For the first 12 sizes it also enumerates the strict partitions directly. Run `python3 -B verify.py --max-n 195 --direct-n 12 --upper-curvature`.
+An independent exact coefficient calculation covers both families at every size through 223. For the first 12 sizes it also enumerates the strict partitions directly. Run `python3 -B verify.py --max-n 223 --direct-n 12 --upper-curvature`.
 
 The 321-avoiding superpatterns repository also replays each project module separately. To reproduce that check, run
 
