@@ -443,3 +443,6 @@ example {m j : ℕ} (hm : 4096≤m) (hmid : staircaseDegree m≤2*(j+1))
 #print axioms HeightBlock.assemble_ground_congr
 #print axioms conjecture34_from_remaining
 #print axioms returnSymbol_inner_001
+#print axioms ReturnSplit.centered_high_bounds
+#print axioms ReturnSplit.sample_second_correction
+#print axioms ReturnSplit.sample_split_second

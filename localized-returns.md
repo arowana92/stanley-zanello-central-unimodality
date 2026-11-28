@@ -155,6 +155,18 @@ $$
 $$
 The integration by parts uses $x=\sin^2t$ and the vanishing of $\sin t\cos t$ at both endpoints. The first correction to $H$ in $S_jg_v$ is therefore $\tau$ times the expression in braces. If $|g_v^{(s)}|\le v^sD_s$ for $s=3,4$, the remaining error is at most $\tau^2(vD_3/24+v^2D_4/128)$. [Arcsine identities](CentralUnimodality/ArcsineDifferentiation.lean) · [Differential identity](CentralUnimodality/SplitFirstCorrection.lean) · [Lattice-scaled estimate](CentralUnimodality/SmoothSplitQuadrature.lean)
 
+### A second correction to the discrete split
+
+For $j\ge1$, let $X$ have the arcsine law on $[0,1]$ and let $K$ conditional on $X=x$ have the binomial law with parameters $j,x$. Write $I$ for expectation over $X$ and $S_jg=\mathbb E[g(K/j)]$. Put $q=x(1-x)$. If $g$ has six continuous derivatives and $M_r$ bounds $|g^{(r)}|$ on $[0,1]$, then
+$
+\left|S_jg-I\left[g+\frac{qg''}{2j}
+ +\frac{1}{j^2}\left(\frac{q(1-2x)g'''}6+\frac{q^2g^{(4)}}8\right)\right]\right|
+ \le \frac{1}{j^3}\left(\frac{M_4}{96}+\frac{M_5}{192}+\frac{M_6}{1440}\right).
+$
+The same inequality holds before the arcsine integration at each $x\in[0,1]$. In the quintic Taylor expansion at $x$, the exact fourth centered moment leaves the term $q(1-6q)g^{(4)}(x)/(24j^3)$. The fifth centered moment satisfies $|\mathbb E[(K-jx)^5\mid X=x]|\le5j^2/8$. The sixth centered moment is at most $j^3/2$. These two bounds control the fifth Taylor coefficient and the sixth-order remainder. [Centered moment identities and bounds](CentralUnimodality/BinomialSixthMoment.lean) · [Taylor estimate and arcsine integration](CentralUnimodality/SecondOrderQuadrature.lean)
+
+For the staircase split $g(x)=B(vx)F(v(1-x))$, let $v=j\tau$ and bound $|g^{(r)}(x)|$ by $v^rD_r$. The right side becomes $\tau^3(vD_4/96+v^2D_5/192+v^3D_6/1440)$. This isolates a signed term of order $\tau^2$ before first-return inversion. A further reduction of the peak cutoff using this estimate needs the corresponding second corrections to the free and bridge symbols and bounds on the resulting spatial errors. [Lattice-scaled theorem](CentralUnimodality/SecondOrderQuadrature.lean)
+
 ### The residual at each time
 
 Use $p=e^{-v^3/24}$, $b=e^{-v^3/96}$, $p_1=-\ell_p p$, $b_1=-\ell_b b$, with the log coefficients below. The signed trial at time $j$ is $r_j(F(v)+\tau G(v))$, where $G=M_\sigma+L_{1/2}F$ uses the correction for walk parity $\sigma$. Its residual is $R_0(v)+\tau R_1(v)+O(\tau^2)$ with $R_0=p-b\star F$. The earlier smooth-residual estimate gives $|R_0|\le1.5\,10^{-15}$ and Lipschitz constant $3.6\,10^{-13}$.
