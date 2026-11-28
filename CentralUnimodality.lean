@@ -69,6 +69,8 @@ public import CentralUnimodality.LocalizedInverse
 public import CentralUnimodality.ModerateFrequencyTail
 public import CentralUnimodality.DirectCorrectedResidual
 public import CentralUnimodality.CertifiedFirstCorrection
+public import CentralUnimodality.CertifiedLocalJets
+public import CentralUnimodality.VerifiedGaussianBins
 public import CentralUnimodality.CorrectedAmplitudeCost
 public import CentralUnimodality.BinnedInverseAllowance
 public import CentralUnimodality.RetainedBinIntegration

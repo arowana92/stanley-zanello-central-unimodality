@@ -1,0 +1,16 @@
+module
+
+public import CentralUnimodality.LocalJetChecks
+
+/-! Main-trial and correction derivatives in bins 216 through 287. -/
+@[expose] public section
+
+namespace CentralUnimodality.PolynomialTrial
+
+set_option maxRecDepth 40000
+set_option maxHeartbeats 0
+set_option Elab.async false
+
+check_jet_range jet_block_3 216 72
+
+end CentralUnimodality.PolynomialTrial
