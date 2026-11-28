@@ -68,7 +68,7 @@ public import CentralUnimodality.SmoothSplitQuadrature
 public import CentralUnimodality.LocalizedInverse
 public import CentralUnimodality.ModerateFrequencyTail
 public import CentralUnimodality.DirectCorrectedResidual
-public import CentralUnimodality.FirstResidualTransfer
+public import CentralUnimodality.CertifiedFirstCorrection
 public import CentralUnimodality.CorrectedAmplitudeCost
 public import CentralUnimodality.BinnedInverseAllowance
 public import CentralUnimodality.RetainedBinIntegration
